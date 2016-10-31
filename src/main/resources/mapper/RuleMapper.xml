@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beecloud.dao.RuleDao">
+	<!-- 查询单条记录 -->
+	<select id="selectRuleById" parameterType="int" resultType="com.beecloud.domain.Rule">
+		SELECT * FROM rule WHERE id = #{id}
+	</select>
+	
+	<!-- 	模糊查询 -->
+	<select id="selectRuleByName" parameterType="java.lang.String" resultType="com.beecloud.domain.Rule">
+		<bind name="pattern" value="'%' + name + '%'" />	
+		SELECT *
+		FROM rule
+		WHERE 1 = 1
+		<if test="name != null and name !=''">
+		    AND name LIKE #{pattern}
+		</if>
+		ORDER BY id
+	</select>
+	
+	<select id="selectEnableRule" resultType="com.beecloud.domain.Rule">
+		SELECT * FROM rule WHERE status=1
+	</select>
+	
+	<insert id="insert">
+		INSERT into rule (name,path,response_id,status) value(#{name},#{path},#{response_id},0)
+	</insert>
+	
+	<delete id="delectRuleById">
+		DELETE FROM rule WHERE id=#{id}
+	</delete>
+	
+	<update id="updateRuleStatusById">
+		UPDATE rule SET status = #{status} WHERE id =#{id}
+	</update>
+</mapper>

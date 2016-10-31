@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beecloud.dao.MockDao">
+	<!-- 查询单条记录 -->
+	<select id="selectMockById" parameterType="int" resultType="com.beecloud.domain.Mock">
+		SELECT * FROM response WHERE id = #{id}
+	</select>
+	
+	<select id="list" resultType="com.beecloud.domain.MockVo">
+		SELECT id,title FROM response WHERE title != ""
+	</select>
+	
+	<!-- 	模糊查询 -->
+	<select id="selectMockByTitle" parameterType="java.lang.String" resultType="com.beecloud.domain.Mock">
+		<bind name="pattern" value="'%' + title + '%'" />	
+		SELECT *
+		FROM response
+		WHERE 1 = 1
+		<if test="title != null and title !=''">
+		    AND title LIKE #{pattern}
+		</if>
+		ORDER BY id
+	</select>
+	
+	<update id="updateMockById">
+		UPDATE response SET title = #{title},statuscode = #{statuscode},response = #{response} WHERE id =#{id}
+	</update>
+	
+	<delete id="delectMockById">
+		DELETE FROM response WHERE id=#{id}
+	</delete>
+	
+	<update id="updateMockStatusById">
+		UPDATE response SET status = #{status} WHERE id =#{id}
+	</update>
+</mapper>

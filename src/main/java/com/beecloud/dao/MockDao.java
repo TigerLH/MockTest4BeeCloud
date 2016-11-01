@@ -16,6 +16,10 @@ import com.beecloud.domain.MockVo;
  * @version v1.0
  */
 public interface MockDao {
+	
+	 void insert(@Param("title")String title,@Param("url")String url,
+			 @Param("method")String method,@Param("statuscode")String statuscode,
+			 @Param("response")String response);
 	 /**
 	  * 
 	  * @param id

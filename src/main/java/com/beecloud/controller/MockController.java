@@ -78,19 +78,19 @@ public class MockController extends BaseController {
     }
     
     
-    @RequestMapping(value="/mock/list", method= {RequestMethod.POST,RequestMethod.GET})
+    @RequestMapping(value="/mock/list", method= {RequestMethod.POST})
     @ResponseBody
     public List<MockVo> list(){
     	return mockService.list();
     }
     
-    /**
-     * 分页查询用户信息
-     * @author linbingwen
-     * @since  2015年10月23日 
-     * @param page
-     * @return
-     */
+    @RequestMapping(value="/mock/insert", method= {RequestMethod.POST})
+    @ResponseBody
+    public void insert(String title,String url, String method,String statuscode,String response){
+    	mockService.insert(title, url, method, statuscode, response);
+    }
+    
+    
     @RequestMapping(value="/rule/list.do", method= {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
     public String ruleList(Integer pageNumber,Integer pageSize ,String name) {

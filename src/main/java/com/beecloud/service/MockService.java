@@ -2,6 +2,8 @@ package com.beecloud.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.beecloud.domain.Mock;
 import com.beecloud.domain.MockVo;
 import com.beecloud.util.PagedResult;
@@ -26,6 +28,8 @@ public interface MockService {
 	void delectMockById(Integer id);
 	
 	void updateMockStatusById(Integer id,Integer status);
+	
+	void insert(String title,String url, String method,String statuscode,String response);
 	
 	PagedResult<Mock> queryByPage(String title,Integer pageNo,Integer pageSize);
 

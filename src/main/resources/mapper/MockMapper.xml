@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.beecloud.dao.MockDao">
+	
+	<insert id="insert">
+		INSERT into response (title,url,method,statuscode,response) value(#{title},#{url},#{method},#{statuscode},#{response})
+	</insert>
+	
 	<!-- 查询单条记录 -->
 	<select id="selectMockById" parameterType="int" resultType="com.beecloud.domain.Mock">
 		SELECT * FROM response WHERE id = #{id}

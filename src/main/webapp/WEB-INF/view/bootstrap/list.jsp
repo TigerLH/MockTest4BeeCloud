@@ -7,8 +7,11 @@
 <title>Mock Test For BeeCloud</title>
 <link href="<%=request.getContextPath()%>/static/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="<%=request.getContextPath()%>/static/css/simple-sidebar.css" rel="stylesheet">
+<link href="<%=request.getContextPath()%>/static/js/bootstrap/css/bootstrapValidator.css" rel="stylesheet">
+
 <script src="<%=request.getContextPath()%>/static/js/jQuery/jquery-2.1.4.min.js"></script>
 <script src="<%=request.getContextPath()%>/static/js/bootstrap/js/bootstrap.min.js"></script>
+<script src="<%=request.getContextPath()%>/static/js/bootstrap/js/bootstrapValidator.js"></script>
 <script src="<%=request.getContextPath()%>/static/js/bootstrap/js/bootstrap-paginator.min.js"></script>
 <style type="text/css">
 #queryDiv {
@@ -84,7 +87,7 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭
 					</button>
-					<button type="button" class="btn btn-primary" onclick="update()">
+					<button type="submit" class="btn btn-primary" onclick="update()">
 						提交更改
 					</button>
 				</div>
@@ -92,10 +95,63 @@
 		</div><!-- /.modal -->
 	</div>
 	   
+	   
+	   
+	    <!-- 模态框（Modal） 新增Mock-->
+	<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display:none">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						新增Mock
+					</h4>
+				</div>
+				<div class="modal-body">
+					<div class="control-group"><label class="control-label" for="create_title" >标题</label>
+						<div class="controls" ><input id="create_title" required data-bv-notempty-message="标题不能为空" placeholder="必填项不能为空" type="text" style="width:300px;"/></div>
+					</div>
+					
+					<div class="control-group"><label class="control-label"  for="create_url" >请求地址</label>
+						<div class="controls">
+						<input id="create_url" required data-bv-notempty-message="请求地址不能为空" placeholder="必填项不能为空" type="text" style="width:300px;"/></div>
+					</div>
+					
+					<div class="form-group">
+						<label for="name">请求方法</label>
+						<select id="create_method_select" class="form-control">
+							<option>GET</option>
+							<option>POST</option>
+						</select>
+					</div>
+					
+					<div class="control-group"><label class="control-label"  for="create_statuscode" >状态码</label>
+						<div class="controls"><input id="create_statuscode" required data-bv-notempty-message="状态码不能为空" placeholder="必填项不能为空" type="text" style="width:300px;"/></div>
+					</div>
+					<label class="control-label"  for="create_response">Response</label>
+					<textarea id="create_response" style="height:200px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+					</button>
+					<button type="button" class="btn btn-primary" onclick="insertMock()">
+						提交更改
+					</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+	</div>
+	   
+	   
+	   
+	   
 	<div id = "queryDiv">
 		<input id = "textInput" type="text" placeholder="请输入标题" >
 		<button id = "queryButton" class="btn btn-primary" type="button">查询</button>
-		<button id = "createButton" class="btn btn-primary" type="button">新建</button>
+		<button id = "createButton" class="btn btn-primary" type="button" data-toggle="modal" data-target="#createModal">新建</button>
 	</div>
 	<form id="form1">
 		<table class="table table-hover table-bordered table-striped" id = 'tableResult'  style="word-break:break-all; word-wrap:break-all;">
@@ -160,59 +216,34 @@
 			});
 		}
 		
-		
-// 		function status(object){
-// 			var index = $(object).attr("id");
-			//获取表格中的一行数据
-// 			var row = index%10;
-// 			if(row==0){
-// 				row=10;  //如果能被整除,则取最后一条
-// 			}
-// 			var id = document.getElementById("tableResult").rows[row].cells[0].innerText;
-// 			if(object.innerText=="运行"){
-// 				$.ajax({
-// 					type: "post",
-// 					url: "update/status",
-// 					data: "id=" + id+ "&status=" + 1,
-// 					dataType: 'html',
-// 					contentType: "application/x-www-form-urlencoded; charset=utf-8",
-// 					success: function(result) {
-// 						object.setAttribute("class", "btn btn-danger");
-// 						object.innerText="停止";
-// 					}
-// 				});
-// 			}else{
-// 				$.ajax({
-// 					type: "post",
-// 					url: "update/status",
-// 					data: "id=" + id+ "&status=" + 0,
-// 					dataType: 'html',
-// 					contentType: "application/x-www-form-urlencoded; charset=utf-8",
-// 					success: function(result) {
-// 						object.setAttribute("class", "btn btn-info");
-// 						object.innerText="运行";
-// 					}
-// 				});
-// 			}
-// 		}
-		
-		
-		
-		//运行停止
-// 		$(document).on('click','#runcode',function(){
-// 			var _this = $(this);
-			//运行状态
-// 			if(_this.hasClass("btn-danger")){
-// 				_this.removeClass("btn-danger").addClass("btn-info");
-// 				_this.text("运行");
-// 			}
-			//停止状态
-// 			else{
-// 				_this.addClass("btn-danger").removeClass("btn-info");
-// 				_this.text("停止");
-// 			}
-// 		});
+		//插入mock
+		function insertMock() {
+			//获取模态框数据
+			var title = $('#create_title').val();
+			var url = $('#create_url').val();
+			var statuscode = $('#create_statuscode').val();
+			var response = $('#create_response').val();
 			
+			var select=create_method_select.selectedIndex ; 
+			var method= create_method_select.options[select].value;
+			
+			if(title==""||url==""||statuscode==""){
+				alert("必填项不能为空");
+				console.log("填写不完整");
+				return;
+			};
+			$.ajax({
+				type: "post",
+				url: "mock/insert",
+				data: "&title=" + title + "&url=" + url+ "&method=" + method+
+				"&statuscode=" + statuscode + "&response=" + response,
+				dataType: 'html',
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
+				success: function(result) {
+					location.reload();
+				}
+			});
+		}
 		
 		
 		//删除记录

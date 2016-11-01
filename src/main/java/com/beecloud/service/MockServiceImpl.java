@@ -75,4 +75,13 @@ public class MockServiceImpl implements MockService{
 		return mockDao.list();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.beecloud.service.MockService#insert(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void insert(String title, String url, String method,
+			String statuscode, String response) {
+		mockDao.insert(title, url, method, statuscode, response);
+	}
+
 }

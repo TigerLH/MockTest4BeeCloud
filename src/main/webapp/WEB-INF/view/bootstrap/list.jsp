@@ -78,7 +78,7 @@
 					</div>
 					
 					<div class="control-group"><label class="control-label"  for="statuscode">状态码</label>
-						<div class="controls"><input id="statuscode" placeholder="statuscode" type="text" style="width:300px;"/></div>
+						<div class="controls"><input id="statuscode" placeholder="statuscode" type="number" max=3 style="width:300px;"/></div>
 					</div>
 					<label class="control-label"  for="response">Response</label>
 					<textarea id="response" style="height:200px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
@@ -128,7 +128,7 @@
 					</div>
 					
 					<div class="control-group"><label class="control-label"  for="create_statuscode" >状态码</label>
-						<div class="controls"><input id="create_statuscode" required data-bv-notempty-message="状态码不能为空" placeholder="必填项不能为空" type="text" style="width:300px;"/></div>
+						<div class="controls"><input id="create_statuscode" required data-bv-notempty-message="状态码不能为空" placeholder="必填项不能为空" type="number" max=3 style="width:300px;"/></div>
 					</div>
 					<label class="control-label"  for="create_response">Response</label>
 					<textarea id="create_response" style="height:200px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
@@ -204,6 +204,15 @@
 			var title = $('#title').val();
 			var statuscode = $('#statuscode').val();
 			var response = $('#response').val();
+			
+			if(id==""||title==""||statuscode==""||response==""){
+				alert("必填项不能为空");
+				return;
+			}
+			if(isNaN(statuscode)){
+				alert("状态码只能为数字");
+				return;
+			}
 			$.ajax({
 				type: "post",
 				url: "mock/update/all",
@@ -227,11 +236,14 @@
 			var select=create_method_select.selectedIndex ; 
 			var method= create_method_select.options[select].value;
 			
-			if(title==""||url==""||statuscode==""){
+			if(title==""||url==""||statuscode==""||response==""){
 				alert("必填项不能为空");
-				console.log("填写不完整");
 				return;
 			};
+			if(isNaN(statuscode)){
+				alert("状态码只能为数字");
+				return;
+			}
 			$.ajax({
 				type: "post",
 				url: "mock/insert",

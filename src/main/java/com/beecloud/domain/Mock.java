@@ -30,7 +30,7 @@ public class Mock {
 	/**
 	 * 状态码
 	 */
-	private String statuscode;
+	private int statuscode;
 	/**
 	 * Mock模拟的返回值
 	 */
@@ -86,13 +86,13 @@ public class Mock {
 	/**
 	 * @return the statuscode
 	 */
-	public String getStatuscode() {
+	public int getStatuscode() {
 		return statuscode;
 	}
 	/**
 	 * @param statuscode the statuscode to set
 	 */
-	public void setStatuscode(String statuscode) {
+	public void setStatuscode(int statuscode) {
 		this.statuscode = statuscode;
 	}
 	/**

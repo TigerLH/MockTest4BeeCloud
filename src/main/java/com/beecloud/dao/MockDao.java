@@ -18,7 +18,7 @@ import com.beecloud.domain.MockVo;
 public interface MockDao {
 	
 	 void insert(@Param("title")String title,@Param("url")String url,
-			 @Param("method")String method,@Param("statuscode")String statuscode,
+			 @Param("method")String method,@Param("statuscode")int statuscode,
 			 @Param("response")String response);
 	 /**
 	  * 
@@ -40,7 +40,7 @@ public interface MockDao {
 	 List<Mock> selectMockByTitle(@Param("title") String title);
 	 
 	 
-	 void updateMockById(@Param("id")Integer id,@Param("title")String title,@Param("response")String response,@Param("statuscode")String statuscode);
+	 void updateMockById(@Param("id")Integer id,@Param("title")String title,@Param("response")String response,@Param("statuscode")int statuscode);
 	 
 	 void delectMockById(@Param("id")Integer id);
 	 

@@ -46,7 +46,7 @@ public class MockServiceImpl implements MockService{
 	 * @see com.lin.service.MockService#updateMockById(java.lang.Integer, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void updateMockById(Integer id, String title, String response,String statuscode) {
+	public void updateMockById(Integer id, String title, String response,int statuscode) {
 		mockDao.updateMockById(id, title, response,statuscode);
 	}
 
@@ -80,7 +80,7 @@ public class MockServiceImpl implements MockService{
 	 */
 	@Override
 	public void insert(String title, String url, String method,
-			String statuscode, String response) {
+			int statuscode, String response) {
 		mockDao.insert(title, url, method, statuscode, response);
 	}
 

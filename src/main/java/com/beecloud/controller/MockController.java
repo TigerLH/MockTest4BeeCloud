@@ -80,7 +80,7 @@ public class MockController extends BaseController {
     
     @RequestMapping(value="/mock/insert", method= {RequestMethod.POST})
     @ResponseBody
-    public void insert(String title,String url, String method,String statuscode,String response){
+    public void insert(String title,String url, String method,int statuscode,String response){
     	mockService.insert(title, url, method, statuscode, response);
     }
     
@@ -105,7 +105,7 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mock/update/all", method= {RequestMethod.POST})
     @ResponseBody
-    public void update(Integer id, String title, String response,String statuscode) {
+    public void update(Integer id, String title, String response,int statuscode) {
     		mockService.updateMockById(id, title, response,statuscode);
     }
     

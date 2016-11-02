@@ -52,7 +52,11 @@ module.exports = {
 				if(res!=null&&""!=res){
 					var response = res[0];
 					console.log(response);
-					callback(response.statuscode,null,response.response);
+					try{
+						callback(response.statuscode,null,response.response);
+					}catch(e){
+						console.log(e);
+					}
 				}
                 
             });

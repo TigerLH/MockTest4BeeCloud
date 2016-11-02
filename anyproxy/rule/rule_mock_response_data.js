@@ -51,7 +51,6 @@ module.exports = {
                 if (err) console.log(err);
 				if(res!=null&&""!=res){
 					var response = res[0];
-					console.log(response);
 					try{
 						callback(response.statuscode,null,response.response);
 					}catch(e){

@@ -12,11 +12,15 @@ module.exports = {
     },
 	
     shouldUseLocalResponse : function(req,reqBody){
-		var res = request('GET', 'http://127.0.0.1:8888/beecloud/rule/get/enable', {
-			'headers': {
-				'accept':'text/html,application/json,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-			}
-		});
+    	try{
+			var res = request('GET', 'http://127.0.0.1:8888/beecloud/rule/get/enable', {
+				'headers': {
+					'accept':'text/html,application/json,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+				}
+			});
+    	}catch(e){
+    		console.log(e);
+    	}
 		if(res==null||res==""){
 			return false;
 		}

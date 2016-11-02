@@ -23,6 +23,10 @@
 		SELECT * FROM rule WHERE status=1
 	</select>
 	
+	<select id="selectUsedMockId" resultType="int">
+		SELECT response_id FROM rule WHERE response_id!=""
+	</select>
+	
 	<insert id="insert">
 		INSERT into rule (name,path,response_id,status) value(#{name},#{path},#{response_id},0)
 	</insert>

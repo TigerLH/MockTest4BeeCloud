@@ -75,4 +75,13 @@ public class RuleServiceImpl implements RuleService{
 		return ruleDao.selectEnableRule();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.beecloud.service.RuleService#selectUsedMockId()
+	 */
+	@Override
+	public List<Integer> selectUsedMockId() {
+		// TODO Auto-generated method stub
+		return ruleDao.selectUsedMockId();
+	}
+
 }

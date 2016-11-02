@@ -259,11 +259,18 @@
 				type: "post",
 				url: "mock/delete",
 				data: "id=" + id,
-				dataType: 'html',
+				async:false,
+				dataType: 'json',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
-					location.reload();
-				}
+				 if(result.isError == true) {	//如果Mock已被绑定则不能删除,并给予后端赋予的提示
+				 	alert(result.errorMsg);
+				 }else{
+				 	location.reload();
+				 }
+				},error: function(e){
+             	     alert("删除失败:" + e);
+             	 }
 			});
 		}
 		

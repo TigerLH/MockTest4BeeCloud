@@ -58,13 +58,7 @@ public class MockController extends BaseController {
 		return "bootstrap/rule";
 	}
 	
-    /**
-     * 分页查询用户信息
-     * @author linbingwen
-     * @since  2015年10月23日 
-     * @param page
-     * @return
-     */
+	
     @RequestMapping(value="/mock/list.do", method= {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
     public String mockList(Integer pageNumber,Integer pageSize ,String title) {
@@ -112,7 +106,7 @@ public class MockController extends BaseController {
     @RequestMapping(value="/mock/update/all", method= {RequestMethod.POST})
     @ResponseBody
     public void update(Integer id, String title, String response,String statuscode) {
-    	mockService.updateMockById(id, title, response,statuscode);
+    		mockService.updateMockById(id, title, response,statuscode);
     }
     
     
@@ -125,21 +119,27 @@ public class MockController extends BaseController {
     @RequestMapping(value="/rule/insert", method= {RequestMethod.POST})
     @ResponseBody
     public void insert(String name,String path,String response_id) {
-    	ruleService.insert(name, path,response_id);
+    		ruleService.insert(name, path,response_id);
     }
     
     
     @RequestMapping(value="/mock/delete", method= {RequestMethod.POST})
     @ResponseBody
-    public void mockDelete(Integer id) {
-    	mockService.delectMockById(id);
+    public String mockDelete(Integer id) {
+    	List<Integer> mock_used = ruleService.selectUsedMockId();
+    	if(mock_used.contains(id)){
+    		return responseFail("Mock已被绑定,删除对应规则后重试");
+    	}else{
+    		mockService.delectMockById(id);
+    		return responseSuccess("删除成功");
+    	}
     }
     
     
     @RequestMapping(value="/rule/delete", method= {RequestMethod.POST})
     @ResponseBody
     public void ruleDelete(Integer id) {
-    	ruleService.delectRuleById(id);
+    		ruleService.delectRuleById(id);
     }
     
     /**
@@ -150,7 +150,7 @@ public class MockController extends BaseController {
     @RequestMapping(value="/rule/update/status", method= {RequestMethod.POST})
     @ResponseBody
     public void ruleUpdateStatus(Integer id,Integer status) {
-    	ruleService.updateRuleStatusById(id, status);
+    		ruleService.updateRuleStatusById(id, status);
     }
     
     

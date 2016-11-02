@@ -58,4 +58,7 @@ public interface RuleDao {
 	  * @param status
 	  */
 	 void updateRuleStatusById(@Param("id")Integer id,@Param("status")Integer status);
+	 
+	
+	 List<Integer> selectUsedMockId();
 }

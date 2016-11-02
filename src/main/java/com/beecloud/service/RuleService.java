@@ -28,6 +28,13 @@ public interface RuleService {
 	
 	void updateRuleStatusById(Integer id,Integer status);
 	
+	/**
+	 * 查询已被使用的Mock_id
+	 * @return
+	 */
+	List<Integer> selectUsedMockId();
+	
+	
 	PagedResult<Rule> queryByPage(String name,Integer pageNo,Integer pageSize);
 
 }

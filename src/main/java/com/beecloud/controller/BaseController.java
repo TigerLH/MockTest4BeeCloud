@@ -119,5 +119,18 @@ public class BaseController {
         logger.info("输出结果：{}", jsonObj.toString());
         return jsonObj.toString();
     }
-
+    
+    
+	/**
+	 * 简单的返回成功信息
+	 * @param Msg
+	 * @return
+	 */
+    public String responseSuccess(String Msg){
+    	JSONObject jsonObj = new JSONObject();
+    	jsonObj.put(HttpConstants.RESPONSE_RESULT_FLAG_ISERROR, false);
+    	jsonObj.put(HttpConstants.SERVICE_RESPONSE_RESULT_MSG, Msg);
+        return jsonObj.toString();
+    }
+    
 }

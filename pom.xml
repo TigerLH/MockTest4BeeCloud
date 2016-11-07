@@ -16,7 +16,21 @@
 		<!-- mybatis版本号 -->
 		<mybatis.version>3.2.1</mybatis.version>
 	</properties>
-
+	
+<repositories>  
+  <repository>  
+     <id>alimaven</id>
+     <name>aliyun maven</name>
+     <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+  </repository>  
+  
+  <repository>  
+    <id>beecloudmaven</id>  
+    <name>beecloud maven</name>  
+    <url>http://10.42.254.200:8081/nexus/content/groups/public/</url> 
+  </repository>  
+</repositories> 
+	
 	<dependencies>
 		<!-- 添加Spring依赖 -->
 		<dependency>
@@ -165,6 +179,25 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.0.1.Final</version>
 		</dependency>
+		
+<!-- 		MQTT协议封装工具 -->
+		<dependency>
+		  <groupId>com.beecloud</groupId>
+		  <artifactId>beecloud-vehicle-spa-protocol</artifactId>
+		  <version>1.0.0-SNAPSHOT</version>
+		</dependency>
+		
+<!-- 		MQTT Client -->
+		<dependency>
+		    <groupId>org.eclipse.paho</groupId>
+		    <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+		    <version>1.1.0</version>
+		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.fusesource.mqtt-client</groupId>-->
+			<!--<artifactId>mqtt-client</artifactId>-->
+			<!--<version>1.12</version>-->
+		<!--</dependency>-->
 	</dependencies>
 	<build>
 	 <plugins>

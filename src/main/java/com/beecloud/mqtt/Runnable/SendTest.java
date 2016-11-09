@@ -1,0 +1,80 @@
+package com.beecloud.mqtt.Runnable;
+
+import com.beecloud.mqtt.entity.SendMessageObject;
+import com.beecloud.platform.protocol.core.constants.ApplicationID;
+import com.beecloud.platform.protocol.core.constants.ErrorCode;
+import com.beecloud.platform.protocol.core.element.ErrorInfo;
+import com.beecloud.platform.protocol.core.element.Identity;
+import com.beecloud.platform.protocol.core.element.TimeStamp;
+import com.beecloud.platform.protocol.core.header.ApplicationHeader;
+import com.beecloud.platform.protocol.core.message.AckMessage;
+import com.beecloud.vehicle.spa.protocol.message.RequestMessage;
+
+import java.util.Date;
+
+public class SendTest {
+	public static void main(String[] args) {
+		sendAckMessage();
+	}
+
+
+	public static void sendRequestMessage(){
+		String host = "tcp://10.28.4.34:1883";
+		String topic = "hello";
+		String clientId = "Server";// clientId不能重复
+		SendMessageObject requestObject = new SendMessageObject();
+		requestObject.setClientId(clientId);
+		requestObject.setHost(host);
+		requestObject.setTopic(topic);
+		requestObject.setTimes(100);
+		requestObject.setInterval(5);
+		RequestMessage requestMsg = new RequestMessage();
+		ApplicationHeader applicationHeader = new ApplicationHeader();
+		applicationHeader.setApplicationID(ApplicationID.ID_AUTH);
+		applicationHeader.setProtocolVersion(10);
+		applicationHeader.setStepId(2);
+		applicationHeader.setSequenceId(1);
+
+		Identity identity = new Identity(123123123);
+		TimeStamp timeStamp = new TimeStamp(new Date());
+		requestMsg.setApplicationHeader(applicationHeader);
+		requestMsg.setIdentity(identity);
+		requestMsg.setTimeStamp(timeStamp);
+
+		requestObject.setMessage(requestMsg);
+
+		MqttClientSendMessageRunnable mr = new MqttClientSendMessageRunnable(requestObject);
+		Thread thread = new Thread(mr);
+		thread.start();
+	}
+
+
+	public  static void sendAckMessage(){
+		String host = "tcp://10.28.4.34:1883";
+		String topic = "hello";
+		String clientId = "Server";// clientId不能重复
+		SendMessageObject requestObject = new SendMessageObject();
+		requestObject.setClientId(clientId);
+		requestObject.setHost(host);
+		requestObject.setTopic(topic);
+		requestObject.setTimes(100);
+		requestObject.setInterval(5);
+		AckMessage ackMessage = new AckMessage();
+		Identity identity = new Identity(12312312);
+		ApplicationHeader applicationHeader = new ApplicationHeader();
+		applicationHeader.setApplicationID(ApplicationID.ID_AUTH);
+		applicationHeader.setProtocolVersion(10);
+		applicationHeader.setStepId(8);
+		applicationHeader.setSequenceId(1);
+		ErrorInfo errorInfo = new ErrorInfo(ErrorCode.AUTH_ERR);
+		ackMessage.setApplicationHeader(applicationHeader);
+		ackMessage.setIdentity(identity);
+		ackMessage.setErrorInfo(errorInfo);
+		TimeStamp timeStamp = new TimeStamp(new Date());
+		ackMessage.setTimeStamp(timeStamp);
+		requestObject.setMessage(ackMessage);
+		MqttClientSendMessageRunnable mr = new MqttClientSendMessageRunnable(requestObject);
+		Thread thread = new Thread(mr);
+		thread.start();
+	}
+}

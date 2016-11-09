@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.beecloud.mqtt.entity.ReceiveMessageObject;
+import com.beecloud.service.MqttService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -37,7 +39,10 @@ public class MockController extends BaseController {
 	
 	@Resource
 	private RuleService ruleService;
-	
+
+    @Resource
+    private MqttService mqttService;
+
 	@RequestMapping("/")  
     public ModelAndView getIndex(){    
 		ModelAndView mav = new ModelAndView("index"); 
@@ -158,6 +163,12 @@ public class MockController extends BaseController {
     @ResponseBody
     public List<Rule> getEnableStatusRule() {
     	return ruleService.selectEnableRule();
+    }
+
+    @RequestMapping(value="/mqtt/receiveMessage", method= {RequestMethod.GET})
+    @ResponseBody
+    public String getMqttReceiveMessage(ReceiveMessageObject receiveMessageObject) {
+        return mqttService.runMqttReceiverMessageClient(receiveMessageObject);
     }
     
 }

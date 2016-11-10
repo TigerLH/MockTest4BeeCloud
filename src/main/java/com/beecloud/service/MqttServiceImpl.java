@@ -15,6 +15,7 @@ public class MqttServiceImpl implements MqttService{
     MqttClientReceiveMessageRunnable MRMR = new MqttClientReceiveMessageRunnable();
     MqttClientSendMessageRunnable MSMR = new MqttClientSendMessageRunnable();
 
+
     @Override
     public void runMqttSendMessageServer() {
         Thread sendThread = new Thread(MSMR);
@@ -26,6 +27,10 @@ public class MqttServiceImpl implements MqttService{
         MSMR.addMessage(sendMessageObject);
     }
 
+    @Override
+    public void disconnectSendMessageServer() {
+        MSMR.disconnect();
+    }
 
     @Override
     public void runMqttReceiverMessageServer() {
@@ -38,5 +43,9 @@ public class MqttServiceImpl implements MqttService{
         MRMR.addTopic(topic);
     }
 
+    @Override
+    public void disconnectReceiveMessageServer() {
+        MRMR.disconnetc();
+    }
 
 }

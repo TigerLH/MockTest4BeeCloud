@@ -167,10 +167,11 @@ public class MockController extends BaseController {
     }
 
 
-    @RequestMapping(value="/mqtt/startReceiveServer", method= {RequestMethod.GET})
+    @RequestMapping(value="/mqtt/connect", method= {RequestMethod.GET})
     @ResponseBody
     public void startMqttReceiveServer() {
          mqttService.runMqttReceiverMessageServer();
+         mqttService.runMqttSendMessageServer();
     }
 
     @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.GET})
@@ -179,15 +180,18 @@ public class MockController extends BaseController {
         mqttService.subscribeTopic(topic);
     }
 
-    @RequestMapping(value="/mqtt/startSendServer", method= {RequestMethod.GET})
-    @ResponseBody
-    public void startMqttSendServer() {
-        mqttService.runMqttSendMessageServer();
-    }
 
     @RequestMapping(value="/mqtt/send", method= {RequestMethod.GET})
     @ResponseBody
     public void sendMessage(SendMessageObject sendMessageObject) {
         mqttService.sendMessaage(sendMessageObject);
     }
+
+    @RequestMapping(value="/mqtt/disconnect", method= {RequestMethod.GET})
+    @ResponseBody
+    public void disconnect() {
+        mqttService.disconnectReceiveMessageServer();
+        mqttService.disconnectSendMessageServer();
+    }
+
 }

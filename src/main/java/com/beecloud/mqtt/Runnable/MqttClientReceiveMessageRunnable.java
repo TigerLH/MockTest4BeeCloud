@@ -25,6 +25,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private List<String> topics = new ArrayList<String>(); //需要订阅的Topic列表
 	String host = "tcp://10.28.4.34:1883";
 	String clientId = UuidUtil.getUuid();// clientId不能重复
+	public boolean status = true;
 	public MqttClientReceiveMessageRunnable( ){
 	}
 
@@ -46,6 +47,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	public void disconnetc(){
 		try {
 			client.disconnectForcibly(1000);
+			status = false;
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -58,8 +60,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 		try {
 			client = new MqttClient(host, clientId);
 			client.connect(options);
-			while(true){
-                System.out.println("topics:"+topics.size());
+			while(status){
 				if(topics.size()>0){
 					for(String topic : topics){
 						PushCallback pushCallback = new PushCallback();

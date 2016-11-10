@@ -15,6 +15,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 	String host = "tcp://10.28.4.34:1883";
 	private MqttClient client = null;
 	String clientId = UuidUtil.getUuid();// clientId不能重复
+	public boolean status = true;
 	private List<SendMessageObject> messages = new ArrayList<SendMessageObject>();
 	
 
@@ -29,6 +30,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 	public void disconnect(){
 		try {
 			client.disconnectForcibly(100);
+			status = false;
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -40,7 +42,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 		try {
 			client = new MqttClient(host, clientId);
 			client.connect(options);
-			while(true) {
+			while(status) {
 				if (messages.size() > 0) {
 					for (SendMessageObject messageObject : messages) {
 						String topic = messageObject.getTopic();

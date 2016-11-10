@@ -1,7 +1,5 @@
 package com.beecloud.mqtt.entity;
 
-import com.beecloud.platform.protocol.core.constants.ApplicationID;
-
 /**
  * Created by dell on 2016/11/9.
  */

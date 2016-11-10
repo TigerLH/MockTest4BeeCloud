@@ -8,7 +8,9 @@ import com.beecloud.mqtt.entity.SendMessageObject;
  */
 public interface MqttService {
     void runMqttSendMessageServer();
+    void disconnectSendMessageServer();
     void runMqttReceiverMessageServer();
+    void disconnectReceiveMessageServer();
     void subscribeTopic(String topic);
     void sendMessaage(SendMessageObject sendMessageObject);
 }

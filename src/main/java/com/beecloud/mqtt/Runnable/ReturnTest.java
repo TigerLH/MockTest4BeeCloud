@@ -1,19 +1,8 @@
 package com.beecloud.mqtt.Runnable;
 
-import com.beecloud.mqtt.listenser.MqttObserver;
-import com.beecloud.mqtt.listenser.MqttSubject;
-import com.beecloud.platform.protocol.core.header.ApplicationHeader;
-import com.beecloud.platform.protocol.core.message.AbstractMessage;
-import com.beecloud.platform.protocol.core.message.AckMessage;
-import com.beecloud.platform.protocol.core.message.BaseMessage;
-import com.beecloud.vehicle.spa.protocol.message.RequestMessage;
-import com.google.gson.Gson;
 import org.eclipse.paho.client.mqttv3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by dell on 2016/11/10.

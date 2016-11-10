@@ -173,14 +173,14 @@ public class MockController extends BaseController {
 
     @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.POST})
     @ResponseBody
-    public void subscribeTopic(@RequestParam String topic) {
+    public void subscribeTopic(String topic) {
         mqttService.subscribeTopic(topic);
     }
 
 
     @RequestMapping(value="/mqtt/send", method= {RequestMethod.POST})
     @ResponseBody
-    public void sendMessage(@RequestParam String message) {
+    public void sendMessage(String message) {
         mqttService.sendMessaage(message);
     }
 

@@ -4,6 +4,10 @@
 package com.beecloud.mqtt.entity;
 
 
+import com.beecloud.mqtt.constansts.MessageType;
+
+import java.util.Arrays;
+
 /**
  * @description //TODO
  * @author hong.lin@beecloud.com
@@ -16,32 +20,33 @@ public class SendMessageObject {
      */
 	private String topic;
 
+
 	/**
 	 * 发送的消息体
      */
-	private Object message;
+	private String message;
 
-	public String getTopic() {
-		return topic;
-	}
+    public String getTopic() {
+        return topic;
+    }
 
-	public void setTopic(String topic) {
-		this.topic = topic;
-	}
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
 
-	public Object getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(Object message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	@Override
-	public String toString() {
-		return "SendMessageObject{" +
-				"topic='" + topic + '\'' +
-				", message=" + message +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "SendMessageObject{" +
+                "topic='" + topic + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

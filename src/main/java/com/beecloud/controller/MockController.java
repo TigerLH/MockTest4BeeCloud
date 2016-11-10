@@ -10,10 +10,7 @@ import com.beecloud.service.MqttService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.beecloud.domain.Mock;
@@ -176,14 +173,14 @@ public class MockController extends BaseController {
 
     @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.POST})
     @ResponseBody
-    public void subscribeTopic(@PathVariable String topic) {
+    public void subscribeTopic(@RequestParam String topic) {
         mqttService.subscribeTopic(topic);
     }
 
 
     @RequestMapping(value="/mqtt/send", method= {RequestMethod.POST})
     @ResponseBody
-    public void sendMessage(@PathVariable String message) {
+    public void sendMessage(@RequestParam String message) {
         mqttService.sendMessaage(message);
     }
 

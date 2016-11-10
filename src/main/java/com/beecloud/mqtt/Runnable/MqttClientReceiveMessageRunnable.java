@@ -1,6 +1,5 @@
 package com.beecloud.mqtt.Runnable;
 
-import com.beecloud.mqtt.entity.ReceiveMessageObject;
 import com.beecloud.mqtt.listenser.MqttObserver;
 import com.beecloud.mqtt.listenser.MqttSubject;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;

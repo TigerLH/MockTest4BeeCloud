@@ -2,8 +2,8 @@ package com.beecloud.service;
 
 import com.beecloud.mqtt.Runnable.MqttClientReceiveMessageRunnable;
 import com.beecloud.mqtt.Runnable.MqttClientSendMessageRunnable;
-import com.beecloud.mqtt.entity.ReceiveMessageObject;
 import com.beecloud.mqtt.entity.SendMessageObject;
+import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,7 +23,9 @@ public class MqttServiceImpl implements MqttService{
     }
 
     @Override
-    public void sendMessaage(SendMessageObject sendMessageObject) {
+    public void sendMessaage(String message) {
+        Gson gson = new Gson();
+        SendMessageObject sendMessageObject = gson.fromJson(message,SendMessageObject.class);
         MSMR.addMessage(sendMessageObject);
     }
 

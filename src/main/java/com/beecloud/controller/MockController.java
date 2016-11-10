@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import com.beecloud.mqtt.entity.ReceiveMessageObject;
 import com.beecloud.mqtt.entity.SendMessageObject;
 import com.beecloud.service.MqttService;
 import org.slf4j.Logger;
@@ -183,8 +182,8 @@ public class MockController extends BaseController {
 
     @RequestMapping(value="/mqtt/send", method= {RequestMethod.GET})
     @ResponseBody
-    public void sendMessage(SendMessageObject sendMessageObject) {
-        mqttService.sendMessaage(sendMessageObject);
+    public void sendMessage(String message) {
+        mqttService.sendMessaage(message);
     }
 
     @RequestMapping(value="/mqtt/disconnect", method= {RequestMethod.GET})

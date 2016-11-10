@@ -23,19 +23,15 @@ public class SendTest {
 		String topic = "hello";
 		String clientId = "Server";// clientId不能重复
 		SendMessageObject requestObject = new SendMessageObject();
-		requestObject.setClientId(clientId);
-		requestObject.setHost(host);
 		requestObject.setTopic(topic);
-		requestObject.setTimes(100);
-		requestObject.setInterval(5);
 		RequestMessage requestMsg = new RequestMessage();
 		ApplicationHeader applicationHeader = new ApplicationHeader();
 		applicationHeader.setApplicationID(ApplicationID.ID_AUTH);
 		applicationHeader.setProtocolVersion(10);
 		applicationHeader.setStepId(2);
 		applicationHeader.setSequenceId(1);
-
-		Identity identity = new Identity(123123123);
+		Identity identity = new Identity();
+		identity.setIdentityCode(123);
 		TimeStamp timeStamp = new TimeStamp(new Date());
 		requestMsg.setApplicationHeader(applicationHeader);
 		requestMsg.setIdentity(identity);
@@ -43,7 +39,7 @@ public class SendTest {
 
 		requestObject.setMessage(requestMsg);
 
-		MqttClientSendMessageRunnable mr = new MqttClientSendMessageRunnable(requestObject);
+		MqttClientSendMessageRunnable mr = new MqttClientSendMessageRunnable();
 		Thread thread = new Thread(mr);
 		thread.start();
 	}
@@ -54,13 +50,10 @@ public class SendTest {
 		String topic = "hello";
 		String clientId = "Server";// clientId不能重复
 		SendMessageObject requestObject = new SendMessageObject();
-		requestObject.setClientId(clientId);
-		requestObject.setHost(host);
 		requestObject.setTopic(topic);
-		requestObject.setTimes(100);
-		requestObject.setInterval(5);
 		AckMessage ackMessage = new AckMessage();
-		Identity identity = new Identity(12312312);
+		Identity identity = new Identity();
+		identity.setIdentityCode(123);
 		ApplicationHeader applicationHeader = new ApplicationHeader();
 		applicationHeader.setApplicationID(ApplicationID.ID_AUTH);
 		applicationHeader.setProtocolVersion(10);
@@ -73,8 +66,9 @@ public class SendTest {
 		TimeStamp timeStamp = new TimeStamp(new Date());
 		ackMessage.setTimeStamp(timeStamp);
 		requestObject.setMessage(ackMessage);
-		MqttClientSendMessageRunnable mr = new MqttClientSendMessageRunnable(requestObject);
+		MqttClientSendMessageRunnable mr = new MqttClientSendMessageRunnable();
 		Thread thread = new Thread(mr);
 		thread.start();
+        mr.addMessage(requestObject);
 	}
 }

@@ -1,9 +1,9 @@
 package com.beecloud.service;
 
 import com.beecloud.mqtt.Runnable.MqttClientReceiveMessageRunnable;
+import com.beecloud.mqtt.Runnable.MqttClientSendMessageRunnable;
 import com.beecloud.mqtt.entity.ReceiveMessageObject;
 import com.beecloud.mqtt.entity.SendMessageObject;
-import com.beecloud.mqtt.listenser.MqttObserver;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,21 +12,31 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MqttServiceImpl implements MqttService{
-    @Override
-    public String runMqttSendMessageClinet(SendMessageObject sendMessageObject) {
+    MqttClientReceiveMessageRunnable MRMR = new MqttClientReceiveMessageRunnable();
+    MqttClientSendMessageRunnable MSMR = new MqttClientSendMessageRunnable();
 
-        return null;
+    @Override
+    public void runMqttSendMessageServer() {
+        Thread sendThread = new Thread(MSMR);
+        sendThread.start();
     }
 
     @Override
-    public String runMqttReceiverMessageClient(ReceiveMessageObject receiveMessageObject) {
-        MqttClientReceiveMessageRunnable MRMR = new MqttClientReceiveMessageRunnable(receiveMessageObject);
+    public void sendMessaage(SendMessageObject sendMessageObject) {
+        MSMR.addMessage(sendMessageObject);
+    }
+
+
+    @Override
+    public void runMqttReceiverMessageServer() {
         Thread receiveThread = new Thread(MRMR);
         receiveThread.start();
-        while(true){     //TODO 设置timeout
-            if(MRMR.getResponse()!=null){
-                return  MRMR.getResponse();
-            }
-        }
     }
+
+    @Override
+    public void subscribeTopic(String topic) {
+        MRMR.addTopic(topic);
+    }
+
+
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.beecloud.mqtt.entity.ReceiveMessageObject;
+import com.beecloud.mqtt.entity.SendMessageObject;
 import com.beecloud.service.MqttService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,10 +166,28 @@ public class MockController extends BaseController {
     	return ruleService.selectEnableRule();
     }
 
-    @RequestMapping(value="/mqtt/receiveMessage", method= {RequestMethod.GET})
+
+    @RequestMapping(value="/mqtt/startReceiveServer", method= {RequestMethod.GET})
     @ResponseBody
-    public String getMqttReceiveMessage(ReceiveMessageObject receiveMessageObject) {
-        return mqttService.runMqttReceiverMessageClient(receiveMessageObject);
+    public void startMqttReceiveServer() {
+         mqttService.runMqttReceiverMessageServer();
     }
-    
+
+    @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.GET})
+    @ResponseBody
+    public void subscribeTopic(String topic) {
+        mqttService.subscribeTopic(topic);
+    }
+
+    @RequestMapping(value="/mqtt/startSendServer", method= {RequestMethod.GET})
+    @ResponseBody
+    public void startMqttSendServer() {
+        mqttService.runMqttSendMessageServer();
+    }
+
+    @RequestMapping(value="/mqtt/send", method= {RequestMethod.GET})
+    @ResponseBody
+    public void sendMessage(SendMessageObject sendMessageObject) {
+        mqttService.sendMessaage(sendMessageObject);
+    }
 }

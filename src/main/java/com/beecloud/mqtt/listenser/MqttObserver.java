@@ -1,5 +1,5 @@
 package com.beecloud.mqtt.listenser;
 
 public interface MqttObserver {
-	void onMessageReceive(String messaage);
+	void onMessageReceive(String topic,String messaage);
 }

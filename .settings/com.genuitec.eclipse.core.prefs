@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+validator.Checked=src/main/webapp/WEB-INF/static/js/bootstrap/js/bootstrapValidator.js,src/main/webapp/WEB-INF/static/js/jQuery/jquery-1.11.3.min.js,src/main/webapp/WEB-INF/static/js/jQuery/jquery-2.1.4.min.js,src/main/webapp/WEB-INF/static/js/bootstrap/js/bootstrapValidator.min.js
+validator.Unchecked=

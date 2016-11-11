@@ -1,8 +1,6 @@
 package com.beecloud.mqtt.Runnable;
 
-import com.beecloud.mqtt.constansts.MessageType;
 import com.beecloud.mqtt.entity.SendMessageObject;
-import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.beecloud.util.UuidUtil;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -11,6 +9,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class MqttClientSendMessageRunnable implements Runnable{
@@ -45,8 +44,9 @@ public class MqttClientSendMessageRunnable implements Runnable{
 			client = new MqttClient(host, clientId);
 			client.connect(options);
 			while(status) {
-				if (messages.size() > 0) {
-					for (SendMessageObject messageObject : messages) {
+					Iterator<SendMessageObject> iterator = messages.iterator();
+					while(iterator.hasNext()){
+						SendMessageObject messageObject = iterator.next();
 						String topic = messageObject.getTopic();
 						String message = messageObject.getMessage();
 						System.out.println(message);
@@ -54,10 +54,9 @@ public class MqttClientSendMessageRunnable implements Runnable{
 						MqttMessage msg = new MqttMessage();
 						msg.setPayload(data);
 						client.publish(topic, msg);
+						iterator.remove();
 						System.out.println("SendMessage");
-						}
 					}
-					messages.clear();
 				}
 			}catch (MqttException e) {
 				e.printStackTrace();

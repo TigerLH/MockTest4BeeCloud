@@ -1,6 +1,8 @@
 package com.beecloud.mqtt.Runnable;
 
 import com.beecloud.mqtt.entity.SendMessageObject;
+import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
+import com.beecloud.platform.protocol.core.message.BaseMessage;
 import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.beecloud.util.UuidUtil;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -49,14 +51,17 @@ public class MqttClientSendMessageRunnable implements Runnable{
 						SendMessageObject messageObject = iterator.next();
 						String topic = messageObject.getTopic();
 						String message = messageObject.getMessage();
-						System.out.println(message);
+						//System.out.println(message);
 						byte[] data = ProtocolUtil.formatBitStringToBytes(message);
+						BaseDataGram baseDataGram = new BaseDataGram();
+						BaseMessage baseMessage = new BaseMessage(data);
+						baseDataGram.addMessage(baseMessage);
 						MqttMessage msg = new MqttMessage();
-						msg.setPayload(data);
+						msg.setPayload(baseDataGram.encode());
 						client.publish(topic, msg);
 						iterator.remove();
-						System.out.println("SendMessage");
-					}
+						System.out.println("SendMessage to:"+topic);
+						}
 				}
 			}catch (MqttException e) {
 				e.printStackTrace();

@@ -1,24 +1,24 @@
 package com.beecloud.controller;
 
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import com.beecloud.mqtt.entity.SendMessageObject;
-import com.beecloud.service.MqttService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.beecloud.domain.Mock;
 import com.beecloud.domain.MockVo;
 import com.beecloud.domain.Rule;
+import com.beecloud.mqtt.entity.AuthObject;
 import com.beecloud.service.MockService;
+import com.beecloud.service.MqttService;
 import com.beecloud.service.RuleService;
 import com.beecloud.util.PagedResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 
@@ -164,11 +164,11 @@ public class MockController extends BaseController {
     }
 
 
-    @RequestMapping(value="/mqtt/connect", method= {RequestMethod.GET})
+    @RequestMapping(value="/mqtt/connect", method= {RequestMethod.POST})
     @ResponseBody
-    public void startMqttReceiveServer() {
-         mqttService.runMqttReceiverMessageServer();
-         mqttService.runMqttSendMessageServer();
+    public void startMqttReceiveServer(String authMessage) {
+         mqttService.run();
+         mqttService.sendAuthReqMessage(authMessage);
     }
 
     @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.POST})
@@ -187,8 +187,13 @@ public class MockController extends BaseController {
     @RequestMapping(value="/mqtt/disconnect", method= {RequestMethod.GET})
     @ResponseBody
     public void disconnect() {
-        mqttService.disconnectReceiveMessageServer();
-        mqttService.disconnectSendMessageServer();
+        mqttService.stop();
+    }
+
+    @RequestMapping(value="/mqtt/receive", method= {RequestMethod.POST})
+    @ResponseBody
+    public String getMessageByKey(String key) {
+        return mqttService.getMessageByKey(key);
     }
 
 }

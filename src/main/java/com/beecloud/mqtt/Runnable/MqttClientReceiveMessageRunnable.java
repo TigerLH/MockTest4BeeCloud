@@ -1,10 +1,17 @@
 package com.beecloud.mqtt.Runnable;
 
+import com.beecloud.mqtt.entity.AuthObject;
 import com.beecloud.mqtt.listenser.MqttObserver;
 import com.beecloud.mqtt.listenser.MqttSubject;
+import com.beecloud.platform.protocol.core.constants.ApplicationID;
+import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
+import com.beecloud.platform.protocol.core.element.Authentication;
+import com.beecloud.platform.protocol.core.element.TimeStamp;
+import com.beecloud.platform.protocol.core.element.VehicleDescriptor;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.AckMessage;
+import com.beecloud.platform.protocol.core.message.AuthReqMessage;
 import com.beecloud.platform.protocol.core.message.BaseMessage;
 import com.beecloud.util.UuidUtil;
 import com.beecloud.vehicle.spa.protocol.message.RequestMessage;
@@ -13,8 +20,7 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by dell on 2016/11/9.
@@ -22,26 +28,27 @@ import java.util.List;
 public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private MqttClient client = null;
 	private List<String> topics = new ArrayList<String>(); //需要订阅的Topic列表
-	String host = "tcp://10.28.4.34:1883";
-	String clientId = UuidUtil.getUuid();// clientId不能重复
+	private String host = "tcp://10.28.4.34:1883";
+	private String clientId = UuidUtil.getUuid();// clientId不能重复
 	public boolean status = true;
-	public MqttClientReceiveMessageRunnable( ){
+	private static Map<String,String> cache = new HashMap<String,String>();
+	public MqttClientReceiveMessageRunnable(){
 	}
 
 	public void addTopic(String topic){
 		topics.add(topic);
 	}
 
-	public List<String> getTopics(){
-		return topics;
+	public void setMessage(String key,String message){
+		cache.put(key,message);
 	}
 
-	public void removeTopic(String topic){
-	    topics.remove(topic);
-    }
-	public void cleanTopics(){
-		topics.clear();
+	public String getMessageBykey(String key){
+		System.out.println(cache);
+		return cache.get(key);
 	}
+
+
 
 	public void disconnetc(){
 		try {
@@ -60,14 +67,16 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 			client = new MqttClient(host, clientId);
 			client.connect(options);
 			while(status){
-				if(topics.size()>0){
-					for(String topic : topics){
+					Iterator<String> iterator = topics.iterator();
+					while(iterator.hasNext()){
+						String topic = iterator.next();
 						PushCallback pushCallback = new PushCallback();
 						pushCallback.registerMqttObserver(this);
 						client.setCallback(pushCallback);
 						client.subscribe(topic, 2);
+						System.out.println("订阅消息:"+topic);
+						iterator.remove();
 					}
-				}
 			}
 		} catch (MqttException e) {
 			e.printStackTrace();
@@ -75,18 +84,9 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	}
 
 	@Override
-	public void onMessageReceive(String topic,String message) {
-		System.out.println(message);
-		byte[] response = message.getBytes();
-		MqttMessage msg = new MqttMessage();
-		msg.setPayload(response);
-		String response_topic = topic+"_MOCK";
-		System.out.println("Publish:"+response_topic);
-		try {
-			client.publish(response_topic,msg);
-		} catch (MqttException e) {
-			e.printStackTrace();
-		}
+	public void onMessageReceive(String keyword,String message) {
+		    System.out.println(keyword+":"+message);
+			setMessage(keyword,message);
 	}
 }
 
@@ -101,7 +101,7 @@ class PushCallback implements MqttCallback,MqttSubject {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public void connectionLost(Throwable cause) {
-		System.out.println("连接断开");
+		System.out.println("Receive Client连接断开");
 	}
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
@@ -110,21 +110,32 @@ class PushCallback implements MqttCallback,MqttSubject {
 
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		AbstractMessage arriveMessage = null;
-		byte[] data = message.getPayload();
+		AbstractMessage abstractMessage = null;
+		BaseDataGram baseDataGram = new BaseDataGram(message.getPayload());
+		List<BaseMessage> baseMessages = baseDataGram.getMessages();
+		BaseMessage baseMessage = baseMessages.get(0);
+		byte[] data = baseMessage.getMessageBody();
 		//需要根据StepId和ApplicationId判断对应的业务
-		BaseMessage baseMessage = new BaseMessage(data);
 		ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
+		int applicationID = applicationHeader.getApplicationID().getApplicationID();
 		int stepId= applicationHeader.getStepId();
+		long sequenceId = applicationHeader.getSequenceId();
+		System.out.println(applicationID);
+		System.out.println(stepId);
+		System.out.println(sequenceId);
 		if(stepId==2){
 			System.out.println("收到RequestMessage");
-			arriveMessage = new RequestMessage(data);
+			abstractMessage = new RequestMessage(data);
 		}else if(stepId==8){
 			System.out.println("收到AckMessage");
-			arriveMessage = new AckMessage(data);
+			abstractMessage = new AckMessage(data);
+		}else if(stepId==1){
+			System.out.println("收到AuthReqMessage");
+			abstractMessage = new AuthReqMessage(data);
 		}
+		String keyword = String.valueOf(topic)+String.valueOf(applicationID)+String.valueOf(stepId)+String.valueOf(sequenceId);
 		Gson gson = new Gson();
-		this.notifyMqttObservers(topic,gson.toJson(arriveMessage));
+		this.notifyMqttObservers(keyword,gson.toJson(abstractMessage));
 	}
 
 	@Override

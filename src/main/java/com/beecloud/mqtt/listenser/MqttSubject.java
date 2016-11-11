@@ -10,6 +10,6 @@ public interface MqttSubject {
 
 	 void removeMqttObserver(MqttObserver o);
 
-	 void notifyMqttObservers(String topic,String message);
+	 void notifyMqttObservers(String keyword,String message);
 
 }

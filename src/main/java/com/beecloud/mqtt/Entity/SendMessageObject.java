@@ -4,10 +4,6 @@
 package com.beecloud.mqtt.entity;
 
 
-import com.beecloud.mqtt.constansts.MessageType;
-
-import java.util.Arrays;
-
 /**
  * @description //TODO
  * @author hong.lin@beecloud.com

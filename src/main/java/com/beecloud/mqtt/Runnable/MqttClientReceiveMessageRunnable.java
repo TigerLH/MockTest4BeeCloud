@@ -134,8 +134,12 @@ class PushCallback implements MqttCallback,MqttSubject {
 			abstractMessage = new AuthReqMessage(data);
 		}
 		String keyword = String.valueOf(topic)+String.valueOf(applicationID)+String.valueOf(stepId)+String.valueOf(sequenceId);
-		Gson gson = new Gson();
-		this.notifyMqttObservers(keyword,gson.toJson(abstractMessage));
+		if(null==abstractMessage){
+			this.notifyMqttObservers(keyword,"{\"error:\"\"there is nothing found\"}");
+		}else{
+			Gson gson = new Gson();
+			this.notifyMqttObservers(keyword,gson.toJson(abstractMessage));
+		}
 	}
 
 	@Override

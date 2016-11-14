@@ -38,7 +38,7 @@ public class MockServiceImpl implements MockService{
 	public PagedResult<Mock> queryByPage(String title,Integer pageNo,Integer pageSize ) {
 		pageNo = pageNo == null?1:pageNo;
 		pageSize = pageSize == null?10:pageSize;
-		PageHelper.startPage(pageNo,pageSize);  //startPage是告诉拦截器说我要开始分页了。分页参数是这两个。
+		PageHelper.startPage(pageNo,pageSize);
 		return BeanUtil.toPagedResult(mockDao.selectMockByTitle(title));
 	}
 

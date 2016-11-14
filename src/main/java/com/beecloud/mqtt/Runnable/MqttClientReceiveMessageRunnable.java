@@ -29,8 +29,6 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private MqttClient client = null;
 	private List<String> topics = new ArrayList<String>(); //需要订阅的Topic列表
 	private String host = "tcp://10.28.4.34:1883";
-	private String clientId = UuidUtil.getUuid();// clientId不能重复
-	public boolean status = true;
 	private static Map<String,String> cache = new HashMap<String,String>();
 	public MqttClientReceiveMessageRunnable(){
 	}
@@ -48,12 +46,15 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 		return cache.get(key);
 	}
 
+	public String getClientId(){
+		return UuidUtil.getUuid();
+	}
 
 
 	public void disconnetc(){
 		try {
 			client.disconnectForcibly(1000);
-			status = false;
+			client = null;
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -64,9 +65,9 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setCleanSession(true);
 		try {
-			client = new MqttClient(host, clientId);
+			client = new MqttClient(host, getClientId());
 			client.connect(options);
-			while(status){
+			while(true){
 					Iterator<String> iterator = topics.iterator();
 					while(iterator.hasNext()){
 						String topic = iterator.next();
@@ -130,12 +131,12 @@ class PushCallback implements MqttCallback,MqttSubject {
 			System.out.println("收到AckMessage");
 			abstractMessage = new AckMessage(data);
 		}else if(stepId==1){
-			System.out.println("收到AuthReqMessage");
-			abstractMessage = new AuthReqMessage(data);
+			System.out.println("收到AckMessage");
+			abstractMessage = new AckMessage(data);
 		}
 		String keyword = String.valueOf(topic)+String.valueOf(applicationID)+String.valueOf(stepId)+String.valueOf(sequenceId);
 		if(null==abstractMessage){
-			this.notifyMqttObservers(keyword,"{\"error:\"\"there is nothing found\"}");
+			this.notifyMqttObservers(keyword,"{\"error\":\"there is nothing found\"}");
 		}else{
 			Gson gson = new Gson();
 			this.notifyMqttObservers(keyword,gson.toJson(abstractMessage));

@@ -6,7 +6,6 @@ package com.beecloud.service;
 public interface MqttService {
     void run();
     void stop();
-    void subscribeTopic(String topic);
     void sendAuthReqMessage(String authMessage);
     void sendMessaage(String message);
     String getMessageByKey(String key);

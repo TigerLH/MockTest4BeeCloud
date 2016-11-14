@@ -5,21 +5,16 @@ import com.beecloud.mqtt.Runnable.MqttClientSendMessageRunnable;
 import com.beecloud.mqtt.entity.AuthObject;
 import com.beecloud.mqtt.entity.SendMessageObject;
 import com.beecloud.platform.protocol.core.constants.ApplicationID;
-import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
 import com.beecloud.platform.protocol.core.element.Authentication;
 import com.beecloud.platform.protocol.core.element.TimeStamp;
 import com.beecloud.platform.protocol.core.element.VehicleDescriptor;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
-import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.AuthReqMessage;
-import com.beecloud.platform.protocol.core.message.BaseMessage;
 import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by dell on 2016/11/9.
@@ -27,8 +22,8 @@ import java.util.List;
  */
 @Service
 public class MqttServiceImpl implements MqttService{
-    MqttClientReceiveMessageRunnable MRMR = new MqttClientReceiveMessageRunnable();
-    MqttClientSendMessageRunnable MSMR = new MqttClientSendMessageRunnable();
+    MqttClientReceiveMessageRunnable MRMR = null;
+    MqttClientSendMessageRunnable MSMR = null;
     private String Tbox_Auth_Topic = "mqtt/server";
     private String Tbox_Channel_Topic = "mqtt/vehicle/%s";
 
@@ -66,16 +61,24 @@ public class MqttServiceImpl implements MqttService{
 
     @Override
     public void run() {
+        MSMR = new MqttClientSendMessageRunnable();
         Thread sendThread = new Thread(MSMR);
         sendThread.start();
+        MRMR = new MqttClientReceiveMessageRunnable();
         Thread receiveThread = new Thread(MRMR);
         receiveThread.start();
     }
 
     @Override
     public void stop() {
-        MRMR.disconnetc();
-        MSMR.disconnect();
+        if(null!=MRMR){
+            MRMR.disconnetc();
+            MRMR = null;
+        }
+        if(null!=MSMR){
+            MSMR.disconnect();
+            MSMR = null;
+        }
     }
 
     @Override
@@ -97,11 +100,6 @@ public class MqttServiceImpl implements MqttService{
         Gson gson = new Gson();
         SendMessageObject sendMessageObject = gson.fromJson(message,SendMessageObject.class);
         MSMR.addMessage(sendMessageObject);
-    }
-
-    @Override
-    public void subscribeTopic(String topic) {
-        MRMR.addTopic(topic);
     }
 
     @Override

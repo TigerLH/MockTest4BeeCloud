@@ -134,9 +134,7 @@ class PushCallback implements MqttCallback,MqttSubject {
                 abstractMessage = new AckMessage(data);
             }
             String keyword = String.valueOf(topic) + String.valueOf(applicationID) + String.valueOf(stepId) + String.valueOf(sequenceId);
-            if (null == abstractMessage) {
-                this.notifyMqttObservers(keyword, "{\"error\":\"there is nothing found\"}");
-            } else {
+            if (null != abstractMessage) {
                 Gson gson = new Gson();
                 this.notifyMqttObservers(keyword, gson.toJson(abstractMessage));
             }

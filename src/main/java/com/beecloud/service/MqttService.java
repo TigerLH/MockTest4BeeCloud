@@ -8,5 +8,5 @@ public interface MqttService {
     void stop();
     void sendAuthReqMessage(String authMessage);
     void sendMessaage(String message);
-    String getMessageByKey(String key);
+    String getMessageByKey(String key,int timeOut);
 }

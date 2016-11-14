@@ -103,7 +103,14 @@ public class MqttServiceImpl implements MqttService{
     }
 
     @Override
-    public String getMessageByKey(String key) {
-        return MRMR.getMessageBykey(key);
+    public String getMessageByKey(String key,int timeOut) {
+        long start = System.currentTimeMillis();
+        while((System.currentTimeMillis()-start)<timeOut*1000){  //设置超时时间
+            String message = MRMR.getMessageBykey(key);
+            if(null!=message&&!"".equals(message)){
+                return message;
+            }
+        }
+        return "";
     }
 }

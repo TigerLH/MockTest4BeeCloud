@@ -185,8 +185,8 @@ public class MockController extends BaseController {
 
     @RequestMapping(value="/mqtt/receive", method= {RequestMethod.POST})
     @ResponseBody
-    public String getMessageByKey(String key) {
-        return mqttService.getMessageByKey(key);
+    public String getMessageByKey(String key,int timeOut) {
+        return mqttService.getMessageByKey(key,timeOut);
     }
 
 }

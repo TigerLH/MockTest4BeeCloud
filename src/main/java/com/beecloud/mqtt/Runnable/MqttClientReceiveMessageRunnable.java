@@ -111,36 +111,38 @@ class PushCallback implements MqttCallback,MqttSubject {
 
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		AbstractMessage abstractMessage = null;
-		BaseDataGram baseDataGram = new BaseDataGram(message.getPayload());
-		List<BaseMessage> baseMessages = baseDataGram.getMessages();
-		BaseMessage baseMessage = baseMessages.get(0);
-		byte[] data = baseMessage.getMessageBody();
-		//需要根据StepId和ApplicationId判断对应的业务
-		ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
-		int applicationID = applicationHeader.getApplicationID().getApplicationID();
-		int stepId= applicationHeader.getStepId();
-		long sequenceId = applicationHeader.getSequenceId();
-		System.out.println(applicationID);
-		System.out.println(stepId);
-		System.out.println(sequenceId);
-		if(stepId==2){
-			System.out.println("收到RequestMessage");
-			abstractMessage = new RequestMessage(data);
-		}else if(stepId==8){
-			System.out.println("收到AckMessage");
-			abstractMessage = new AckMessage(data);
-		}else if(stepId==1){
-			System.out.println("收到AckMessage");
-			abstractMessage = new AckMessage(data);
-		}
-		String keyword = String.valueOf(topic)+String.valueOf(applicationID)+String.valueOf(stepId)+String.valueOf(sequenceId);
-		if(null==abstractMessage){
-			this.notifyMqttObservers(keyword,"{\"error\":\"there is nothing found\"}");
-		}else{
-			Gson gson = new Gson();
-			this.notifyMqttObservers(keyword,gson.toJson(abstractMessage));
-		}
+	    try {
+            AbstractMessage abstractMessage = null;
+            BaseDataGram baseDataGram = new BaseDataGram(message.getPayload());
+            List<BaseMessage> baseMessages = baseDataGram.getMessages();
+            BaseMessage baseMessage = baseMessages.get(0);
+            byte[] data = baseMessage.encode();
+            //需要根据StepId和ApplicationId判断对应的业务
+            ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
+            int applicationID = applicationHeader.getApplicationID().getApplicationID();
+            int stepId = applicationHeader.getStepId();
+            long sequenceId = applicationHeader.getSequenceId();
+            System.out.println(baseMessage);
+            System.out.println("applicationID=============" + applicationID);
+            System.out.println("stepId=============" + stepId);
+            System.out.println("sequenceId============" + sequenceId);
+            if (stepId == 2) {
+                System.out.println("收到RequestMessage");
+                abstractMessage = new RequestMessage(data);
+            } else if (stepId == 8||stepId ==1) {
+                System.out.println("收到AckMessage");
+                abstractMessage = new AckMessage(data);
+            }
+            String keyword = String.valueOf(topic) + String.valueOf(applicationID) + String.valueOf(stepId) + String.valueOf(sequenceId);
+            if (null == abstractMessage) {
+                this.notifyMqttObservers(keyword, "{\"error\":\"there is nothing found\"}");
+            } else {
+                Gson gson = new Gson();
+                this.notifyMqttObservers(keyword, gson.toJson(abstractMessage));
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 	}
 
 	@Override

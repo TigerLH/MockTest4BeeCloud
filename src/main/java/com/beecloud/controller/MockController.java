@@ -187,7 +187,7 @@ public class MockController extends BaseController {
     @ResponseBody
     public String getMessageByKey(String key,int timeOut) {
         String message = mqttService.getMessageByKey(key,timeOut);
-        return responseSuccess(message);
+        return mqttResponse(message);
     }
 
 }

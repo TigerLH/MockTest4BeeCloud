@@ -13,16 +13,14 @@ public class HttpConstants {
 	
 	// 服务端返回结果的标志
 	public static final String SERVICE_RESPONSE_RESULT_FLAG = "returnCode";
-	
+
 	// 服务端返回结果失败的标志
 	public static final String SERVICE_RESPONSE_RESULT_MSG = "errorMsg";
-	
+
+	//服务器返回数据标志
+	public static final String MQTT_SERVICE_RESPONSE_DATA = "data";
+
 	// 返回给前段页面成功或失败的标志
 	public static final String RESPONSE_RESULT_FLAG_ISERROR = "isError";
-	
-	// 执行删除操作
-	public static final String OPERATION_TYPE_DELETE = "D";
-
-	public static final String ENUM_PATH = "com.mucfc.msm.enumeration.";
 	
 }

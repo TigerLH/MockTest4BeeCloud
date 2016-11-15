@@ -132,5 +132,16 @@ public class BaseController {
     	jsonObj.put(HttpConstants.SERVICE_RESPONSE_RESULT_MSG, Msg);
         return jsonObj.toString();
     }
+
+	/**
+	 *
+	 * @param response
+     * @return
+     */
+	public String mqttResponse(String response){
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put(HttpConstants.MQTT_SERVICE_RESPONSE_DATA,response);
+		return jsonObj.toString();
+	}
     
 }

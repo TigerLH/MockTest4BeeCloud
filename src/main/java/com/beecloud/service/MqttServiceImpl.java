@@ -111,6 +111,6 @@ public class MqttServiceImpl implements MqttService{
                 return message;
             }
         }
-        return "";
+        return "nothing to be found";
     }
 }

@@ -42,7 +42,6 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	}
 
 	public String getMessageBykey(String key){
-		System.out.println(cache);
 		return cache.get(key);
 	}
 

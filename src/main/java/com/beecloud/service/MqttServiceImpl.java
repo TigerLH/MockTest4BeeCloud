@@ -94,6 +94,10 @@ public class MqttServiceImpl implements MqttService{
         MSMR.addMessage(sendMessageObject);  //发布认证message
     }
 
+    @Override
+    public void subscribeTopic(String topic){
+        MRMR.addTopic(topic);
+    }
 
     @Override
     public void sendMessaage(String message) {

@@ -1,17 +1,11 @@
 package com.beecloud.mqtt.Runnable;
 
-import com.beecloud.mqtt.entity.AuthObject;
 import com.beecloud.mqtt.listenser.MqttObserver;
 import com.beecloud.mqtt.listenser.MqttSubject;
-import com.beecloud.platform.protocol.core.constants.ApplicationID;
 import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
-import com.beecloud.platform.protocol.core.element.Authentication;
-import com.beecloud.platform.protocol.core.element.TimeStamp;
-import com.beecloud.platform.protocol.core.element.VehicleDescriptor;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.AckMessage;
-import com.beecloud.platform.protocol.core.message.AuthReqMessage;
 import com.beecloud.platform.protocol.core.message.BaseMessage;
 import com.beecloud.util.UuidUtil;
 import com.beecloud.vehicle.spa.protocol.message.RequestMessage;
@@ -121,10 +115,6 @@ class PushCallback implements MqttCallback,MqttSubject {
             int applicationID = applicationHeader.getApplicationID().getApplicationID();
             int stepId = applicationHeader.getStepId();
             long sequenceId = applicationHeader.getSequenceId();
-            System.out.println(baseMessage);
-            System.out.println("applicationID=============" + applicationID);
-            System.out.println("stepId=============" + stepId);
-            System.out.println("sequenceId============" + sequenceId);
             if (stepId == 2) {
                 System.out.println("收到RequestMessage");
                 abstractMessage = new RequestMessage(data);
@@ -132,6 +122,9 @@ class PushCallback implements MqttCallback,MqttSubject {
                 System.out.println("收到AckMessage");
                 abstractMessage = new AckMessage(data);
             }
+			System.out.println("applicationID=============" + applicationID);
+			System.out.println("stepId=============" + stepId);
+			System.out.println("sequenceId============" + sequenceId);
             String keyword = String.valueOf(topic) + String.valueOf(applicationID) + String.valueOf(stepId) + String.valueOf(sequenceId);
             if (null != abstractMessage) {
                 Gson gson = new Gson();

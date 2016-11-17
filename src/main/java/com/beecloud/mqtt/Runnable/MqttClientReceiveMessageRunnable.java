@@ -24,6 +24,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private List<String> topics = new ArrayList<String>(); //需要订阅的Topic列表
 	private String host = "tcp://10.28.4.34:1883";
 	private static Map<String,String> cache = new HashMap<String,String>();
+	private boolean status = true;
 	public MqttClientReceiveMessageRunnable(){
 	}
 
@@ -48,6 +49,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 		try {
 			client.disconnectForcibly(1000);
 			client = null;
+			status = false;
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -60,7 +62,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 		try {
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
-			while(true){
+			while(status){
 					Iterator<String> iterator = topics.iterator();
 					while(iterator.hasNext()){
 						String topic = iterator.next();

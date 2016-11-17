@@ -48,6 +48,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	public void disconnetc(){
 		try {
 			client.disconnectForcibly(1000);
+
 			client = null;
 			status = false;
 		} catch (MqttException e) {
@@ -118,15 +119,13 @@ class PushCallback implements MqttCallback,MqttSubject {
             int stepId = applicationHeader.getStepId();
             long sequenceId = applicationHeader.getSequenceId();
             if (stepId == 2) {
-                System.out.println("收到RequestMessage");
                 abstractMessage = new RequestMessage(data);
             } else if (stepId == 8||stepId ==1) {
-                System.out.println("收到AckMessage");
                 abstractMessage = new AckMessage(data);
             }
-			System.out.println("applicationID=============" + applicationID);
-			System.out.println("stepId=============" + stepId);
-			System.out.println("sequenceId============" + sequenceId);
+			System.out.println("=================================ReceiveMessage========================================");
+			System.out.println(abstractMessage);
+			System.out.println("=================================ReceiveMessage========================================");
             String keyword = String.valueOf(topic) + String.valueOf(applicationID) + String.valueOf(stepId) + String.valueOf(sequenceId);
             if (null != abstractMessage) {
                 Gson gson = new Gson();

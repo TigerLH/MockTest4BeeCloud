@@ -69,20 +69,27 @@ public class MqttClientSendMessageRunnable implements Runnable{
 					ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
 					int stepId = applicationHeader.getStepId();
 					if(stepId==3){
+						System.out.println("=========================AckMessage=================================");
 						System.out.println("StepId=3,发送AckMessage");
 						AckMessage ackMessage = new AckMessage(data);
 						System.out.println(ackMessage);
+						System.out.println("=========================AckMessage=================================");
 					}else if(stepId==5){
+						System.out.println("=====================ResponseMessage================================");
 						System.out.println("StepId=5,发送ResponseMessage");
+						ResponseMessage responseMessage = new ResponseMessage(data);
+						System.out.println(responseMessage);
+						System.out.println("=====================ResponseMessage================================");
 					}else if(stepId==0){
-						System.out.println("StepId=0,发送AuthReqMessage");
+						System.out.println("=======================AuthReqMessage===================================");
+						AuthReqMessage authReqMessage = new AuthReqMessage(data);
+						System.out.println(authReqMessage);
+						System.out.println("=======================AuthReqMessage===================================");
 					}
 					MqttMessage msg = new MqttMessage();
 					msg.setPayload(baseDataGram.encode());
 					client.publish(topic, msg);
 					iterator.remove();
-					System.out.println("SendMessage to:" + topic);
-					System.out.println("SendMessage:" + baseMessage);
 				}
 			}
 		}catch (MqttException e) {

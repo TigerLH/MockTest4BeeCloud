@@ -38,7 +38,7 @@ public class MqttServiceImpl implements MqttService{
         applicationHeader.setStepId(0);
         applicationHeader.setApplicationID(ApplicationID.ID_AUTH);
         applicationHeader.setSequenceId(0);
-        applicationHeader.setProtocolVersion(10);
+        applicationHeader.setProtocolVersion(0);
         Authentication authentication = new Authentication();
         authentication.setPid("BEECLOUD");
 

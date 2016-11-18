@@ -57,41 +57,39 @@ public class MqttClientSendMessageRunnable implements Runnable{
 			options.setCleanSession(true);
 			client.connect(options);
 			while (status) {
-				if(messages.size()>0){
-					Iterator<SendMessageObject> iterator = messages.iterator();
-					while (iterator.hasNext()) {
-						SendMessageObject messageObject = iterator.next();
-						String topic = messageObject.getTopic();
-						String message = messageObject.getMessage();
-						byte[] data = ProtocolUtil.formatBitStringToBytes(message);
-						BaseDataGram baseDataGram = new BaseDataGram();
-						BaseMessage baseMessage = new BaseMessage(data);
-						baseDataGram.addMessage(baseMessage);
-						ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
-						int stepId = applicationHeader.getStepId();
-						if(stepId==3){
-							System.out.println("=========================AckMessage=================================");
-							System.out.println("StepId=3,发送AckMessage");
-							AckMessage ackMessage = new AckMessage(data);
-							System.out.println(ackMessage);
-							System.out.println("=========================AckMessage=================================");
-						}else if(stepId==5){
-							System.out.println("=====================ResponseMessage================================");
-							System.out.println("StepId=5,发送ResponseMessage");
-							ResponseMessage responseMessage = new ResponseMessage(data);
-							System.out.println(responseMessage);
-							System.out.println("=====================ResponseMessage================================");
-						}else if(stepId==0){
-							System.out.println("=======================AuthReqMessage===================================");
-							AuthReqMessage authReqMessage = new AuthReqMessage(data);
-							System.out.println(authReqMessage);
-							System.out.println("=======================AuthReqMessage===================================");
-						}
-						MqttMessage msg = new MqttMessage();
-						msg.setPayload(baseDataGram.encode());
-						client.publish(topic, msg);
-						iterator.remove();
+				Iterator<SendMessageObject> iterator = messages.iterator();
+				while (iterator.hasNext()) {
+					SendMessageObject messageObject = iterator.next();
+					String topic = messageObject.getTopic();
+					String message = messageObject.getMessage();
+					byte[] data = ProtocolUtil.formatBitStringToBytes(message);
+					BaseDataGram baseDataGram = new BaseDataGram();
+					BaseMessage baseMessage = new BaseMessage(data);
+					baseDataGram.addMessage(baseMessage);
+					ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
+					int stepId = applicationHeader.getStepId();
+					if(stepId==3){
+						System.out.println("=========================AckMessage=================================");
+						System.out.println("StepId=3,发送AckMessage");
+						AckMessage ackMessage = new AckMessage(data);
+						System.out.println(ackMessage);
+						System.out.println("=========================AckMessage=================================");
+					}else if(stepId==5){
+						System.out.println("=====================ResponseMessage================================");
+						System.out.println("StepId=5,发送ResponseMessage");
+						ResponseMessage responseMessage = new ResponseMessage(data);
+						System.out.println(responseMessage);
+						System.out.println("=====================ResponseMessage================================");
+					}else if(stepId==0){
+						System.out.println("=======================AuthReqMessage===================================");
+						AuthReqMessage authReqMessage = new AuthReqMessage(data);
+						System.out.println(authReqMessage);
+						System.out.println("=======================AuthReqMessage===================================");
 					}
+					MqttMessage msg = new MqttMessage();
+					msg.setPayload(baseDataGram.encode());
+					client.publish(topic, msg);
+					iterator.remove();
 				}
 			}
 		}catch (MqttException e) {

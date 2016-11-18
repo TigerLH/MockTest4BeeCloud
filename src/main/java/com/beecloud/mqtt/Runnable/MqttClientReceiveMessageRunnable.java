@@ -64,18 +64,16 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
 			while(status){
-				if(topics.size()>0) {
 					Iterator<String> iterator = topics.iterator();
-					while (iterator.hasNext()) {
+					while(iterator.hasNext()){
 						String topic = iterator.next();
 						PushCallback pushCallback = new PushCallback();
 						pushCallback.registerMqttObserver(this);
 						client.setCallback(pushCallback);
 						client.subscribe(topic, 2);
-						System.out.println("订阅消息:" + topic);
+						System.out.println("订阅消息:"+topic);
 						iterator.remove();
 					}
-				}
 			}
 		} catch (MqttException e) {
 			e.printStackTrace();

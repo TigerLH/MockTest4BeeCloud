@@ -10,6 +10,7 @@ import com.beecloud.platform.protocol.core.message.BaseMessage;
 import com.beecloud.util.UuidUtil;
 import com.beecloud.vehicle.spa.protocol.message.RequestMessage;
 import com.google.gson.Gson;
+import com.jayway.jsonpath.JsonPath;
 import org.eclipse.paho.client.mqttv3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import java.util.*;
  */
 public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private MqttClient client = null;
+	private Logger logger = LoggerFactory.getLogger(this.getClientId());
 	private List<String> topics = new ArrayList<String>(); //需要订阅的Topic列表
 	private String host = "tcp://10.28.4.34:1883";
 	private static Map<String,String> cache = new HashMap<String,String>();
@@ -94,46 +96,77 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
  *
  */
 class PushCallback implements MqttCallback,MqttSubject {
+	private String prefix = "mqtt/vehicle";
 	private List<MqttObserver> observers = new ArrayList<MqttObserver>();
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public void connectionLost(Throwable cause) {
-		System.out.println("Receive Client连接断开");
+		logger.error("Receive Client连接断开");
 	}
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
-		System.out.println("deliveryComplete---------" + token.isComplete());
+		logger.info("deliveryComplete---------" + token.isComplete());
+	}
+
+
+	/**
+	 * 接收Tbox消息,并已topic+applicationID+stepId+sequenceId做为key进行存储
+	 * @param topic
+	 * @param message
+     */
+	protected   void receiveTboxMessaage(String topic,MqttMessage message){
+		try {
+			AbstractMessage abstractMessage = null;
+			BaseDataGram baseDataGram = new BaseDataGram(message.getPayload());
+			List<BaseMessage> baseMessages = baseDataGram.getMessages();
+			BaseMessage baseMessage = baseMessages.get(0);
+			byte[] data = baseMessage.encode();
+			//需要根据StepId和ApplicationId判断对应的业务
+			ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
+			int applicationID = applicationHeader.getApplicationID().getApplicationID();
+			int stepId = applicationHeader.getStepId();
+			long sequenceId = applicationHeader.getSequenceId();
+			if (stepId == 2) {
+				logger.info("接收Tbox消息:");
+				logger.info("消息类型:RequestMessage");
+				abstractMessage = new RequestMessage(data);
+			} else if (stepId == 8||stepId ==1) {
+				logger.info("接收Tbox消息:");
+				logger.info("消息类型:AckMessage");
+				abstractMessage = new AckMessage(data);
+			}
+			logger.info(abstractMessage.toString());
+			String keyword = String.valueOf(topic) + String.valueOf(applicationID) + String.valueOf(stepId) + String.valueOf(sequenceId);
+			if (null != abstractMessage) {
+				Gson gson = new Gson();
+				this.notifyMqttObservers(keyword, gson.toJson(abstractMessage));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 接收App消息,并以MsgId做为key进行存储
+	 * @param topic
+	 * @param message
+     */
+	protected void receiveAppMessage(String topic, MqttMessage message){
+			byte[] data = message.getPayload();
+			String msg = new String(data);
+			String key = JsonPath.parse(msg).read("$.mqttHeader.msgId");
+		    logger.info("收到App推送消息:");
+			logger.info(msg);
+		    this.notifyMqttObservers(key,msg);
 	}
 
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-	    try {
-            AbstractMessage abstractMessage = null;
-            BaseDataGram baseDataGram = new BaseDataGram(message.getPayload());
-            List<BaseMessage> baseMessages = baseDataGram.getMessages();
-            BaseMessage baseMessage = baseMessages.get(0);
-            byte[] data = baseMessage.encode();
-            //需要根据StepId和ApplicationId判断对应的业务
-            ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
-            int applicationID = applicationHeader.getApplicationID().getApplicationID();
-            int stepId = applicationHeader.getStepId();
-            long sequenceId = applicationHeader.getSequenceId();
-            if (stepId == 2) {
-                abstractMessage = new RequestMessage(data);
-            } else if (stepId == 8||stepId ==1) {
-                abstractMessage = new AckMessage(data);
-            }
-			System.out.println("=================================ReceiveMessage========================================");
-			System.out.println(abstractMessage);
-			System.out.println("=================================ReceiveMessage========================================");
-            String keyword = String.valueOf(topic) + String.valueOf(applicationID) + String.valueOf(stepId) + String.valueOf(sequenceId);
-            if (null != abstractMessage) {
-                Gson gson = new Gson();
-                this.notifyMqttObservers(keyword, gson.toJson(abstractMessage));
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+			if(topic.startsWith(prefix)){		//Tbox消息
+				receiveTboxMessaage(topic,message);
+			}else{								//APP消息
+				receiveAppMessage(topic,message);
+			}
 	}
 
 	@Override

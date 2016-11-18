@@ -12,6 +12,8 @@ import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AuthReqMessage;
 import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.google.gson.Gson;
+import org.apache.log4j.spi.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -22,6 +24,7 @@ import java.util.Date;
  */
 @Service
 public class MqttServiceImpl implements MqttService{
+    private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
     MqttClientReceiveMessageRunnable MRMR = null;
     MqttClientSendMessageRunnable MSMR = null;
     private String Tbox_Auth_Topic = "mqtt/server";
@@ -112,6 +115,8 @@ public class MqttServiceImpl implements MqttService{
         while((System.currentTimeMillis()-start)<timeOut*1000){  //设置超时时间
             String message = MRMR.getMessageBykey(key);
             if(null!=message&&!"".equals(message)){
+                logger.info("ReturnMessage for key:"+key);
+                logger.info(message);
                 return message;
             }
         }

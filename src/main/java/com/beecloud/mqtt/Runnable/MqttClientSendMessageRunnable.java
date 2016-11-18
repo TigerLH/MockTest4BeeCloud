@@ -79,7 +79,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 						System.out.println("StepId=5,发送ResponseMessage");
 						ResponseMessage responseMessage = new ResponseMessage(data);
 						System.out.println(responseMessage);
-						System.out.println("=====================ResponseMessage================================");
+						System.out.println("=====================ResponseMessage====================================");
 					}else if(stepId==0){
 						System.out.println("=======================AuthReqMessage===================================");
 						AuthReqMessage authReqMessage = new AuthReqMessage(data);

@@ -20,7 +20,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 	String host = "tcp://10.28.4.34:1883";
 	private MqttClient client = null;
 	private boolean status = true;
-	private Logger logger = org.slf4j.LoggerFactory.getLogger("SendMessage");
+	private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 	private List<SendMessageObject> messages = new ArrayList<SendMessageObject>();
 	
 
@@ -42,6 +42,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 			client.disconnectForcibly(1000);
 			status = false;
 			client = null;
+			messages.clear();
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -73,6 +74,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 					}else if(stepId==0){
 						logger.info("=====================发送认证消息===================================");
 					}
+					logger.info(baseMessage.toString());
 					MqttMessage msg = new MqttMessage();
 					msg.setPayload(baseDataGram.encode());
 					client.publish(topic, msg);

@@ -50,9 +50,9 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	public void disconnetc(){
 		try {
 			client.disconnectForcibly(1000);
-
 			client = null;
 			status = false;
+			topics.clear();
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}

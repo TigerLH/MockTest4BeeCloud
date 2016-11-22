@@ -8,21 +8,18 @@ import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.beecloud.util.UuidUtil;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MqttClientSendMessageRunnable implements Runnable{
 	String host = "tcp://10.28.4.34:1883";
 	private MqttClient client = null;
 	private boolean status = true;
 	private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
-	private List<SendMessageObject> total = new ArrayList<SendMessageObject>();
-	private List<SendMessageObject> messages = new ArrayList<SendMessageObject>();
+	Queue<SendMessageObject> messages = new LinkedBlockingQueue<SendMessageObject>();
 	
 
 	
@@ -35,7 +32,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 
 
 	public void addMessage(SendMessageObject sendMessageObject){
-		total.add(sendMessageObject);
+		messages.add(sendMessageObject);
 	}
 
 	public void disconnect(){
@@ -56,12 +53,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 			options.setCleanSession(true);
 			client.connect(options);
 			while (status) {
-				if(messages.size()==0){   //消费完再取
-					messages = total;
-				}
-				Iterator<SendMessageObject> iterator = messages.iterator();
-				while (iterator.hasNext()) {
-					SendMessageObject messageObject = iterator.next();
+					SendMessageObject messageObject = messages.poll();
 					String topic = messageObject.getTopic();
 					String message = messageObject.getMessage();
 					byte[] data = ProtocolUtil.formatBitStringToBytes(message);
@@ -81,8 +73,6 @@ public class MqttClientSendMessageRunnable implements Runnable{
 					MqttMessage msg = new MqttMessage();
 					msg.setPayload(baseDataGram.encode());
 					client.publish(topic, msg);
-				}
-				total.removeAll(messages); //消费完再删除
 			}
 		}catch (Exception e) {
 			e.printStackTrace();

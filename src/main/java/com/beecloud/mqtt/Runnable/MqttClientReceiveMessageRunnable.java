@@ -1,5 +1,6 @@
 package com.beecloud.mqtt.Runnable;
 
+import com.beecloud.mqtt.entity.SendMessageObject;
 import com.beecloud.mqtt.listenser.MqttObserver;
 import com.beecloud.mqtt.listenser.MqttSubject;
 import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by dell on 2016/11/9.
@@ -23,8 +25,7 @@ import java.util.*;
 public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private MqttClient client = null;
 	private Logger logger = LoggerFactory.getLogger(this.getClientId());
-	private List<String> topics = new ArrayList<String>(); //需要订阅的Topic列表
-	private List<String> total = new ArrayList<String>();
+	private Queue<String> topics = new LinkedBlockingQueue<String>();
 	private String host = "tcp://10.28.4.34:1883";
 	private static Map<String,String> cache = new HashMap<String,String>();
 	private boolean status = true;
@@ -32,7 +33,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	}
 
 	public void addTopic(String topic){
-		total.add(topic);
+		topics.add(topic);
 	}
 
 	public void setMessage(String key,String message){
@@ -66,19 +67,12 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
 			while(status){
-				if(topics.size()==0){
-					topics = total;
-				}
-				Iterator<String> iterator = topics.iterator();
-				while(iterator.hasNext()){
-					String topic = iterator.next();
-					PushCallback pushCallback = new PushCallback();
-					pushCallback.registerMqttObserver(this);
-					client.setCallback(pushCallback);
-					client.subscribe(topic, 2);
-					logger.info("订阅消息:"+topic);
-				}
-				total.removeAll(topics);
+				String topic = topics.poll();
+				PushCallback pushCallback = new PushCallback();
+				pushCallback.registerMqttObserver(this);
+				client.setCallback(pushCallback);
+				client.subscribe(topic, 2);
+				logger.info("订阅消息:"+topic);
 			}
 		} catch (MqttException e) {
 			e.printStackTrace();

@@ -39,10 +39,13 @@ public class MqttClientSendMessageRunnable implements Runnable{
 
 	public void disconnect(){
 		try {
-			client.disconnectForcibly(1000);
-			status = false;
-			client = null;
-			messages.clear();
+			while (status){			//队列不为空时不断开连接
+				if(messages.size()==0){
+					client.disconnectForcibly(1000);
+					status = false;
+					client = null;
+				}
+			}
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -59,8 +62,9 @@ public class MqttClientSendMessageRunnable implements Runnable{
 				if(messages.size()==0){
 					return;
 				}
-				List delList = new ArrayList();
-				for(SendMessageObject messageObject : messages){
+				Iterator<SendMessageObject> iterator = messages.iterator();
+				while (iterator.hasNext()) {
+					SendMessageObject messageObject = iterator.next();
 					String topic = messageObject.getTopic();
 					String message = messageObject.getMessage();
 					byte[] data = ProtocolUtil.formatBitStringToBytes(message);
@@ -80,9 +84,8 @@ public class MqttClientSendMessageRunnable implements Runnable{
 					MqttMessage msg = new MqttMessage();
 					msg.setPayload(baseDataGram.encode());
 					client.publish(topic, msg);
-					delList.add(messageObject);
+					iterator.remove();
 				}
-				messages.remove(delList);
 			}
 		}catch (MqttException e) {
 			e.printStackTrace();

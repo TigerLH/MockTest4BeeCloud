@@ -49,10 +49,14 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 
 	public void disconnetc(){
 		try {
-			client.disconnectForcibly(1000);
-			client = null;
-			status = false;
-			topics.clear();
+			while(status){
+				if(topics.size()==0){
+					client.disconnectForcibly(1000);
+					client = null;
+					status = false;
+				}
+			}
+
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -66,19 +70,19 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
 			while(status){
-				if(topics.size()==0) {
-					return;
-				}
-				List delList = new ArrayList();
-				for(String topic : topics){
-					PushCallback pushCallback = new PushCallback();
-					pushCallback.registerMqttObserver(this);
-					client.setCallback(pushCallback);
-					client.subscribe(topic, 2);
-					delList.add(topic);
-					logger.info("订阅消息:" + topic);
-				}
-				topics.remove(delList);
+					if(topics.size()==0){
+						return;
+					}
+					Iterator<String> iterator = topics.iterator();
+					while(iterator.hasNext()){
+						String topic = iterator.next();
+						PushCallback pushCallback = new PushCallback();
+						pushCallback.registerMqttObserver(this);
+						client.setCallback(pushCallback);
+						client.subscribe(topic, 2);
+						logger.info("订阅消息:"+topic);
+						iterator.remove();
+					}
 			}
 		} catch (MqttException e) {
 			e.printStackTrace();

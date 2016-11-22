@@ -21,6 +21,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 	private MqttClient client = null;
 	private boolean status = true;
 	private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
+	private List<SendMessageObject> total = new ArrayList<SendMessageObject>();
 	private List<SendMessageObject> messages = new ArrayList<SendMessageObject>();
 	
 
@@ -34,7 +35,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 
 
 	public void addMessage(SendMessageObject sendMessageObject){
-		messages.add(sendMessageObject);
+		total.add(sendMessageObject);
 	}
 
 	public void disconnect(){
@@ -55,8 +56,10 @@ public class MqttClientSendMessageRunnable implements Runnable{
 			options.setCleanSession(true);
 			client.connect(options);
 			while (status) {
-				List<SendMessageObject> current = messages;
-				Iterator<SendMessageObject> iterator = current.iterator();
+				if(messages.size()==0){   //消费完再取
+					messages = total;
+				}
+				Iterator<SendMessageObject> iterator = messages.iterator();
 				while (iterator.hasNext()) {
 					SendMessageObject messageObject = iterator.next();
 					String topic = messageObject.getTopic();
@@ -78,8 +81,8 @@ public class MqttClientSendMessageRunnable implements Runnable{
 					MqttMessage msg = new MqttMessage();
 					msg.setPayload(baseDataGram.encode());
 					client.publish(topic, msg);
-					iterator.remove();
 				}
+				total.removeAll(messages); //消费完再删除
 			}
 		}catch (Exception e) {
 			e.printStackTrace();

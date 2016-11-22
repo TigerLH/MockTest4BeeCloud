@@ -24,6 +24,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private MqttClient client = null;
 	private Logger logger = LoggerFactory.getLogger(this.getClientId());
 	private List<String> topics = new ArrayList<String>(); //需要订阅的Topic列表
+	private List<String> total = new ArrayList<String>();
 	private String host = "tcp://10.28.4.34:1883";
 	private static Map<String,String> cache = new HashMap<String,String>();
 	private boolean status = true;
@@ -31,7 +32,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	}
 
 	public void addTopic(String topic){
-		topics.add(topic);
+		total.add(topic);
 	}
 
 	public void setMessage(String key,String message){
@@ -65,16 +66,19 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
 			while(status){
-					Iterator<String> iterator = topics.iterator();
-					while(iterator.hasNext()){
-						String topic = iterator.next();
-						PushCallback pushCallback = new PushCallback();
-						pushCallback.registerMqttObserver(this);
-						client.setCallback(pushCallback);
-						client.subscribe(topic, 2);
-						logger.info("订阅消息:"+topic);
-						iterator.remove();
-					}
+				if(topics.size()==0){
+					topics = total;
+				}
+				Iterator<String> iterator = topics.iterator();
+				while(iterator.hasNext()){
+					String topic = iterator.next();
+					PushCallback pushCallback = new PushCallback();
+					pushCallback.registerMqttObserver(this);
+					client.setCallback(pushCallback);
+					client.subscribe(topic, 2);
+					logger.info("订阅消息:"+topic);
+				}
+				total.removeAll(topics);
 			}
 		} catch (MqttException e) {
 			e.printStackTrace();

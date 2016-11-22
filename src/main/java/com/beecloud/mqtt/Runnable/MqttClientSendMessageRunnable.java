@@ -39,14 +39,10 @@ public class MqttClientSendMessageRunnable implements Runnable{
 
 	public void disconnect(){
 		try {
-			while (status){			//队列不为空时不断开连接
-				if(messages.size()==0){
-					client.disconnectForcibly(1000);
-					status = false;
-					client = null;
-				}
-			}
-		} catch (MqttException e) {
+			client.disconnect(10*1000);
+			status = false;
+			client = null;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -59,9 +55,6 @@ public class MqttClientSendMessageRunnable implements Runnable{
 			options.setCleanSession(true);
 			client.connect(options);
 			while (status) {
-				if(messages.size()==0){
-					return;
-				}
 				Iterator<SendMessageObject> iterator = messages.iterator();
 				while (iterator.hasNext()) {
 					SendMessageObject messageObject = iterator.next();

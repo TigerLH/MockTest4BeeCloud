@@ -49,10 +49,10 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 
 	public void disconnetc(){
 		try {
-			client.disconnectForcibly(1000);
+			client.disconnect(10*1000);
 			client = null;
 			status = false;
-		} catch (MqttException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -65,9 +65,6 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
 			while(status){
-					if(topics.size()==0){
-						return;
-					}
 					Iterator<String> iterator = topics.iterator();
 					while(iterator.hasNext()){
 						String topic = iterator.next();

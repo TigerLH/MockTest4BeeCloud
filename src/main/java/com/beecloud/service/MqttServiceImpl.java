@@ -25,8 +25,8 @@ import java.util.Date;
 @Service
 public class MqttServiceImpl implements MqttService{
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
-    MqttClientReceiveMessageRunnable MRMR = null;
-    MqttClientSendMessageRunnable MSMR = null;
+    private MqttClientReceiveMessageRunnable MRMR = null;
+    private MqttClientSendMessageRunnable MSMR = null;
     private String Tbox_Auth_Topic = "mqtt/server";
     private String Tbox_Channel_Topic = "mqtt/vehicle/%s";
 

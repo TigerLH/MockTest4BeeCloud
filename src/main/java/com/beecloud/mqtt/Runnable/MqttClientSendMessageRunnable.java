@@ -55,7 +55,8 @@ public class MqttClientSendMessageRunnable implements Runnable{
 			options.setCleanSession(true);
 			client.connect(options);
 			while (status) {
-				Iterator<SendMessageObject> iterator = messages.iterator();
+				List<SendMessageObject> current = messages;
+				Iterator<SendMessageObject> iterator = current.iterator();
 				while (iterator.hasNext()) {
 					SendMessageObject messageObject = iterator.next();
 					String topic = messageObject.getTopic();
@@ -80,7 +81,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 					iterator.remove();
 				}
 			}
-		}catch (MqttException e) {
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

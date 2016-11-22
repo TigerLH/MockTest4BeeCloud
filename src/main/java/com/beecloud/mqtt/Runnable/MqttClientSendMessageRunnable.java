@@ -56,9 +56,11 @@ public class MqttClientSendMessageRunnable implements Runnable{
 			options.setCleanSession(true);
 			client.connect(options);
 			while (status) {
-				Iterator<SendMessageObject> iterator = messages.iterator();
-				while (iterator.hasNext()) {
-					SendMessageObject messageObject = iterator.next();
+				if(messages.size()==0){
+					return;
+				}
+				List delList = new ArrayList();
+				for(SendMessageObject messageObject : messages){
 					String topic = messageObject.getTopic();
 					String message = messageObject.getMessage();
 					byte[] data = ProtocolUtil.formatBitStringToBytes(message);
@@ -78,8 +80,9 @@ public class MqttClientSendMessageRunnable implements Runnable{
 					MqttMessage msg = new MqttMessage();
 					msg.setPayload(baseDataGram.encode());
 					client.publish(topic, msg);
-					iterator.remove();
+					delList.add(messageObject);
 				}
+				messages.remove(delList);
 			}
 		}catch (MqttException e) {
 			e.printStackTrace();

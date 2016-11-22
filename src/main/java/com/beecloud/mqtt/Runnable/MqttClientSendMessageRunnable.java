@@ -3,17 +3,14 @@ package com.beecloud.mqtt.Runnable;
 import com.beecloud.mqtt.entity.SendMessageObject;
 import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
-import com.beecloud.platform.protocol.core.message.AbstractMessage;
-import com.beecloud.platform.protocol.core.message.AckMessage;
-import com.beecloud.platform.protocol.core.message.AuthReqMessage;
 import com.beecloud.platform.protocol.core.message.BaseMessage;
 import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.beecloud.util.UuidUtil;
-import com.beecloud.vehicle.spa.protocol.message.ResponseMessage;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,6 +20,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 	String host = "tcp://10.28.4.34:1883";
 	private MqttClient client = null;
 	private boolean status = true;
+	private Logger logger = org.slf4j.LoggerFactory.getLogger("SendMessage");
 	private List<SendMessageObject> messages = new ArrayList<SendMessageObject>();
 	
 
@@ -69,22 +67,11 @@ public class MqttClientSendMessageRunnable implements Runnable{
 					ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
 					int stepId = applicationHeader.getStepId();
 					if(stepId==3){
-						System.out.println("=========================AckMessage=================================");
-						System.out.println("StepId=3,发送AckMessage");
-						AckMessage ackMessage = new AckMessage(data);
-						System.out.println(ackMessage);
-						System.out.println("=========================AckMessage=================================");
+						logger.info("=====================发送AckMessage=================================");
 					}else if(stepId==5){
-						System.out.println("=====================ResponseMessage================================");
-						System.out.println("StepId=5,发送ResponseMessage");
-						ResponseMessage responseMessage = new ResponseMessage(data);
-						System.out.println(responseMessage);
-						System.out.println("=====================ResponseMessage====================================");
+						logger.info("=====================发送响应消息===================================");
 					}else if(stepId==0){
-						System.out.println("=======================AuthReqMessage===================================");
-						AuthReqMessage authReqMessage = new AuthReqMessage(data);
-						System.out.println(authReqMessage);
-						System.out.println("=======================AuthReqMessage===================================");
+						logger.info("=====================发送认证消息===================================");
 					}
 					MqttMessage msg = new MqttMessage();
 					msg.setPayload(baseDataGram.encode());

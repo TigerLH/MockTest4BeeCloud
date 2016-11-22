@@ -73,7 +73,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 						pushCallback.registerMqttObserver(this);
 						client.setCallback(pushCallback);
 						client.subscribe(topic, 2);
-						System.out.println("订阅消息:"+topic);
+						logger.info("订阅消息:"+topic);
 						iterator.remove();
 					}
 			}

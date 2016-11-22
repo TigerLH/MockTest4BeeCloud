@@ -67,6 +67,9 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
 			while(status){
+				if(topics.isEmpty()){
+					continue;
+				}
 				String topic = topics.poll();
 				PushCallback pushCallback = new PushCallback();
 				pushCallback.registerMqttObserver(this);

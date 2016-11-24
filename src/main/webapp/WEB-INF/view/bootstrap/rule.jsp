@@ -41,6 +41,9 @@
 	         <li>
 	             <a href="#">Rule管理</a>
 	         </li>
+			 <li>
+				 <a href="tbox">Tbox管理</a>
+			 </li>
 	     </ul>
 	 </div>
 	 

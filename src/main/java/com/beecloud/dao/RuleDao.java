@@ -33,7 +33,7 @@ public interface RuleDao {
 	 
 	 /**
 	  * 
-	  * @param title
+	  * @param name
 	  * @return
 	  */
 	 List<Rule> selectRuleByName(@Param("name") String name);

@@ -31,11 +31,11 @@ public class BaseController {
 	public String responseResult(Object obj){
 		JSONObject jsonObj = null;
 		if(obj != null){
-		    logger.info("后端返回对象：{}", obj);
+		    //logger.info("后端返回对象：{}", obj);
 		    JsonConfig jsonConfig = new JsonConfig(); 
 		    jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
 		    jsonObj = JSONObject.fromObject(obj, jsonConfig);
-		    logger.info("后端返回数据：" + jsonObj);
+		    //logger.info("后端返回数据：" + jsonObj);
 		    if(HttpConstants.SERVICE_RESPONSE_SUCCESS_CODE.equals(jsonObj.getString(HttpConstants.SERVICE_RESPONSE_RESULT_FLAG))){
 		    	jsonObj.element(HttpConstants.RESPONSE_RESULT_FLAG_ISERROR, false);
 		    	jsonObj.element(HttpConstants.SERVICE_RESPONSE_RESULT_MSG, "");
@@ -45,7 +45,7 @@ public class BaseController {
 		    	jsonObj.element(HttpConstants.SERVICE_RESPONSE_RESULT_MSG, errMsg==null?HttpConstants.SERVICE_RESPONSE_NULL:errMsg);
 		    }
 		}
-		logger.info("输出结果：{}", jsonObj.toString());
+		//logger.info("输出结果：{}", jsonObj.toString());
 		return jsonObj.toString();
 	}
 	
@@ -57,15 +57,15 @@ public class BaseController {
 	public String responseSuccess(Object obj){
 		JSONObject jsonObj = null;
 		if(obj != null){
-		    logger.info("后端返回对象：{}", obj);
+		    //logger.info("后端返回对象：{}", obj);
 		    JsonConfig jsonConfig = new JsonConfig(); 
 		    jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
 		    jsonObj = JSONObject.fromObject(obj, jsonConfig);
-		    logger.info("后端返回数据：" + jsonObj);
+		    //logger.info("后端返回数据：" + jsonObj);
 		    jsonObj.element(HttpConstants.RESPONSE_RESULT_FLAG_ISERROR, false);
 		    jsonObj.element(HttpConstants.SERVICE_RESPONSE_RESULT_MSG, "");
 		}
-		logger.info("输出结果：{}", jsonObj.toString());
+		//logger.info("输出结果：{}", jsonObj.toString());
 		return jsonObj.toString();
 	}
 
@@ -77,13 +77,13 @@ public class BaseController {
 	public String responseArraySuccess(Object obj){
 		JSONArray jsonObj = null;
 		if(obj != null){
-			logger.info("后端返回对象：{}", obj);
+			//logger.info("后端返回对象：{}", obj);
 			JsonConfig jsonConfig = new JsonConfig();
 			jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
 			jsonObj = JSONArray.fromObject(obj, jsonConfig);
-			logger.info("后端返回数据：" + jsonObj);
+			//logger.info("后端返回数据：" + jsonObj);
 		}
-		logger.info("输出结果：{}", jsonObj.toString());
+		//logger.info("输出结果：{}", jsonObj.toString());
 		return jsonObj.toString();
 	}
 	
@@ -95,15 +95,15 @@ public class BaseController {
 	public String responseSuccess(Object obj, String msg){
 		JSONObject jsonObj = null;
 		if(obj != null){
-		    logger.info("后端返回对象：{}", obj);
+		    //logger.info("后端返回对象：{}", obj);
 		    JsonConfig jsonConfig = new JsonConfig(); 
 		    jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
 		    jsonObj = JSONObject.fromObject(obj, jsonConfig);
-		    logger.info("后端返回数据：" + jsonObj);
+		    //logger.info("后端返回数据：" + jsonObj);
 		    jsonObj.element(HttpConstants.RESPONSE_RESULT_FLAG_ISERROR, false);
 		    jsonObj.element(HttpConstants.SERVICE_RESPONSE_RESULT_MSG, msg);
 		}
-		logger.info("输出结果：{}", jsonObj.toString());
+		//logger.info("输出结果：{}", jsonObj.toString());
 		return jsonObj.toString();
 	}
 	
@@ -116,7 +116,7 @@ public class BaseController {
     	JSONObject jsonObj = new JSONObject();
     	jsonObj.put(HttpConstants.RESPONSE_RESULT_FLAG_ISERROR, true);
     	jsonObj.put(HttpConstants.SERVICE_RESPONSE_RESULT_MSG, errorMsg);
-        logger.info("输出结果：{}", jsonObj.toString());
+        //logger.info("输出结果：{}", jsonObj.toString());
         return jsonObj.toString();
     }
     

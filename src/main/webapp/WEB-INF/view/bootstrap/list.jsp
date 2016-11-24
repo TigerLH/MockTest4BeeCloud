@@ -39,11 +39,14 @@
 	             </a>
 	         </li>
 	         <li>
-	             <a href="list">Mock管理</a>
+	             <a href="#">Mock管理</a>
 	         </li>
 	       	 <li>
 	             <a href="rule">Rule管理</a>
 	         </li>
+			 <li>
+				 <a href="tbox">Tbox管理</a>
+			 </li>
 	     </ul>
 	 </div>
 	 

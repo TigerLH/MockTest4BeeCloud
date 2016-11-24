@@ -4,10 +4,12 @@ package com.beecloud.controller;
 import com.beecloud.domain.Mock;
 import com.beecloud.domain.MockVo;
 import com.beecloud.domain.Rule;
+import com.beecloud.domain.Tbox;
 import com.beecloud.mqtt.entity.AuthObject;
 import com.beecloud.service.MockService;
 import com.beecloud.service.MqttService;
 import com.beecloud.service.RuleService;
+import com.beecloud.service.TboxService;
 import com.beecloud.util.PagedResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,8 @@ public class MockController extends BaseController {
     @Resource
     private MqttService mqttService;
 
+    @Resource
+    private TboxService tboxService;
 	@RequestMapping("/")  
     public ModelAndView getIndex(){    
 		ModelAndView mav = new ModelAndView("index"); 
@@ -60,7 +64,11 @@ public class MockController extends BaseController {
 	public String rulelist(){
 		return "bootstrap/rule";
 	}
-	
+
+    @RequestMapping("/tbox")
+    public String mqttlist(){
+        return "bootstrap/tbox";
+    }
 	
     @RequestMapping(value="/mock/list.do", method= {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
@@ -86,7 +94,18 @@ public class MockController extends BaseController {
     public void insert(String title,String url, String method,int statuscode,String response){
     	mockService.insert(title, url, method, statuscode, response);
     }
-    
+
+    @RequestMapping(value="/mock/delete", method= {RequestMethod.POST})
+    @ResponseBody
+    public String mockDelete(Integer id) {
+        List<Integer> mock_used = ruleService.selectUsedMockId();
+        if(mock_used.contains(id)){
+            return responseFail("Mock已被绑定,删除对应规则后重试");
+        }else{
+            mockService.delectMockById(id);
+            return responseSuccess("删除成功");
+        }
+    }
     
     @RequestMapping(value="/rule/list.do", method= {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
@@ -99,7 +118,8 @@ public class MockController extends BaseController {
 			return responseFail(e.getMessage());
 		}
     }
-    
+
+
     /**
      * 更新mock值
      * @param id
@@ -125,18 +145,7 @@ public class MockController extends BaseController {
     		ruleService.insert(name, path,response_id);
     }
     
-    
-    @RequestMapping(value="/mock/delete", method= {RequestMethod.POST})
-    @ResponseBody
-    public String mockDelete(Integer id) {
-    	List<Integer> mock_used = ruleService.selectUsedMockId();
-    	if(mock_used.contains(id)){
-    		return responseFail("Mock已被绑定,删除对应规则后重试");
-    	}else{
-    		mockService.delectMockById(id);
-    		return responseSuccess("删除成功");
-    	}
-    }
+
     
     
     @RequestMapping(value="/rule/delete", method= {RequestMethod.POST})
@@ -177,12 +186,26 @@ public class MockController extends BaseController {
         mqttService.subscribeTopic(topic);
     }
 
+
+    /**
+     * 接口测试中使用
+     * @param message
+     */
     @RequestMapping(value="/mqtt/send", method= {RequestMethod.POST})
     @ResponseBody
     public void sendMessage(String message) {
         mqttService.sendMessaage(message);
     }
 
+
+    /**
+     * 功能测试使用
+     */
+    @RequestMapping(value="/mqtt/send/unencrypted", method= {RequestMethod.POST})
+    @ResponseBody
+    public void sendUnencryptedMessage(String message) {
+        mqttService.sendUnencryptedMessage(message);
+    }
 
 
     @RequestMapping(value="/mqtt/disconnect", method= {RequestMethod.GET})
@@ -196,6 +219,30 @@ public class MockController extends BaseController {
     public String getMessageByKey(String key,int timeOut) {
         String message = mqttService.getMessageByKey(key,timeOut);
         return mqttResponse(message);
+    }
+
+    @RequestMapping(value="/tbox/insert", method= {RequestMethod.POST})
+    @ResponseBody
+    public void tboxInsert(String name,String data) {
+        tboxService.insert(name,data);
+    }
+
+    @RequestMapping(value="/tbox/delete", method= {RequestMethod.POST})
+    @ResponseBody
+    public void tboxDelete(Integer id) {
+        tboxService.delectTboxById(id);
+    }
+
+    @RequestMapping(value="/tbox/list.do", method= {RequestMethod.POST,RequestMethod.GET})
+    @ResponseBody
+    public String tboxList(Integer pageNumber,Integer pageSize ,String name) {
+        logger.info("分页查询用户信息列表请求入参：pageNumber{},pageSize{}", pageNumber,pageSize);
+        try {
+            PagedResult<Tbox> pageResult = tboxService.queryByPage(name, pageNumber,pageSize);
+            return responseSuccess(pageResult);
+        } catch (Exception e) {
+            return responseFail(e.getMessage());
+        }
     }
 
 }

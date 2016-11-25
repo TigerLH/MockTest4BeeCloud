@@ -46,6 +46,11 @@ public class TboxServiceImpl implements TboxService{
     }
 
     @Override
+    public void updateTboxById(Integer id,String name,String data){
+        tboxDao.updateTboxById(id,name,data);
+    }
+
+    @Override
     public PagedResult<Tbox> queryByPage(String name, Integer pageNo, Integer pageSize) {
         pageNo = pageNo == null?1:pageNo;
         pageSize = pageSize == null?10:pageSize;

@@ -47,7 +47,7 @@
 	     </ul>
 	 </div>
 	 
-	 <!-- 模态框（Modal） -->
+	 <!-- 新增模态框（Modal） -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display:none">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -79,8 +79,45 @@
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal -->
-	</div> 
-	   
+	</div>
+
+	 <!-- 编辑模态框（Modal） -->
+	 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display:none">
+		 <div class="modal-dialog">
+			 <div class="modal-content">
+				 <div class="modal-header">
+					 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						 &times;
+					 </button>
+					 <h4 class="modal-title" id="myModalLabel">
+						 编辑数据
+					 </h4>
+				 </div>
+				 <div class="modal-body">
+					 <div class="control-group"><label class="control-label" for="index" >id</label>
+						 <div class="controls" ><input id="index" placeholder="index" type="text" readonly="true" style="width:300px;"/></div>
+					 </div>
+
+					 <div class="control-group"><label class="control-label" for="title" >标题</label>
+						 <div class="controls" ><input id="title" placeholder="title" type="text" style="width:300px;"/></div>
+					 </div>
+
+					 <label class="control-label"  for="message">消息体</label>
+					 <textarea id="message" style="height:200px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
+				 </div>
+			 </div>
+			 <div class="modal-footer">
+				 <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+				 </button>
+				 <button type="submit" class="btn btn-primary" onclick="update()">
+					 提交更改
+				 </button>
+			 </div>
+		 </div><!-- /.modal-content -->
+	 </div><!-- /.modal -->
+	 </div>
+
+
 	<div id = "queryDiv">
 		<input id = "textInput" type="text" placeholder="请输入标题" >
 		<button id = "queryButton" class="btn btn-primary" type="button">查询</button>
@@ -104,20 +141,23 @@
 		<div id="bottomTab"></div>
 	</form>
 	<script type='text/javascript'>
-		//运行停止
-// 		$(document).on('click','#runcode',function(){
-// 			var _this = $(this);
-			//运行状态
-// 			if(_this.hasClass("btn-danger")){
-// 				_this.removeClass("btn-danger").addClass("btn-info");
-// 				_this.text("运行");
-// 			}
-			//停止状态
-// 			else{
-// 				_this.addClass("btn-danger").removeClass("btn-info");
-// 				_this.text("停止");
-// 			}
-// 		});
+		//触发模态框的同时调用此方法
+		function edit(obj) {
+			var id = $(obj).attr("id");
+			//获取表格中的一行数据
+			var row = id%10;
+			if(row==0){
+				row=10;  //如果能被整除,则取最后一条
+			}
+			var id = document.getElementById("tableResult").rows[row].cells[0].innerText;
+			var title = document.getElementById("tableResult").rows[row].cells[1].innerText;
+			var message = document.getElementById("tableResult").rows[row].cells[2].innerText;
+			//向模态框中传值
+			$('#index').val(id);
+			$('#title').val(title);
+			$('#message').val(message);
+			$('#editModal').modal('show');
+		}
 			
 		//插入规则
 		function insert() {
@@ -134,7 +174,23 @@
 				}
 			});
 		}
-		
+
+		function update(){
+			var id =  $('#index').val();
+			var name = $('#title').val();
+			var data = $('#message').val();
+			$.ajax({
+				type: "post",
+				url: "tbox/update",
+				data: "id=" + id +"&name=" + name + "&data=" + data,
+				dataType: 'html',
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
+				success: function(result) {
+					location.reload();
+				}
+			});
+		}
+
 		//删除记录
 		function del(obj) {
 			var index = $(obj).attr("id");
@@ -264,6 +320,7 @@
                     content += '<td>' + element.data + '</td>';
                     content += '<td>';
 				    content += '<button class="btn btn-info" type="button"'+'id="'+index+'"onclick=send(this)>发送</button>';
+				    content += '<button class="btn btn-warning" type="button"'+'id="'+index+'"onclick=edit(this)>编辑</button>';
                     content += '<button class="btn btn-danger" type="button"'+'id="'+index+'"onclick=del(this)>删除</button>';
                     content += '</td>';
                     content += '</tr>';

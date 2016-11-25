@@ -31,4 +31,8 @@
 	<update id="delectTboxById">
 		UPDATE tbox SET status=0 WHERE id=#{id}
 	</update>
+
+	<update id="updateTboxById">
+		UPDATE tbox SET name = #{name},data = #{data} WHERE id=#{id}
+	</update>
 </mapper>

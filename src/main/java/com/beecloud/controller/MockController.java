@@ -227,6 +227,12 @@ public class MockController extends BaseController {
         tboxService.insert(name,data);
     }
 
+    @RequestMapping(value="/tbox/update", method= {RequestMethod.POST})
+    @ResponseBody
+    public void tboxUpdate(Integer id,String name,String data) {
+        tboxService.updateTboxById(id,name,data);
+    }
+
     @RequestMapping(value="/tbox/delete", method= {RequestMethod.POST})
     @ResponseBody
     public void tboxDelete(Integer id) {
@@ -236,7 +242,6 @@ public class MockController extends BaseController {
     @RequestMapping(value="/tbox/list.do", method= {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
     public String tboxList(Integer pageNumber,Integer pageSize ,String name) {
-        logger.info("分页查询用户信息列表请求入参：pageNumber{},pageSize{}", pageNumber,pageSize);
         try {
             PagedResult<Tbox> pageResult = tboxService.queryByPage(name, pageNumber,pageSize);
             return responseSuccess(pageResult);

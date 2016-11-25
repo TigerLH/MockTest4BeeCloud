@@ -152,12 +152,23 @@ class PushCallback implements MqttCallback,MqttSubject {
      */
 	protected void receiveAppMessage(String topic, MqttMessage message){
 			byte[] data = message.getPayload();
+		    String key;
 			String msg = new String(data);
-			String key = JsonPath.parse(msg).read("$.mqttHeader.msgId");
+			try{
+				 key = JsonPath.parse(msg).read("$.mqttHeader.msgId");
+			}catch(Exception e){
+				String applicationId = JsonPath.parse(msg).read("$.mqttHeader.applicationId");
+				String stepId = JsonPath.parse(msg).read("$.mqttHeader.stepId");
+				long tboxEventTime = JsonPath.parse(msg).read("$.data.tboxEventTime");
+				key = String.valueOf(applicationId)+String.valueOf(stepId)+String.valueOf(tboxEventTime);
+			}
 		    logger.info("收到App推送消息:");
+			logger.info(key);
 			logger.info(msg);
 		    this.notifyMqttObservers(key,msg);
 	}
+
+
 
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {

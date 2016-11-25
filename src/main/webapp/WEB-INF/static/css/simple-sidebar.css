@@ -65,12 +65,12 @@
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
-    color: #999999;
+    color: #87B7FF;
 }
 
 .sidebar-nav li a:hover {
     text-decoration: none;
-    color: #fff;
+    color: #87B7FF;
     background: rgba(255,255,255,0.2);
 }
 
@@ -80,7 +80,7 @@
 }
 
 .sidebar-nav > .sidebar-brand {
-    height: 65px;
+    height: 50px;
     font-size: 18px;
     line-height: 60px;
 }

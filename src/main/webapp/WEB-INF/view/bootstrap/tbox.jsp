@@ -35,14 +35,19 @@
 	                Mock Server
 	             </a>
 	         </li>
-	         <li>
-	             <a href="list">Mock管理</a>
-	         </li>
-	         <li>
-	             <a href="rule">Rule管理</a>
-	         </li>
+			 <li class="sidebar-brand">
+				 <a href="list">
+					 HttpMock
+				 </a>
+			 </li>
+
+			 <li class="sidebar-brand">
+				 <a href="#">
+					 TboxMock
+				 </a>
 			 <li>
-				 <a href="#">Tbox管理</a>
+				 <a href="tbox">Tbox管理</a>
+			 </li>
 			 </li>
 	     </ul>
 	 </div>

@@ -78,6 +78,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 				client.publish(topic, msg);
 			}
 		}catch (Exception e) {
+			this.disconnect();
 			e.printStackTrace();
 		}
 	}

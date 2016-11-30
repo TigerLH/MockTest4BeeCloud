@@ -155,21 +155,34 @@ class PushCallback implements MqttCallback,MqttSubject {
 			byte[] data = message.getPayload();
 		    String key;
 			String msg = new String(data);
+			logger.info("收到App推送消息:");
+			logger.info(msg);
 			try{
-				 key = JsonPath.parse(msg).read("$.mqttHeader.msgId");
+				key = ((ArrayList<String>)JsonPath.parse(msg).read("$..msgId")).get(0);
 			}catch(Exception e){
-				String applicationId = JsonPath.parse(msg).read("$.mqttHeader.applicationId");
-				String stepId = JsonPath.parse(msg).read("$.mqttHeader.stepId");
-				long tboxEventTime = JsonPath.parse(msg).read("$.data.tboxEventTime");
+				String applicationId = ((ArrayList<String>)JsonPath.parse(msg).read("$..applicationId")).get(0);
+				String stepId = ((ArrayList<String>)JsonPath.parse(msg).read("$..stepId")).get(0);
+				long tboxEventTime =  ((ArrayList<Long>)JsonPath.parse(msg).read("$..tboxEventTime")).get(0);
 				key = String.valueOf(applicationId)+String.valueOf(stepId)+String.valueOf(tboxEventTime);
 			}
-		    logger.info("收到App推送消息:");
+			logger.info("映射的Key为:");
 			logger.info(key);
-			logger.info(msg);
 		    this.notifyMqttObservers(key,msg);
 	}
 
-
+	public static void main(String ...args){
+		String msg = " {\"serviceHeader\":{\"applicationId\":\"1\",\"stepId\":\"7\",\"msgId\":\"1480488965807|VIN99999901\"},\"data\":{\"state\":false,\"tboxEventTime\":1480488966000,\"notiyfyMsg\":\"浠诲姟鎵ц\uE511鏉′欢涓嶆弧瓒砡杞﹁締姝ｅ湪琛岄┒\",\"plate\":\"宸滱99901\"}}";
+		String key = "";
+		try{
+			key = ((ArrayList<String>)JsonPath.parse(msg).read("$..msgId")).get(0);
+		}catch(Exception e){
+			String applicationId = ((ArrayList<String>)JsonPath.parse(msg).read("$..applicationId")).get(0);
+			String stepId = ((ArrayList<String>)JsonPath.parse(msg).read("$..stepId")).get(0);
+			long tboxEventTime =  ((ArrayList<Long>)JsonPath.parse(msg).read("$..tboxEventTime")).get(0);
+			key = String.valueOf(applicationId)+String.valueOf(stepId)+String.valueOf(tboxEventTime);
+		}
+		System.out.println(key);
+	}
 
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {

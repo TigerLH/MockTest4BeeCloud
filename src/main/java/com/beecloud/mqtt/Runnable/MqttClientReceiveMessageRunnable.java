@@ -77,7 +77,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 				logger.info("订阅消息:"+topic);
 			}
 		} catch (MqttException e) {
-			this.disconnetc();
+			//this.disconnetc();
 			e.printStackTrace();
 		}
 	}

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.beecloud.mqtt.entity;
+package com.beecloud.mqtt.Entity;
 
 
 /**

@@ -1,6 +1,6 @@
 package com.beecloud.mqtt.Runnable;
 
-import com.beecloud.mqtt.entity.SendMessageObject;
+import com.beecloud.mqtt.Entity.SendMessageObject;
 import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.BaseMessage;

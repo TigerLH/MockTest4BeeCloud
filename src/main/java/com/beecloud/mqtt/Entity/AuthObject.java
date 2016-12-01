@@ -1,4 +1,4 @@
-package com.beecloud.mqtt.entity;
+package com.beecloud.mqtt.Entity;
 
 /**
  * Created by dell on 2016/11/11.

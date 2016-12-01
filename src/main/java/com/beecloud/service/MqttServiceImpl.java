@@ -1,10 +1,10 @@
 package com.beecloud.service;
 
+import com.beecloud.mqtt.Entity.AuthObject;
+import com.beecloud.mqtt.Entity.SendMessageObject;
 import com.beecloud.mqtt.Runnable.MqttClientReceiveMessageRunnable;
 import com.beecloud.mqtt.Runnable.MqttClientSendMessageRunnable;
 import com.beecloud.mqtt.constansts.MessageMapper;
-import com.beecloud.mqtt.entity.AuthObject;
-import com.beecloud.mqtt.entity.SendMessageObject;
 import com.beecloud.platform.protocol.core.constants.ApplicationID;
 import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
 import com.beecloud.platform.protocol.core.element.Authentication;
@@ -12,14 +12,12 @@ import com.beecloud.platform.protocol.core.element.TimeStamp;
 import com.beecloud.platform.protocol.core.element.VehicleDescriptor;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AbstractMessage;
-import com.beecloud.platform.protocol.core.message.AckMessage;
 import com.beecloud.platform.protocol.core.message.AuthReqMessage;
 import com.beecloud.platform.protocol.core.message.BaseMessage;
 import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.beecloud.util.UuidUtil;
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
-import org.apache.log4j.spi.LoggerFactory;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;

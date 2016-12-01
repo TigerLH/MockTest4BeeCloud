@@ -5,7 +5,6 @@ import com.beecloud.domain.Mock;
 import com.beecloud.domain.MockVo;
 import com.beecloud.domain.Rule;
 import com.beecloud.domain.Tbox;
-import com.beecloud.mqtt.entity.AuthObject;
 import com.beecloud.service.MockService;
 import com.beecloud.service.MqttService;
 import com.beecloud.service.RuleService;

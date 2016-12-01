@@ -2,7 +2,6 @@ package com.beecloud.service;
 
 import com.beecloud.domain.Tbox;
 import com.beecloud.util.PagedResult;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ public interface TboxService {
 	
 	void delectTboxById(Integer id);
 
-	void updateTboxById(Integer id, String name,String data);
+	void updateTboxById(Integer id, String name,String data,String vin);
 	
 	PagedResult<Tbox> queryByPage(String name, Integer pageNo, Integer pageSize);
 

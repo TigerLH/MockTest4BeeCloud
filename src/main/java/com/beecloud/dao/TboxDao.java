@@ -3,7 +3,6 @@
  */
 package com.beecloud.dao;
 
-import com.beecloud.domain.Rule;
 import com.beecloud.domain.Tbox;
 import org.apache.ibatis.annotations.Param;
 
@@ -51,5 +50,5 @@ public interface TboxDao {
 	  */
 	 void delectTboxById(@Param("id") Integer id);
 
-	 void updateTboxById(@Param("id")Integer id,@Param("name")String name,@Param("data")String data);
+	 void updateTboxById(@Param("id")Integer id,@Param("name")String name,@Param("data")String data,@Param("vin")String vin);
 }

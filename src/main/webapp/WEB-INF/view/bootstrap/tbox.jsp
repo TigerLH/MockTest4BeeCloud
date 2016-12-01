@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.util.*" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +27,35 @@
 </style>
 </head>
 <body>
-	 <!-- Sidebar -->
+<%
+	List<String> vehicle_list = new ArrayList<String>();
+	try{
+		Connection conn = null;
+		Statement stat = null;
+		//加载数据库驱动类
+		Class.forName("com.mysql.jdbc.Driver").newInstance();
+		//数据库连接URL
+		String url = "jdbc:mysql://10.28.4.35:3306/vehicle?useUnicode=true&characterEncoding=UTF-8";
+		//数据库用户名
+		String user = "root";
+		//数据库密码
+		String password = "beecloud2016";
+		//根据数据库参数取得一个数据库连接
+		conn = DriverManager.getConnection(url, user, password);
+		stat = conn.createStatement();
+		String sql = "select * from vehicle";
+		ResultSet rs = stat.executeQuery(sql);
+		while(rs.next()){
+			vehicle_list.add(rs.getString("vin"));
+		}
+		if (rs!=null){
+			rs.close();
+		}
+	}catch (Exception e){
+		e.printStackTrace();
+	}
+%>
+<!-- Sidebar -->
 	 <div id="sidebar-wrapper">
 	     <ul class="sidebar-nav">
 	         <li class="sidebar-brand">
@@ -68,7 +96,7 @@
 					<div class="control-group"><label class="control-label" for="name" >名称</label>
 						<div class="controls" ><input id="name" placeholder="名称" type="text" style="width:300px;"/></div>
 					</div>
-					
+
 					<div class="control-group"><label class="control-label"  for="data">消息体</label>
 						<div class="controls">
 							<textarea id="data" style="height:200px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
@@ -107,6 +135,12 @@
 						 <div class="controls" ><input id="title" placeholder="title" type="text" style="width:300px;"/></div>
 					 </div>
 
+					 <div class="form-group">
+						 <label for="name">绑定车辆</label>
+						 <select id="myselect" class="form-control">
+						 </select>
+					 </div>
+
 					 <label class="control-label"  for="message">消息体</label>
 					 <textarea id="message" style="height:200px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
 				 </div>
@@ -134,7 +168,8 @@
 			<thead>
 				<tr>
 					<th width=10%>id</th>
-					<th width=20%>name</th>
+					<th width=15%>name</th>
+					<th width=15%>vin</th>
 					<th width=40%>data</th>
 					<th width=20%>operation</th>
 				</tr>
@@ -156,12 +191,26 @@
 			}
 			var id = document.getElementById("tableResult").rows[row].cells[0].innerText;
 			var title = document.getElementById("tableResult").rows[row].cells[1].innerText;
-			var message = document.getElementById("tableResult").rows[row].cells[2].innerText;
+			var message = document.getElementById("tableResult").rows[row].cells[3].innerText;
 			//向模态框中传值
 			$('#index').val(id);
 			$('#title').val(title);
 			$('#message').val(message);
 			$('#editModal').modal('show');
+
+			//初始化车辆信息
+			var data = '<%=vehicle_list%>';
+			var array = data.replace("[","").replace("]","").split(",");
+			var count= document.getElementById('myselect').options.length;
+			if(count>0){
+				return;
+			}
+			$.each(array,function(index,value){
+				if(""!=value){
+					var content = '<option>' +value+ '</option>';
+					$("#myselect").append(content);
+				}
+			});
 		}
 			
 		//插入规则
@@ -183,11 +232,13 @@
 		function update(){
 			var id =  $('#index').val();
 			var name = $('#title').val();
+			var select=myselect.selectedIndex ;
+			var vin= myselect.options[select].value;
 			var data = $('#message').val();
 			$.ajax({
 				type: "post",
 				url: "tbox/update",
-				data: "id=" + id +"&name=" + name + "&data=" + data,
+				data: "id=" + id +"&name=" + name + "&data=" + data +"&vin=" + vin,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
@@ -322,6 +373,7 @@
                     index = index+1;
                     content += '<td>' + element.id + '</td>';
                     content += '<td>' + element.name + '</td>';
+				    content += '<td>' + element.vin + '</td>';
                     content += '<td>' + element.data + '</td>';
                     content += '<td>';
 				    content += '<button class="btn btn-info" type="button"'+'id="'+index+'"onclick=send(this)>发送</button>';

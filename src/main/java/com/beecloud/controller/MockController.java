@@ -228,8 +228,8 @@ public class MockController extends BaseController {
 
     @RequestMapping(value="/tbox/update", method= {RequestMethod.POST})
     @ResponseBody
-    public void tboxUpdate(Integer id,String name,String data) {
-        tboxService.updateTboxById(id,name,data);
+    public void tboxUpdate(Integer id,String name,String data,String vin) {
+        tboxService.updateTboxById(id,name,data,vin);
     }
 
     @RequestMapping(value="/tbox/delete", method= {RequestMethod.POST})

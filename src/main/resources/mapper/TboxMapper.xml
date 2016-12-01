@@ -33,6 +33,6 @@
 	</update>
 
 	<update id="updateTboxById">
-		UPDATE tbox SET name = #{name},data = #{data} WHERE id=#{id}
+		UPDATE tbox SET name = #{name},data = #{data},vin = #{vin} WHERE id=#{id}
 	</update>
 </mapper>

@@ -8,6 +8,7 @@ package com.beecloud.domain;
 public class Tbox {
     private int id;
     private String name;
+    private String vin;
     private String data;
     private int status;
 
@@ -25,6 +26,14 @@ public class Tbox {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getVin() {
+        return vin;
+    }
+
+    public void setVin(String vin) {
+        this.vin = vin;
     }
 
     public String getData() {
@@ -48,6 +57,7 @@ public class Tbox {
         return "Tbox{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", vin='" + vin + '\'' +
                 ", data='" + data + '\'' +
                 ", status=" + status +
                 '}';

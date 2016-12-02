@@ -170,8 +170,8 @@
 	</div>
 	<div id = "startServer">
 		<select id="select_start_server" class="form-control"></select>
-		<button id = "button_start_server" class="btn btn-primary" type="button" onclick="startMockServer()">启动</button>
-		<button id = "button_stop_server" class="btn btn-info" type="button" onclick="stopMockServer()">停止</button>
+		<button id = "button_start_server" class="btn btn-success" type="button" onclick="startMockServer()">启动</button>
+		<button id = "button_stop_server" class="btn btn-warning" type="button" onclick="stopMockServer()">停止</button>
 	</div>
 
 
@@ -222,7 +222,9 @@
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
-
+					document.getElementById("select_start_server").disabled=true;
+					document.getElementById("button_start_server").disabled=true;
+					document.getElementById("button_start_server").setAttribute("class","btn btn-default");
 				}
 			});
 		}
@@ -235,7 +237,9 @@
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
-
+					document.getElementById("select_start_server").disabled=false;
+					document.getElementById("button_start_server").disabled=false;
+					document.getElementById("button_start_server").setAttribute("class","btn btn-success");
 				}
 			});
 		}

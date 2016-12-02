@@ -131,9 +131,7 @@ public class MqttServiceImpl implements MqttService{
         SendMessageObject sendMessageObject = new SendMessageObject();
         sendMessageObject.setTopic(Tbox_Send_Topic);
         sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(abstractMessage.encode()));
-        logger.info("功能测试:发送消息");
-        logger.info("消息类型:"+MessageMapper.getMessage(key).getName());
-        logger.info(abstractMessage.toString());
+        MSMR.addMessage(sendMessageObject);
     }
 
     public static void main(String...args){

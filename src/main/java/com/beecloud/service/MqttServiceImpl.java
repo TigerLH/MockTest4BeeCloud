@@ -6,22 +6,15 @@ import com.beecloud.mqtt.Runnable.MqttClientReceiveMessageRunnable;
 import com.beecloud.mqtt.Runnable.MqttClientSendMessageRunnable;
 import com.beecloud.mqtt.constansts.MessageMapper;
 import com.beecloud.platform.protocol.core.constants.ApplicationID;
-import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
 import com.beecloud.platform.protocol.core.element.Authentication;
 import com.beecloud.platform.protocol.core.element.TimeStamp;
 import com.beecloud.platform.protocol.core.element.VehicleDescriptor;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.AuthReqMessage;
-import com.beecloud.platform.protocol.core.message.BaseMessage;
 import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
-import com.beecloud.util.UuidUtil;
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +27,8 @@ import java.util.Date;
 @Service
 public class MqttServiceImpl implements MqttService{
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
-    private String host = "tcp://10.28.4.34:1883";
+    private String host = "tcp://10.28.4.34:1883";  //功能测试环境
+    private String auto_test_host = "tcp://10.28.4.76:1883";//自动化测试环境
     private MqttClientReceiveMessageRunnable MRMR = null;
     private MqttClientSendMessageRunnable MSMR = null;
     private String Tbox_Send_Topic = "mqtt/server";
@@ -74,10 +68,10 @@ public class MqttServiceImpl implements MqttService{
 
     @Override
     public void run() {
-        MSMR = new MqttClientSendMessageRunnable();
+        MSMR = new MqttClientSendMessageRunnable(host);
         Thread sendThread = new Thread(MSMR);
         sendThread.start();
-        MRMR = new MqttClientReceiveMessageRunnable();
+        MRMR = new MqttClientReceiveMessageRunnable(host);
         Thread receiveThread = new Thread(MRMR);
         receiveThread.start();
     }
@@ -98,7 +92,7 @@ public class MqttServiceImpl implements MqttService{
     public void sendAuthReqMessage(String authMessage) {
         Gson gson = new Gson();
         AuthObject authObject = gson.fromJson(authMessage,AuthObject.class);
-        MRMR.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin()));//订阅认证ack topic
+        MRMR.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin().trim()));//订阅认证ack topic
 
         SendMessageObject sendMessageObject = new SendMessageObject();
         AuthReqMessage authReqMessage = getAuthReqMessage(authObject);
@@ -120,29 +114,26 @@ public class MqttServiceImpl implements MqttService{
     }
 
     @Override
-    public void sendUnencryptedMessage(String unEncryptedMessage) {
-        Gson gson = new Gson();
-        String applicationId = JsonPath.parse(unEncryptedMessage).read("$.applicationHeader.applicationID");
-        int stepId = JsonPath.parse(unEncryptedMessage).read("$.applicationHeader.stepId");
-        String key = applicationId+stepId;
-        AbstractMessage abstractMessage = (AbstractMessage)gson.fromJson(unEncryptedMessage,MessageMapper.getMessage(key));
-        BaseDataGram baseDataGram = new BaseDataGram();
-        BaseMessage baseMessage = (BaseMessage)abstractMessage;
-        baseDataGram.addMessage(baseMessage);
-        try {
-            MqttClient client = new MqttClient(host, UuidUtil.getUuid());
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setCleanSession(true);
-            client.connect(options);
-            MqttMessage msg = new MqttMessage();
-            msg.setPayload(baseDataGram.encode());
-            client.publish(Tbox_Send_Topic, msg);
-            client.disconnect(3*1000);
-            logger.info("功能测试:发送消息");
-            logger.info(baseDataGram.toString());
-        } catch (MqttException e) {
-            e.printStackTrace();
+    public void sendUnencryptedMessage(String message,String vin) {
+        if(vin!=null&&!"".equals(vin)){  //如果VIN码不为空,则替换掉Message中的identityCode
+            AuthObject authObject = new AuthObject();
+            authObject.setVin(vin);
+            authObject.setPid("BEECLOUD");
+            long identityCode = authObject.getIdentityCode();
+            int tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
+            message = message.replace(String.valueOf(tobeReplace),String.valueOf(identityCode));
         }
+        Gson gson = new Gson();
+        String applicationId = JsonPath.parse(message).read("$.applicationHeader.applicationID");
+        int stepId = JsonPath.parse(message).read("$.applicationHeader.stepId");
+        String key = applicationId+stepId;
+        AbstractMessage abstractMessage = (AbstractMessage)gson.fromJson(message, MessageMapper.getMessage(key));
+        SendMessageObject sendMessageObject = new SendMessageObject();
+        sendMessageObject.setTopic(Tbox_Send_Topic);
+        sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(abstractMessage.encode()));
+        logger.info("功能测试:发送消息");
+        logger.info("消息类型:"+MessageMapper.getMessage(key).getName());
+        logger.info(abstractMessage.toString());
     }
 
     public static void main(String...args){
@@ -170,7 +161,13 @@ public class MqttServiceImpl implements MqttService{
                 "        \"remainingLength\": 0\n" +
                 "    }\n" +
                 "}";
-        new MqttServiceImpl().sendUnencryptedMessage(json);
+      //  new MqttServiceImpl().sendUnencryptedMessage(json,"VIN99999901");
+        AuthObject authObject = new AuthObject();
+        authObject.setVin("VIN99999901");
+        authObject.setPid("BEECLOUD");
+//        AuthReqMessage authReqMessage = new MqttServiceImpl().getAuthReqMessage(authObject);
+        Gson gson = new Gson();
+        System.out.println(gson.toJson(authObject));
     }
 
 

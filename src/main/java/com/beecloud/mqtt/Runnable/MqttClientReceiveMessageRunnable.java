@@ -25,10 +25,11 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private MqttClient client = null;
 	private Logger logger = LoggerFactory.getLogger(this.getClientId());
 	private Queue<String> topics = new LinkedBlockingQueue<String>();
-	private String host = "tcp://10.28.4.34:1883";
 	private static Map<String,String> cache = new HashMap<String,String>();
 	private boolean status = true;
-	public MqttClientReceiveMessageRunnable(){
+	private String host;
+	public MqttClientReceiveMessageRunnable(String host){
+		this.host = host;
 	}
 
 	public void addTopic(String topic){

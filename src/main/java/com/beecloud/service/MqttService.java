@@ -9,6 +9,6 @@ public interface MqttService {
     void sendAuthReqMessage(String authMessage);
     void subscribeTopic(String topic);
     void sendMessaage(String message);
-    void sendUnencryptedMessage(String json);
+    void sendUnencryptedMessage(String json,String vin);
     String getMessageByKey(String key,int timeOut);
 }

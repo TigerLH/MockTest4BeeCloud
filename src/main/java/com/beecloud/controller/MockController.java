@@ -202,8 +202,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/send/unencrypted", method= {RequestMethod.POST})
     @ResponseBody
-    public void sendUnencryptedMessage(String message) {
-        mqttService.sendUnencryptedMessage(message);
+    public void sendUnencryptedMessage(String message,String vin) {
+        mqttService.sendUnencryptedMessage(message,vin);
     }
 
 
@@ -228,8 +228,8 @@ public class MockController extends BaseController {
 
     @RequestMapping(value="/tbox/update", method= {RequestMethod.POST})
     @ResponseBody
-    public void tboxUpdate(Integer id,String name,String data,String vin) {
-        tboxService.updateTboxById(id,name,data,vin);
+    public void tboxUpdate(Integer id,String name,String data) {
+        tboxService.updateTboxById(id,name,data);
     }
 
     @RequestMapping(value="/tbox/delete", method= {RequestMethod.POST})

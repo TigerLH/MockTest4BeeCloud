@@ -16,6 +16,12 @@
  margin-left: auto;
  width:800px;
 }
+#startServer {
+	margin-right: auto;
+	margin-left: auto;
+	width:800px;
+}
+
 #textInput {
  margin-top: 10px;
 }
@@ -135,11 +141,11 @@
 						 <div class="controls" ><input id="title" placeholder="title" type="text" style="width:300px;"/></div>
 					 </div>
 
-					 <div class="form-group">
-						 <label for="name">绑定车辆</label>
-						 <select id="myselect" class="form-control">
-						 </select>
-					 </div>
+					 <%--<div class="form-group">--%>
+						 <%--<label for="name">绑定车辆</label>--%>
+						 <%--<select id="myselect" class="form-control">--%>
+						 <%--</select>--%>
+					 <%--</div>--%>
 
 					 <label class="control-label"  for="message">消息体</label>
 					 <textarea id="message" style="height:200px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
@@ -162,14 +168,21 @@
 		<button id = "queryButton" class="btn btn-primary" type="button">查询</button>
 		<button id = "createButton" class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">新建</button>
 	</div>
+	<div id = "startServer">
+		<select id="select_start_server" class="form-control"></select>
+		<button id = "button_start_server" class="btn btn-primary" type="button" onclick="startMockServer()">启动</button>
+		<button id = "button_stop_server" class="btn btn-info" type="button" onclick="stopMockServer()">停止</button>
+	</div>
+
+
+
 	<form id="form1">
 		<table class="table table-hover table-bordered table-striped" id = 'tableResult'  style="word-break:break-all; word-wrap:break-all;">
 			<caption>查询结果</caption>
 			<thead>
 				<tr>
 					<th width=10%>id</th>
-					<th width=15%>name</th>
-					<th width=15%>vin</th>
+					<th width=20%>name</th>
 					<th width=40%>data</th>
 					<th width=20%>operation</th>
 				</tr>
@@ -181,6 +194,53 @@
 		<div id="bottomTab"></div>
 	</form>
 	<script type='text/javascript'>
+		//页面加载完成时初始化车辆下拉框
+		$(document).ready(function(){
+			var data = '<%=vehicle_list%>';
+			var array = data.replace("[","").replace("]","").split(",");
+			var count= document.getElementById('select_start_server').options.length;
+			if(count>0){
+				return;
+			}
+			$.each(array,function(index,value){
+				if(""!=value){
+					var content = '<option>' +value+ '</option>';
+					$("#select_start_server").append(content);
+				}
+			});
+		});
+
+		//启动服务
+		function startMockServer(){
+			var index=select_start_server.selectedIndex ;
+			var vin= select_start_server.options[index].value;
+			var auth = '{ "vin": "'+vin+'", "pid": "BEECLOUD" }';
+			$.ajax({
+				type: "post",
+				url: "mqtt/connect",
+				data: "authMessage=" + auth,
+				dataType: 'html',
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
+				success: function(result) {
+
+				}
+			});
+		}
+
+		//关闭服务
+		function  stopMockServer() {
+			$.ajax({
+				type: "get",
+				url: "mqtt/disconnect",
+				dataType: 'html',
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
+				success: function(result) {
+
+				}
+			});
+		}
+
+
 		//触发模态框的同时调用此方法
 		function edit(obj) {
 			var id = $(obj).attr("id");
@@ -191,26 +251,12 @@
 			}
 			var id = document.getElementById("tableResult").rows[row].cells[0].innerText;
 			var title = document.getElementById("tableResult").rows[row].cells[1].innerText;
-			var message = document.getElementById("tableResult").rows[row].cells[3].innerText;
+			var message = document.getElementById("tableResult").rows[row].cells[2].innerText;
 			//向模态框中传值
 			$('#index').val(id);
 			$('#title').val(title);
 			$('#message').val(message);
 			$('#editModal').modal('show');
-
-			//初始化车辆信息
-			var data = '<%=vehicle_list%>';
-			var array = data.replace("[","").replace("]","").split(",");
-			var count= document.getElementById('myselect').options.length;
-			if(count>0){
-				return;
-			}
-			$.each(array,function(index,value){
-				if(""!=value){
-					var content = '<option>' +value+ '</option>';
-					$("#myselect").append(content);
-				}
-			});
 		}
 			
 		//插入规则
@@ -232,13 +278,11 @@
 		function update(){
 			var id =  $('#index').val();
 			var name = $('#title').val();
-			var select=myselect.selectedIndex ;
-			var vin= myselect.options[select].value;
 			var data = $('#message').val();
 			$.ajax({
 				type: "post",
 				url: "tbox/update",
-				data: "id=" + id +"&name=" + name + "&data=" + data +"&vin=" + vin,
+				data: "id=" + id +"&name=" + name + "&data=" + data,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
@@ -277,11 +321,12 @@
 				row=10;  //如果能被整除,则取最后一条
 			}
 			var message = document.getElementById("tableResult").rows[row].cells[2].innerText;
-			console.log(message);
+			var index=select_start_server.selectedIndex ;
+			var vin= select_start_server.options[index].value;
 			$.ajax({
 				type: "post",
 				url: "mqtt/send/unencrypted",
-				data: "message=" + message,
+				data: "message=" + message +"&vin=" + vin,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
@@ -373,7 +418,6 @@
                     index = index+1;
                     content += '<td>' + element.id + '</td>';
                     content += '<td>' + element.name + '</td>';
-				    content += '<td>' + element.vin + '</td>';
                     content += '<td>' + element.data + '</td>';
                     content += '<td>';
 				    content += '<button class="btn btn-info" type="button"'+'id="'+index+'"onclick=send(this)>发送</button>';
@@ -384,7 +428,7 @@
                     $("#tableBody").append(content);
              	    });
              	    } else {             	            	
-             	          $("#tableBody").append('<tr><th colspan ="4"><center>查询无数据</center></th></tr>');
+             	          $("#tableBody").append('<tr><th colspan ="5"><center>查询无数据</center></th></tr>');
              	    }
              	    }else{
              	          alert(data.errorMsg);

@@ -15,15 +15,15 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class MqttClientSendMessageRunnable implements Runnable{
-	private String host = "tcp://10.28.4.34:1883";
 	private MqttClient client = null;
 	private boolean status = true;
 	private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 	private Queue<SendMessageObject> messages = new LinkedBlockingQueue<SendMessageObject>();
-	
+	private String host;
 
 	
-	public MqttClientSendMessageRunnable(){
+	public MqttClientSendMessageRunnable(String host){
+		this.host = host;
 	}
 
 	public String getClientId(){

@@ -46,8 +46,8 @@ public class TboxServiceImpl implements TboxService{
     }
 
     @Override
-    public void updateTboxById(Integer id,String name,String data,String vin){
-        tboxDao.updateTboxById(id,name,data,vin);
+    public void updateTboxById(Integer id,String name,String data){
+        tboxDao.updateTboxById(id,name,data);
     }
 
     @Override

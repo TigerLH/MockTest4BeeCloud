@@ -50,5 +50,5 @@ public interface TboxDao {
 	  */
 	 void delectTboxById(@Param("id") Integer id);
 
-	 void updateTboxById(@Param("id")Integer id,@Param("name")String name,@Param("data")String data,@Param("vin")String vin);
+	 void updateTboxById(@Param("id")Integer id,@Param("name")String name,@Param("data")String data);
 }

@@ -118,10 +118,10 @@ public class MqttServiceImpl implements MqttService{
         sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(authReqMessage.encode()));
         sendMessageObject.setTopic(Tbox_Send_Topic);
         if(Type.FUNCTION.equals(type)){
-            MRMR_FUNCTION.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin()));//订阅认证ack topic
+            MRMR_FUNCTION.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin().trim()));//订阅认证ack topic
             MSMR_FUNCTION.addMessage(sendMessageObject);  //发布认证message
         }else{
-            MRMR_AUTOTEST.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin()));//订阅认证ack topic
+            MRMR_AUTOTEST.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin().trim()));//订阅认证ack topic
             MSMR_AUTOTEST.addMessage(sendMessageObject);  //发布认证message
         }
     }

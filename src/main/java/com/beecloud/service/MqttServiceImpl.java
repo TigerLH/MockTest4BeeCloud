@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by dell on 2016/11/9.
@@ -73,6 +75,8 @@ public class MqttServiceImpl implements MqttService{
 
     @Override
     public void run(Type type) {
+        ExecutorService pool = Executors.newCachedThreadPool();
+
         if(Type.FUNCTION.equals(type)){
             sendThread = new Thread(MRMR_FUNCTION);
             sendThread.start();
@@ -114,10 +118,10 @@ public class MqttServiceImpl implements MqttService{
         sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(authReqMessage.encode()));
         sendMessageObject.setTopic(Tbox_Send_Topic);
         if(Type.FUNCTION.equals(type)){
-            MRMR_FUNCTION.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin().trim()));//订阅认证ack topic
+            MRMR_FUNCTION.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin()));//订阅认证ack topic
             MSMR_FUNCTION.addMessage(sendMessageObject);  //发布认证message
         }else{
-            MRMR_AUTOTEST.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin().trim()));//订阅认证ack topic
+            MRMR_AUTOTEST.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin()));//订阅认证ack topic
             MSMR_AUTOTEST.addMessage(sendMessageObject);  //发布认证message
         }
     }

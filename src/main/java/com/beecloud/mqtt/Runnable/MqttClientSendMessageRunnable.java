@@ -69,7 +69,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 				int stepId = applicationHeader.getStepId();
 				String applicatonName = applicationHeader.getApplicationID().name();
 				String key = applicatonName+stepId;
-				logger.info("功能测试:发送消息");
+				logger.info("发送消息");
 				logger.info("消息类型:"+ MessageMapper.getMessage(key).getName());
 				logger.info(baseMessage.toString());
 				MqttMessage msg = new MqttMessage();

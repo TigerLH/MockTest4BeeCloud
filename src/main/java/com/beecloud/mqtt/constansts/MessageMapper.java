@@ -60,6 +60,14 @@ public class MessageMapper {
         map.put(ApplicationID.ABNORMAL_MOVEMENT_ALARM.name()+1,NotifyAutoAlarm.class);
         map.put(ApplicationID.ABNORMAL_MOVEMENT_ALARM.name()+3,AutoLocationMessage.class);
         map.put(ApplicationID.ABNORMAL_MOVEMENT_ALARM.name()+5,NotifyAutoAlarm.class);
+
+        /**远程控制**/
+        map.put(ApplicationID.REMOTE_CONTROL.name()+3,AckMessage.class);
+        map.put(ApplicationID.REMOTE_CONTROL.name()+5,RemoteNotifyMessage.class);
+
+         /**碰撞记录上传**/
+        map.put(ApplicationID.COLLISION_RECORD_UPLOAD.name()+2,NotifyCollisionMessage.class);
+
     }
     public static Class getMessage(String key){
         return map.get(key);

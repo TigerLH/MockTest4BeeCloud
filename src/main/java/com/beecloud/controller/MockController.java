@@ -198,10 +198,15 @@ public class MockController extends BaseController {
 
     @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.POST})
     @ResponseBody
-    public void subcribeTopic(String topic){
+    public void subcribeTopic4AutoTest(String topic){
         mqttService.subscribeTopic(topic,Type.AUTOTEST);
     }
 
+    @RequestMapping(value="/mqtt/function/subscribe", method= {RequestMethod.POST})
+    @ResponseBody
+    public void subcribeTopic4Function(String topic){
+        mqttService.subscribeTopic(topic,Type.FUNCTION);
+    }
 
     /**
      * 接口测试中发送消息

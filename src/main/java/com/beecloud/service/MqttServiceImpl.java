@@ -135,10 +135,26 @@ public class MqttServiceImpl implements MqttService{
         }
     }
 
+    /**
+     * 转换接口参数中的json转换为AbstractMessage实体
+     * @param message
+     * @return
+     */
+    public SendMessageObject transJsonToAbstractMessage(String message){
+        Gson gson = new Gson();
+        String applicationId = JsonPath.parse(message).read("$.applicationHeader.applicationID");
+        int stepId = JsonPath.parse(message).read("$.applicationHeader.stepId");
+        String key = applicationId+stepId;
+        AbstractMessage abstractMessage = (AbstractMessage)gson.fromJson(message, MessageMapper.getMessage(key));
+        SendMessageObject sendMessageObject = new SendMessageObject();
+        sendMessageObject.setTopic(Tbox_Send_Topic);
+        sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(abstractMessage.encode()));
+        return sendMessageObject;
+    }
+
     @Override
     public void sendMessaage(String message) {              //自动化测试发送
-        Gson gson = new Gson();
-        SendMessageObject sendMessageObject = gson.fromJson(message,SendMessageObject.class);
+        SendMessageObject sendMessageObject = this.transJsonToAbstractMessage(message);
         MSMR_AUTOTEST.addMessage(sendMessageObject);
     }
 
@@ -152,14 +168,7 @@ public class MqttServiceImpl implements MqttService{
             int tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
             message = message.replace(String.valueOf(tobeReplace),String.valueOf(identityCode));
         }
-        Gson gson = new Gson();
-        String applicationId = JsonPath.parse(message).read("$.applicationHeader.applicationID");
-        int stepId = JsonPath.parse(message).read("$.applicationHeader.stepId");
-        String key = applicationId+stepId;
-        AbstractMessage abstractMessage = (AbstractMessage)gson.fromJson(message, MessageMapper.getMessage(key));
-        SendMessageObject sendMessageObject = new SendMessageObject();
-        sendMessageObject.setTopic(Tbox_Send_Topic);
-        sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(abstractMessage.encode()));
+        SendMessageObject sendMessageObject = this.transJsonToAbstractMessage(message);
         MSMR_FUNCTION.addMessage(sendMessageObject);
     }
 

@@ -4,8 +4,8 @@ import com.beecloud.mqtt.Entity.SendMessageObject;
 import com.beecloud.mqtt.constansts.MessageMapper;
 import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
+import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.BaseMessage;
-import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.beecloud.util.UuidUtil;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -62,8 +62,8 @@ public class MqttClientSendMessageRunnable implements Runnable{
 				}
 				SendMessageObject messageObject = messages.poll();
 				String topic = messageObject.getTopic();
-				String message = messageObject.getMessage();
-				byte[] data = ProtocolUtil.formatBitStringToBytes(message);
+				AbstractMessage message = messageObject.getMessage();
+				byte[] data = message.encode();
 				BaseDataGram baseDataGram = new BaseDataGram();
 				BaseMessage baseMessage = new BaseMessage(data);
 				baseDataGram.addMessage(baseMessage);

@@ -13,7 +13,6 @@ import com.beecloud.platform.protocol.core.element.VehicleDescriptor;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.AuthReqMessage;
-import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
@@ -115,7 +114,7 @@ public class MqttServiceImpl implements MqttService{
         AuthObject authObject = gson.fromJson(authMessage,AuthObject.class);
         SendMessageObject sendMessageObject = new SendMessageObject();
         AuthReqMessage authReqMessage = getAuthReqMessage(authObject);
-        sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(authReqMessage.encode()));
+        sendMessageObject.setMessage(authReqMessage);
         sendMessageObject.setTopic(Tbox_Send_Topic);
         if(Type.FUNCTION.equals(type)){
             MRMR_FUNCTION.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin().trim()));//订阅认证ack topic
@@ -148,12 +147,12 @@ public class MqttServiceImpl implements MqttService{
         AbstractMessage abstractMessage = (AbstractMessage)gson.fromJson(message, MessageMapper.getMessage(key));
         SendMessageObject sendMessageObject = new SendMessageObject();
         sendMessageObject.setTopic(Tbox_Send_Topic);
-        sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(abstractMessage.encode()));
+        sendMessageObject.setMessage(abstractMessage);
         return sendMessageObject;
     }
 
     @Override
-    public void sendMessaage(String message) {              //自动化测试发送
+    public void sendMessaage(String message) {  //自动化测试发送
         SendMessageObject sendMessageObject = this.transJsonToAbstractMessage(message);
         MSMR_AUTOTEST.addMessage(sendMessageObject);
     }

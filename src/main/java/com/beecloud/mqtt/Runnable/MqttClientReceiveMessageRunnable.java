@@ -61,6 +61,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 
 	@Override
 	public void run() {
+		status = true;
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setCleanSession(true);
 		try {
@@ -74,6 +75,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 				PushCallback pushCallback = new PushCallback();
 				pushCallback.registerMqttObserver(this);
 				client.setCallback(pushCallback);
+				//client.unsubscribe(topic);	//多线程操作时,可能存在线程未关闭,先退订再订阅解决此问题
 				client.subscribe(topic, 2);
 				logger.info("订阅消息:"+topic);
 			}
@@ -174,14 +176,14 @@ class PushCallback implements MqttCallback,MqttSubject {
 	public static void main(String ...args){
 		String msg = " {\"serviceHeader\":{\"applicationId\":\"1\",\"stepId\":\"7\",\"msgId\":\"1480488965807|VIN99999901\"},\"data\":{\"state\":false,\"tboxEventTime\":1480488966000,\"notiyfyMsg\":\"浠诲姟鎵ц\uE511鏉′欢涓嶆弧瓒砡杞﹁締姝ｅ湪琛岄┒\",\"plate\":\"宸滱99901\"}}";
 		String key = "";
-		try{
-			key = ((ArrayList<String>)JsonPath.parse(msg).read("$..msgId")).get(0);
-		}catch(Exception e){
-			String applicationId = ((ArrayList<String>)JsonPath.parse(msg).read("$..applicationId")).get(0);
-			String stepId = ((ArrayList<String>)JsonPath.parse(msg).read("$..stepId")).get(0);
-			long tboxEventTime =  ((ArrayList<Long>)JsonPath.parse(msg).read("$..tboxEventTime")).get(0);
-			key = String.valueOf(applicationId)+String.valueOf(stepId)+String.valueOf(tboxEventTime);
-		}
+//		try{
+//			key = ((ArrayList<String>)JsonPath.parse(msg).read("$..msgId")).get(0);
+//		}catch(Exception e){
+//			String applicationId = ((ArrayList<String>)JsonPath.parse(msg).read("$..applicationId")).get(0);
+//			String stepId = ((ArrayList<String>)JsonPath.parse(msg).read("$..stepId")).get(0);
+//			long tboxEventTime =  ((ArrayList<Long>)JsonPath.parse(msg).read("$..tboxEventTime")).get(0);
+//			key = String.valueOf(applicationId)+String.valueOf(stepId)+String.valueOf(tboxEventTime);
+//		}
 		System.out.println(key);
 	}
 

@@ -5,6 +5,7 @@ import com.beecloud.mqtt.Entity.SendMessageObject;
 import com.beecloud.mqtt.Runnable.MqttClientReceiveMessageRunnable;
 import com.beecloud.mqtt.Runnable.MqttClientSendMessageRunnable;
 import com.beecloud.mqtt.constansts.MessageMapper;
+import com.beecloud.mqtt.constansts.Type;
 import com.beecloud.platform.protocol.core.constants.ApplicationID;
 import com.beecloud.platform.protocol.core.element.Authentication;
 import com.beecloud.platform.protocol.core.element.TimeStamp;
@@ -29,8 +30,12 @@ public class MqttServiceImpl implements MqttService{
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private String host = "tcp://10.28.4.34:1883";  //功能测试环境
     private String auto_test_host = "tcp://10.28.4.76:1883";//自动化测试环境
-    private MqttClientReceiveMessageRunnable MRMR = null;
-    private MqttClientSendMessageRunnable MSMR = null;
+    private Thread sendThread = null;
+    private Thread receiveThread = null;
+    private MqttClientReceiveMessageRunnable MRMR_FUNCTION = new MqttClientReceiveMessageRunnable(host);
+    private MqttClientSendMessageRunnable MSMR_FUNCTION = new MqttClientSendMessageRunnable(host);
+    private MqttClientReceiveMessageRunnable MRMR_AUTOTEST = new MqttClientReceiveMessageRunnable(auto_test_host);
+    private MqttClientSendMessageRunnable MSMR_AUTOTEST = new MqttClientSendMessageRunnable(auto_test_host);
     private String Tbox_Send_Topic = "mqtt/server";
     private String Tbox_Channel_Topic = "mqtt/vehicle/%s";
 
@@ -67,54 +72,74 @@ public class MqttServiceImpl implements MqttService{
     }
 
     @Override
-    public void run() {
-        MSMR = new MqttClientSendMessageRunnable(host);
-        Thread sendThread = new Thread(MSMR);
-        sendThread.start();
-        MRMR = new MqttClientReceiveMessageRunnable(host);
-        Thread receiveThread = new Thread(MRMR);
-        receiveThread.start();
-    }
-
-    @Override
-    public void stop() {
-        if(null!=MRMR){
-            MRMR.disconnetc();
-            MRMR = null;
-        }
-        if(null!=MSMR){
-            MSMR.disconnect();
-            MSMR = null;
+    public void run(Type type) {
+        if(Type.FUNCTION.equals(type)){
+            sendThread = new Thread(MRMR_FUNCTION);
+            sendThread.start();
+            receiveThread = new Thread(MSMR_FUNCTION);
+            receiveThread.start();
+        }else{
+            sendThread = new Thread(MRMR_AUTOTEST);
+            sendThread.start();
+            receiveThread = new Thread(MSMR_AUTOTEST);
+            receiveThread.start();
         }
     }
 
     @Override
-    public void sendAuthReqMessage(String authMessage) {
+    public void stop(Type type) {
+        if(Type.FUNCTION.equals(type)){
+            MRMR_FUNCTION.disconnetc();
+            MSMR_FUNCTION.disconnect();
+        }else{
+            MSMR_AUTOTEST.disconnect();
+            MRMR_AUTOTEST.disconnetc();
+        }
+        if(null != sendThread){
+            sendThread.stop();
+            sendThread = null;
+        }
+        if(null != receiveThread){
+            receiveThread.stop();
+            receiveThread = null;
+        }
+    }
+
+    @Override
+    public void sendAuthReqMessage(String authMessage,Type type) {
         Gson gson = new Gson();
         AuthObject authObject = gson.fromJson(authMessage,AuthObject.class);
-        MRMR.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin().trim()));//订阅认证ack topic
-
         SendMessageObject sendMessageObject = new SendMessageObject();
         AuthReqMessage authReqMessage = getAuthReqMessage(authObject);
         sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(authReqMessage.encode()));
         sendMessageObject.setTopic(Tbox_Send_Topic);
-        MSMR.addMessage(sendMessageObject);  //发布认证message
+        if(Type.FUNCTION.equals(type)){
+            MRMR_FUNCTION.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin().trim()));//订阅认证ack topic
+            MSMR_FUNCTION.addMessage(sendMessageObject);  //发布认证message
+        }else{
+            MRMR_AUTOTEST.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin().trim()));//订阅认证ack topic
+            MSMR_AUTOTEST.addMessage(sendMessageObject);  //发布认证message
+        }
     }
 
     @Override
-    public void subscribeTopic(String topic){
-        MRMR.addTopic(topic);
+    public void subscribeTopic(String topic,Type type){
+        if(Type.FUNCTION.equals(type)){
+            MRMR_FUNCTION.addTopic(topic);
+        }else{
+            MRMR_AUTOTEST.addTopic(topic);
+        }
     }
 
     @Override
-    public void sendMessaage(String message) {
+    public void sendMessaage(String message) {              //自动化测试发送
         Gson gson = new Gson();
         SendMessageObject sendMessageObject = gson.fromJson(message,SendMessageObject.class);
-        MSMR.addMessage(sendMessageObject);
+        MSMR_AUTOTEST.addMessage(sendMessageObject);
     }
 
     @Override
-    public void sendUnencryptedMessage(String message,String vin) {
+    public void sendFunctionMessage(String message,String vin) {     //功能测试发送
         if(vin!=null&&!"".equals(vin)){  //如果VIN码不为空,则替换掉Message中的identityCode
             AuthObject authObject = new AuthObject();
             authObject.setVin(vin);
@@ -131,7 +156,7 @@ public class MqttServiceImpl implements MqttService{
         SendMessageObject sendMessageObject = new SendMessageObject();
         sendMessageObject.setTopic(Tbox_Send_Topic);
         sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(abstractMessage.encode()));
-        MSMR.addMessage(sendMessageObject);
+        MSMR_FUNCTION.addMessage(sendMessageObject);
     }
 
     public static void main(String...args){
@@ -170,10 +195,15 @@ public class MqttServiceImpl implements MqttService{
 
 
     @Override
-    public String getMessageByKey(String key,int timeOut) {
+    public String getMessageByKey(String key,int timeOut,Type type) {
         long start = System.currentTimeMillis();
         while((System.currentTimeMillis()-start)<timeOut*1000){  //设置超时时间
-            String message = MRMR.getMessageBykey(key);
+            String message = "";
+            if(Type.FUNCTION.equals(type)){
+                 message = MRMR_FUNCTION.getMessageBykey(key);
+            }else{
+                message = MRMR_AUTOTEST.getMessageBykey(key);
+            }
             if(null!=message&&!"".equals(message)){
                 logger.info("ReturnMessage for key:"+key);
                 logger.info(message);

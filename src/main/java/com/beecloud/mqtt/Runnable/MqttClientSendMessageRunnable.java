@@ -49,6 +49,7 @@ public class MqttClientSendMessageRunnable implements Runnable{
 	@Override
 	public void run() {
 		try {
+			status = true;
 			client = new MqttClient(host, getClientId());
 			MqttConnectOptions options = new MqttConnectOptions();
 			options.setCleanSession(true);

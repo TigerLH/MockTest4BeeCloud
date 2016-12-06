@@ -231,9 +231,10 @@
 
 		//关闭服务
 		function  stopMockServer() {
+			var vin= select_start_server.options[index].value;
 			$.ajax({
 				type: "get",
-				url: "mqtt/disconnect",
+				url: "mqtt/disconnect" +"&vin=" + vin,
 				data: "type=FUNCTION",
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",

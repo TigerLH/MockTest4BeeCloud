@@ -134,12 +134,12 @@ class PushCallback implements MqttCallback,MqttSubject {
 			logger.info("消息类型:");
 			logger.info(MessageMapper.getMessage(key).getName());
 			Constructor<?> cons[] = MessageMapper.getMessage(key).getConstructors();
-			AbstractMessage abstractMessages = (AbstractMessage)cons[1].newInstance(data);
-			logger.info(abstractMessages.toString());
+			Object object = cons[1].newInstance(data);
+			logger.info(object.toString());
 			String keyword = String.valueOf(topic) + String.valueOf(applicationID) + String.valueOf(stepId) + String.valueOf(sequenceId);
-			if (null != abstractMessages) {
+			if (null != object) {
 				Gson gson = new Gson();
-				this.notifyMqttObservers(keyword, gson.toJson(abstractMessages));
+				this.notifyMqttObservers(keyword, gson.toJson(object));
 			}
 		}catch(Exception e){
 			e.printStackTrace();

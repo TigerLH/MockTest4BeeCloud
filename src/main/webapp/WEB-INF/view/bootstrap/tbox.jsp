@@ -231,6 +231,7 @@
 
 		//关闭服务
 		function  stopMockServer() {
+			var index=select_start_server.selectedIndex ;
 			var vin= select_start_server.options[index].value;
 			$.ajax({
 				type: "get",

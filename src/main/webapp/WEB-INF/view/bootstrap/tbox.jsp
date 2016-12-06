@@ -235,8 +235,8 @@
 			var vin= select_start_server.options[index].value;
 			$.ajax({
 				type: "get",
-				url: "mqtt/disconnect" +"&vin=" + vin,
-				data: "type=FUNCTION",
+				url: "mqtt/disconnect",
+				data: "type=FUNCTION" +"&vin=" + vin,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {

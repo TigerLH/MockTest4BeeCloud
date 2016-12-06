@@ -1,20 +1,20 @@
 package com.beecloud.mqtt.Runnable;
 
+import com.beecloud.mqtt.constansts.MessageMapper;
 import com.beecloud.mqtt.listenser.MqttObserver;
 import com.beecloud.mqtt.listenser.MqttSubject;
 import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AbstractMessage;
-import com.beecloud.platform.protocol.core.message.AckMessage;
 import com.beecloud.platform.protocol.core.message.BaseMessage;
 import com.beecloud.util.UuidUtil;
-import com.beecloud.vehicle.spa.protocol.message.RequestMessage;
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
 import org.eclipse.paho.client.mqttv3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -119,7 +119,6 @@ class PushCallback implements MqttCallback,MqttSubject {
      */
 	protected   void receiveTboxMessaage(String topic,MqttMessage message){
 		try {
-			AbstractMessage abstractMessage = null;
 			BaseDataGram baseDataGram = new BaseDataGram(message.getPayload());
 			List<BaseMessage> baseMessages = baseDataGram.getMessages();
 			BaseMessage baseMessage = baseMessages.get(0);
@@ -127,22 +126,20 @@ class PushCallback implements MqttCallback,MqttSubject {
 			//需要根据StepId和ApplicationId判断对应的业务
 			ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
 			int applicationID = applicationHeader.getApplicationID().getApplicationID();
+			String name = applicationHeader.getApplicationID().name();
 			int stepId = applicationHeader.getStepId();
 			long sequenceId = applicationHeader.getSequenceId();
-			if (stepId == 2) {
-				logger.info("接收Tbox消息:");
-				logger.info("消息类型:RequestMessage");
-				abstractMessage = new RequestMessage(data);
-			} else if (stepId == 8||stepId ==1) {
-				logger.info("接收Tbox消息:");
-				logger.info("消息类型:AckMessage");
-				abstractMessage = new AckMessage(data);
-			}
-			logger.info(abstractMessage.toString());
+			String key = name+stepId;
+			logger.info("接收Tbox消息:");
+			logger.info("消息类型:");
+			logger.info(MessageMapper.getMessage(key).getName());
+			Constructor<?> cons[] = MessageMapper.getMessage(key).getConstructors();
+			AbstractMessage abstractMessages = (AbstractMessage)cons[1].newInstance(data);
+			logger.info(abstractMessages.toString());
 			String keyword = String.valueOf(topic) + String.valueOf(applicationID) + String.valueOf(stepId) + String.valueOf(sequenceId);
-			if (null != abstractMessage) {
+			if (null != abstractMessages) {
 				Gson gson = new Gson();
-				this.notifyMqttObservers(keyword, gson.toJson(abstractMessage));
+				this.notifyMqttObservers(keyword, gson.toJson(abstractMessages));
 			}
 		}catch(Exception e){
 			e.printStackTrace();

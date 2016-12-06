@@ -217,8 +217,8 @@
 			var auth = '{ "vin": "'+vin+'", "pid": "BEECLOUD" }';
 			$.ajax({
 				type: "post",
-				url: "mqtt/function/connect",
-				data: "authMessage=" + auth,
+				url: "mqtt/connect",
+				data: "authMessage=" + auth +"&type=FUNCTION",
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
@@ -233,7 +233,8 @@
 		function  stopMockServer() {
 			$.ajax({
 				type: "get",
-				url: "mqtt/function/disconnect",
+				url: "mqtt/disconnect",
+				data: "type=FUNCTION",
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
@@ -329,8 +330,8 @@
 			var vin= select_start_server.options[index].value;
 			$.ajax({
 				type: "post",
-				url: "mqtt/function/send",
-				data: "message=" + message +"&vin=" + vin,
+				url: "mqtt/send",
+				data: "message=" + message +"&type=FUNCTION",
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {

@@ -4,8 +4,6 @@
 package com.beecloud.mqtt.Entity;
 
 
-import com.beecloud.platform.protocol.core.message.AbstractMessage;
-
 /**
  * @description //TODO
  * @author hong.lin@beecloud.com
@@ -22,7 +20,7 @@ public class SendMessageObject {
 	/**
 	 * 发送的消息体
      */
-	private AbstractMessage message;
+	private String message;
 
     public String getTopic() {
         return topic;
@@ -32,11 +30,11 @@ public class SendMessageObject {
         this.topic = topic;
     }
 
-    public AbstractMessage getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(AbstractMessage message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 
@@ -44,7 +42,7 @@ public class SendMessageObject {
     public String toString() {
         return "SendMessageObject{" +
                 "topic='" + topic + '\'' +
-                ", message=" + message +
+                ", message='" + message + '\'' +
                 '}';
     }
 }

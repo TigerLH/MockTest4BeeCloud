@@ -5,7 +5,6 @@ import com.beecloud.domain.Mock;
 import com.beecloud.domain.MockVo;
 import com.beecloud.domain.Rule;
 import com.beecloud.domain.Tbox;
-import com.beecloud.mqtt.constansts.Type;
 import com.beecloud.service.MockService;
 import com.beecloud.service.MqttService;
 import com.beecloud.service.RuleService;
@@ -174,103 +173,103 @@ public class MockController extends BaseController {
 
 
     /**
-     * 自动化测试连接
+     * 连接
      * @param authMessage
      */
     @RequestMapping(value="/mqtt/connect", method= {RequestMethod.POST})
     @ResponseBody
-    public void startMqttServer4AutoTest(String authMessage) {
-         mqttService.run(Type.AUTOTEST);
-         mqttService.sendAuthReqMessage(authMessage,Type.AUTOTEST);
+    public void startMqttServer4AutoTest(String authMessage,String type) {
+         mqttService.run(type);
+         mqttService.sendAuthReqMessage(authMessage,type);
     }
 
-    /**
-     * 功能测试连接
-     * @param authMessage
-     */
-    @RequestMapping(value="/mqtt/function/connect", method= {RequestMethod.POST})
-    @ResponseBody
-    public void startMqttServer4Function(String authMessage) {
-        mqttService.run(Type.FUNCTION);
-        mqttService.sendAuthReqMessage(authMessage,Type.FUNCTION);
-    }
+//    /**
+//     * 功能测试连接
+//     * @param authMessage
+//     */
+//    @RequestMapping(value="/mqtt/function/connect", method= {RequestMethod.POST})
+//    @ResponseBody
+//    public void startMqttServer4Function(String authMessage) {
+//        mqttService.run(Type.FUNCTION);
+//        mqttService.sendAuthReqMessage(authMessage,Type.FUNCTION);
+//    }
 
 
     @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.POST})
     @ResponseBody
-    public void subcribeTopic4AutoTest(String topic){
-        mqttService.subscribeTopic(topic,Type.AUTOTEST);
+    public void subcribeTopic4AutoTest(String topic,String type){
+        mqttService.subscribeTopic(topic,type);
     }
 
-    @RequestMapping(value="/mqtt/function/subscribe", method= {RequestMethod.POST})
-    @ResponseBody
-    public void subcribeTopic4Function(String topic){
-        mqttService.subscribeTopic(topic,Type.FUNCTION);
-    }
+//    @RequestMapping(value="/mqtt/function/subscribe", method= {RequestMethod.POST})
+//    @ResponseBody
+//    public void subcribeTopic4Function(String topic){
+//        mqttService.subscribeTopic(topic,Type.FUNCTION);
+//    }
 
     /**
-     * 接口测试中发送消息
+     * 发送消息
      * @param message
      */
     @RequestMapping(value="/mqtt/send", method= {RequestMethod.POST})
     @ResponseBody
-    public void sendMessage(String message) {
-        mqttService.sendMessaage(message);
+    public void sendMessage(String message,String type) {
+        mqttService.sendMessaage(message,type);
     }
 
 
-    /**
-     * 功能测试中发送消息
-     */
-    @RequestMapping(value="/mqtt/function/send", method= {RequestMethod.POST})
-    @ResponseBody
-    public void sendFunctionMessage(String message,String vin) {
-        mqttService.sendFunctionMessage(message,vin);
-    }
+//    /**
+//     * 功能测试中发送消息
+//     */
+//    @RequestMapping(value="/mqtt/function/send", method= {RequestMethod.POST})
+//    @ResponseBody
+//    public void sendFunctionMessage(String message,String vin) {
+//        mqttService.sendFunctionMessage(message,vin);
+//    }
 
     /**
-     * 自动化测试断开连接
+     * 断开连接
      */
     @RequestMapping(value="/mqtt/disconnect", method= {RequestMethod.GET})
     @ResponseBody
-    public void disconnect4AutoTests() {
-        mqttService.stop(Type.AUTOTEST);
+    public void disconnect(String type) {
+        mqttService.stop(type);
     }
 
-    /**
-     * 功能测试断开连接
-     */
-    @RequestMapping(value="/mqtt/function/disconnect", method= {RequestMethod.GET})
-    @ResponseBody
-    public void disconnect4Function() {
-        mqttService.stop(Type.FUNCTION);
-    }
+//    /**
+//     * 功能测试断开连接
+//     */
+//    @RequestMapping(value="/mqtt/function/disconnect", method= {RequestMethod.GET})
+//    @ResponseBody
+//    public void disconnect4Function() {
+//        mqttService.stop(Type.FUNCTION);
+//    }
 
     /**
-     * 自动测试获取message
+     * 获取message
      * @param key
      * @param timeOut
      * @return
      */
     @RequestMapping(value="/mqtt/receive", method= {RequestMethod.POST})
     @ResponseBody
-    public String getMessage4AutoTest(String key,int timeOut) {
-        String message = mqttService.getMessageByKey(key,timeOut, Type.AUTOTEST);
+    public String getMessage(String key,int timeOut,String type) {
+        String message = mqttService.getMessageByKey(key,timeOut, type);
         return mqttResponse(message);
     }
 
-    /**
-     * 功能测试获取message
-     * @param key
-     * @param timeOut
-     * @return
-     */
-    @RequestMapping(value="/mqtt/function/receive", method= {RequestMethod.POST})
-    @ResponseBody
-    public String getMessage4Function(String key,int timeOut) {
-        String message = mqttService.getMessageByKey(key,timeOut, Type.FUNCTION);
-        return mqttResponse(message);
-    }
+//    /**
+//     * 功能测试获取message
+//     * @param key
+//     * @param timeOut
+//     * @return
+//     */
+//    @RequestMapping(value="/mqtt/function/receive", method= {RequestMethod.POST})
+//    @ResponseBody
+//    public String getMessage4Function(String key,int timeOut) {
+//        String message = mqttService.getMessageByKey(key,timeOut, Type.FUNCTION);
+//        return mqttResponse(message);
+//    }
 
 
     @RequestMapping(value="/tbox/insert", method= {RequestMethod.POST})

@@ -1,11 +1,9 @@
 package com.beecloud.mqtt.Runnable;
 
 import com.beecloud.mqtt.Entity.SendMessageObject;
-import com.beecloud.mqtt.constansts.MessageMapper;
 import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
-import com.beecloud.platform.protocol.core.header.ApplicationHeader;
-import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.BaseMessage;
+import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.beecloud.util.UuidUtil;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -62,24 +60,18 @@ public class MqttClientSendMessageRunnable implements Runnable{
 				}
 				SendMessageObject messageObject = messages.poll();
 				String topic = messageObject.getTopic();
-				AbstractMessage message = messageObject.getMessage();
-				byte[] data = message.encode();
+				String message = messageObject.getMessage();
+				byte[] data = ProtocolUtil.formatBitStringToBytes(message);
 				BaseDataGram baseDataGram = new BaseDataGram();
 				BaseMessage baseMessage = new BaseMessage(data);
 				baseDataGram.addMessage(baseMessage);
-				ApplicationHeader applicationHeader = baseMessage.getApplicationHeader();
-				int stepId = applicationHeader.getStepId();
-				String applicatonName = applicationHeader.getApplicationID().name();
-				String key = applicatonName+stepId;
-				logger.info("发送消息");
-				logger.info("消息类型:"+ MessageMapper.getMessage(key).getName());
-				logger.info(baseMessage.toString());
 				MqttMessage msg = new MqttMessage();
 				msg.setPayload(baseDataGram.encode());
+				logger.info("消息体:");
+				logger.info(baseMessage.toString());
 				client.publish(topic, msg);
 			}
 		}catch (Exception e) {
-			//this.disconnect();
 			e.printStackTrace();
 		}
 	}

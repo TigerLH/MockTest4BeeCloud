@@ -54,7 +54,7 @@ public class MessageMapper {
 
         /**远程定位**/
         map.put(ApplicationID.REMOTE_LOCATION.name()+3,AckMessage.class);
-        map.put(ApplicationID.REMOTE_LOCATION.name()+5,AutoLocationMessage.class);
+        map.put(ApplicationID.REMOTE_LOCATION.name()+5,RemoteLocationMessage.class);
 
         /**车辆异常移动报警**/
         map.put(ApplicationID.ABNORMAL_MOVEMENT_ALARM.name()+1,NotifyAutoAlarm.class);
@@ -67,7 +67,6 @@ public class MessageMapper {
 
          /**碰撞记录上传**/
         map.put(ApplicationID.COLLISION_RECORD_UPLOAD.name()+2,NotifyCollisionMessage.class);
-
     }
     public static Class getMessage(String key){
         return map.get(key);

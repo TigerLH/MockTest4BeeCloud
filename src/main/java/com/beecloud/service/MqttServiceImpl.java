@@ -13,14 +13,13 @@ import com.beecloud.platform.protocol.core.element.VehicleDescriptor;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.AuthReqMessage;
+import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by dell on 2016/11/9.
@@ -73,10 +72,8 @@ public class MqttServiceImpl implements MqttService{
     }
 
     @Override
-    public void run(Type type) {
-        ExecutorService pool = Executors.newCachedThreadPool();
-
-        if(Type.FUNCTION.equals(type)){
+    public void run(String type) {
+        if(Type.FUNCTION.getCode().equals(type)){
             sendThread = new Thread(MRMR_FUNCTION);
             sendThread.start();
             receiveThread = new Thread(MSMR_FUNCTION);
@@ -90,8 +87,8 @@ public class MqttServiceImpl implements MqttService{
     }
 
     @Override
-    public void stop(Type type) {
-        if(Type.FUNCTION.equals(type)){
+    public void stop(String type) {
+        if(Type.FUNCTION.getCode().equals(type)){
             MRMR_FUNCTION.disconnetc();
             MSMR_FUNCTION.disconnect();
         }else{
@@ -109,14 +106,14 @@ public class MqttServiceImpl implements MqttService{
     }
 
     @Override
-    public void sendAuthReqMessage(String authMessage,Type type) {
+    public void sendAuthReqMessage(String authMessage,String type) {
         Gson gson = new Gson();
         AuthObject authObject = gson.fromJson(authMessage,AuthObject.class);
         SendMessageObject sendMessageObject = new SendMessageObject();
         AuthReqMessage authReqMessage = getAuthReqMessage(authObject);
-        sendMessageObject.setMessage(authReqMessage);
+        sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(authReqMessage.encode()));
         sendMessageObject.setTopic(Tbox_Send_Topic);
-        if(Type.FUNCTION.equals(type)){
+        if(Type.FUNCTION.toString().equals(type)){
             MRMR_FUNCTION.addTopic(String.format(Tbox_Channel_Topic,authObject.getVin().trim()));//订阅认证ack topic
             MSMR_FUNCTION.addMessage(sendMessageObject);  //发布认证message
         }else{
@@ -126,8 +123,8 @@ public class MqttServiceImpl implements MqttService{
     }
 
     @Override
-    public void subscribeTopic(String topic,Type type){
-        if(Type.FUNCTION.equals(type)){
+    public void subscribeTopic(String topic,String type){
+        if(Type.FUNCTION.getCode().equals(type)){
             MRMR_FUNCTION.addTopic(topic);
         }else{
             MRMR_AUTOTEST.addTopic(topic);
@@ -144,32 +141,42 @@ public class MqttServiceImpl implements MqttService{
         String applicationId = JsonPath.parse(message).read("$.applicationHeader.applicationID");
         int stepId = JsonPath.parse(message).read("$.applicationHeader.stepId");
         String key = applicationId+stepId;
+        logger.info("发送消息:");
+        logger.info("消息类型:"+ MessageMapper.getMessage(key).getName());
         AbstractMessage abstractMessage = (AbstractMessage)gson.fromJson(message, MessageMapper.getMessage(key));
         SendMessageObject sendMessageObject = new SendMessageObject();
         sendMessageObject.setTopic(Tbox_Send_Topic);
-        sendMessageObject.setMessage(abstractMessage);
+        sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(abstractMessage.encode()));
         return sendMessageObject;
     }
 
     @Override
-    public void sendMessaage(String message) {  //自动化测试发送
-        SendMessageObject sendMessageObject = this.transJsonToAbstractMessage(message);
-        MSMR_AUTOTEST.addMessage(sendMessageObject);
-    }
-
-    @Override
-    public void sendFunctionMessage(String message,String vin) {     //功能测试发送
-        if(vin!=null&&!"".equals(vin)){  //如果VIN码不为空,则替换掉Message中的identityCode
-            AuthObject authObject = new AuthObject();
-            authObject.setVin(vin);
-            authObject.setPid("BEECLOUD");
-            long identityCode = authObject.getIdentityCode();
-            int tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
-            message = message.replace(String.valueOf(tobeReplace),String.valueOf(identityCode));
+    public void sendMessaage(String message,String type) {
+        SendMessageObject sendMessageObject = null;
+        if(Type.FUNCTION.getCode().equals(type)){
+            sendMessageObject = this.transJsonToAbstractMessage(message);
+            MSMR_FUNCTION.addMessage(sendMessageObject);
+        }else{
+            sendMessageObject = new SendMessageObject();
+            sendMessageObject.setTopic(Tbox_Send_Topic);
+            sendMessageObject.setMessage(message);
+            MSMR_AUTOTEST.addMessage(sendMessageObject);
         }
-        SendMessageObject sendMessageObject = this.transJsonToAbstractMessage(message);
-        MSMR_FUNCTION.addMessage(sendMessageObject);
     }
+//
+//    @Override
+//    public void sendFunctionMessage(String message,String vin) {     //功能测试发送
+//        if(vin!=null&&!"".equals(vin)){  //如果VIN码不为空,则替换掉Message中的identityCode
+//            AuthObject authObject = new AuthObject();
+//            authObject.setVin(vin);
+//            authObject.setPid("BEECLOUD");
+//            long identityCode = authObject.getIdentityCode();
+//            int tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
+//            message = message.replace(String.valueOf(tobeReplace),String.valueOf(identityCode));
+//        }
+//        SendMessageObject sendMessageObject = this.transJsonToAbstractMessage(message);
+//        MSMR_FUNCTION.addMessage(sendMessageObject);
+//    }
 
     public static void main(String...args){
         String json = "{\n" +
@@ -200,18 +207,18 @@ public class MqttServiceImpl implements MqttService{
         AuthObject authObject = new AuthObject();
         authObject.setVin("VIN99999901");
         authObject.setPid("BEECLOUD");
-//        AuthReqMessage authReqMessage = new MqttServiceImpl().getAuthReqMessage(authObject);
+//      AuthReqMessage authReqMessage = new MqttServiceImpl().getAuthReqMessage(authObject);
         Gson gson = new Gson();
         System.out.println(gson.toJson(authObject));
     }
 
 
     @Override
-    public String getMessageByKey(String key,int timeOut,Type type) {
+    public String getMessageByKey(String key,int timeOut,String type) {
         long start = System.currentTimeMillis();
         while((System.currentTimeMillis()-start)<timeOut*1000){  //设置超时时间
             String message = "";
-            if(Type.FUNCTION.equals(type)){
+            if(Type.FUNCTION.getCode().equals(type)){
                  message = MRMR_FUNCTION.getMessageBykey(key);
             }else{
                 message = MRMR_AUTOTEST.getMessageBykey(key);

@@ -3,13 +3,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mock Test For BeeCloud</title>
-<link href="<%=request.getContextPath()%>/static/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="<%=request.getContextPath()%>/static/css/simple-sidebar.css" rel="stylesheet">
-<script src="<%=request.getContextPath()%>/static/js/jQuery/jquery-2.1.4.min.js"></script>
-<script src="<%=request.getContextPath()%>/static/js/bootstrap/js/bootstrap.min.js"></script>
-<script src="<%=request.getContextPath()%>/static/js/bootstrap/js/bootstrap-paginator.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mock Test For BeeCloud</title>
+	<link href="<%=request.getContextPath()%>/static/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="<%=request.getContextPath()%>/static/css/simple-sidebar.css" rel="stylesheet">
+	<script src="<%=request.getContextPath()%>/static/js/jQuery/jquery-2.1.4.min.js"></script>
+	<script src="<%=request.getContextPath()%>/static/js/bootstrap/js/bootstrap.min.js"></script>
+	<script src="<%=request.getContextPath()%>/static/js/bootstrap/js/bootstrap-paginator.min.js"></script>
+	<script src="<%=request.getContextPath()%>/static/js/bootstrap/js/mqttws31.min.js"></script>
 <style type="text/css">
 #queryDiv {
  margin-right: auto;
@@ -30,6 +31,13 @@
  margin-left: 280px;
  width:auto;
 }
+#showmessage {
+	margin-right: auto;
+	margin-left: 280px;
+	width:800px;
+	height:400px;
+}
+
 </style>
 </head>
 <body>
@@ -170,8 +178,8 @@
 	</div>
 	<div id = "startServer">
 		<select id="select_start_server" class="form-control"></select>
-		<button id = "button_start_server" class="btn btn-success" type="button" onclick="startMockServer()">启动</button>
-		<button id = "button_stop_server" class="btn btn-warning" type="button" onclick="stopMockServer()">停止</button>
+		<button id = "button_start_server" class="btn btn-success" type="button" onclick="startMockServer()">认证</button>
+		<button id = "button_stop_server" class="btn btn-warning" type="button" onclick="stopMockServer()">退订</button>
 	</div>
 
 
@@ -192,6 +200,7 @@
 		</table>
 		<!-- 底部分页按钮 -->
 		<div id="bottomTab"></div>
+		<textarea id="showmessage" style="word-break:break-all; word-wrap:break-all;"></textarea>
 	</form>
 	<script type='text/javascript'>
 		//页面加载完成时初始化车辆下拉框
@@ -210,11 +219,35 @@
 			});
 		});
 
+		function subscribe(){
+			var index=select_start_server.selectedIndex ;
+			var vin= select_start_server.options[index].value;
+			var client = new Paho.MQTT.Client("10.28.4.34",1883, "FUNCTION_TEST");//建立客户端实例
+			client.connect({onSuccess:onConnect});//连接服务器并注册连接成功处理事件
+			function onConnect() {
+				console.log("onConnected");
+				client.subscribe("mqtt/vehicle/"+vin);//订阅主题
+			}
+			client.onConnectionLost = onConnectionLost;//注册连接断开处理事件
+			client.onMessageArrived = onMessageArrived;//注册消息接收处理事件
+			function onConnectionLost(responseObject) {
+				if (responseObject.errorCode !== 0) {
+					console.log("onConnectionLost:"+responseObject.errorMessage);
+					console.log("连接已断开");
+				}
+			}
+			function onMessageArrived(message) {
+				console.log("收到消息:"+message.payloadString);
+			}
+		}
+
+
 		//启动服务
 		function startMockServer(){
 			var index=select_start_server.selectedIndex ;
 			var vin= select_start_server.options[index].value;
 			var auth = '{ "vin": "'+vin+'", "pid": "BEECLOUD" }';
+			subscribe();
 			$.ajax({
 				type: "post",
 				url: "mqtt/connect",

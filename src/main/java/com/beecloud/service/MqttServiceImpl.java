@@ -30,12 +30,16 @@ public class MqttServiceImpl implements MqttService{
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
     private String host = "tcp://10.28.4.34:1883";  //功能测试环境
     private String auto_test_host = "tcp://10.28.4.76:1883";//自动化测试环境
-    private Thread sendThread = null;
-    private Thread receiveThread = null;
     private MqttClientReceiveMessageRunnable MRMR_FUNCTION = new MqttClientReceiveMessageRunnable(host);
     private MqttClientSendMessageRunnable MSMR_FUNCTION = new MqttClientSendMessageRunnable(host);
     private MqttClientReceiveMessageRunnable MRMR_AUTOTEST = new MqttClientReceiveMessageRunnable(auto_test_host);
     private MqttClientSendMessageRunnable MSMR_AUTOTEST = new MqttClientSendMessageRunnable(auto_test_host);
+
+    private Thread function_SendThread = new Thread(MRMR_FUNCTION);
+    private Thread function_ReceiveThread = new Thread(MSMR_FUNCTION);
+    private Thread auto_SendThread = new Thread(MRMR_AUTOTEST);
+    private Thread auto_ReceiveThread = new Thread(MSMR_AUTOTEST);
+
     private String Tbox_Send_Topic = "mqtt/server";
     private String Tbox_Channel_Topic = "mqtt/vehicle/%s";
 
@@ -74,34 +78,28 @@ public class MqttServiceImpl implements MqttService{
     @Override
     public void run(String type) {
         if(Type.FUNCTION.getCode().equals(type)){
-            sendThread = new Thread(MRMR_FUNCTION);
-            sendThread.start();
-            receiveThread = new Thread(MSMR_FUNCTION);
-            receiveThread.start();
+            if(!function_SendThread.isAlive()){
+                function_SendThread.start();
+            }
+            if(!function_ReceiveThread.isAlive()){
+               function_ReceiveThread.start();
+            }
         }else{
-            sendThread = new Thread(MRMR_AUTOTEST);
-            sendThread.start();
-            receiveThread = new Thread(MSMR_AUTOTEST);
-            receiveThread.start();
+            if(!auto_SendThread.isAlive()){
+                auto_SendThread.start();
+            }
+            if(!auto_ReceiveThread.isAlive()){
+                auto_ReceiveThread.start();
+            }
         }
     }
 
     @Override
-    public void stop(String type) {
+    public void stop(String vin,String type) {
         if(Type.FUNCTION.getCode().equals(type)){
-            MRMR_FUNCTION.disconnetc();
-            MSMR_FUNCTION.disconnect();
+            MRMR_FUNCTION.unsubscribe(vin);
         }else{
-            MSMR_AUTOTEST.disconnect();
-            MRMR_AUTOTEST.disconnetc();
-        }
-        if(null != sendThread){
-            sendThread.stop();
-            sendThread = null;
-        }
-        if(null != receiveThread){
-            receiveThread.stop();
-            receiveThread = null;
+            MRMR_AUTOTEST.unsubscribe(vin);
         }
     }
 

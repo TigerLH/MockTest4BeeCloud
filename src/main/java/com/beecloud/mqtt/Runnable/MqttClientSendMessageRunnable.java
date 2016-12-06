@@ -34,17 +34,6 @@ public class MqttClientSendMessageRunnable implements Runnable{
 		messages.add(sendMessageObject);
 	}
 
-	public void disconnect(){
-		try {
-			if(null!=client){
-				client.disconnect(10*1000);
-				client = null;
-				status = false;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	@Override
 	public void run() {

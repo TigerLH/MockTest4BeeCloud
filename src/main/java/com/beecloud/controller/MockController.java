@@ -218,8 +218,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/disconnect", method= {RequestMethod.GET})
     @ResponseBody
-    public void disconnect(String type) {
-        mqttService.stop(type);
+    public void disconnect(String vin,String type) {
+        mqttService.stop(vin,type);
     }
 
 

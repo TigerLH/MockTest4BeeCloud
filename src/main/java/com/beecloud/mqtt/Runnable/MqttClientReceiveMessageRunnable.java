@@ -26,8 +26,8 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private Logger logger = LoggerFactory.getLogger(this.getClientId());
 	private Queue<String> topics = new LinkedBlockingQueue<String>();
 	private static Map<String,String> cache = new HashMap<String,String>();
-	private boolean status = true;
 	private String host;
+	private String Tbox_Channel_Topic = "mqtt/vehicle/%s";
 	public MqttClientReceiveMessageRunnable(String host){
 		this.host = host;
 	}
@@ -48,13 +48,14 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 		return UuidUtil.getUuid();
 	}
 
-
-	public void disconnetc(){
+	/**
+	 * 退订topic
+	 * @param vin
+     */
+	public void unsubscribe(String vin){
 		try {
 			if(null!=client){
-				client.disconnect(10*1000);
-				client = null;
-				status = false;
+				client.unsubscribe(String.format(Tbox_Channel_Topic,vin));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -63,13 +64,12 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 
 	@Override
 	public void run() {
-		status = true;
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setCleanSession(true);
 		try {
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
-			while(status){
+			while(true){
 				if(topics.isEmpty()){
 					continue;
 				}
@@ -77,12 +77,10 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 				PushCallback pushCallback = new PushCallback();
 				pushCallback.registerMqttObserver(this);
 				client.setCallback(pushCallback);
-				//client.unsubscribe(topic);	//多线程操作时,可能存在线程未关闭,先退订再订阅解决此问题
 				client.subscribe(topic, 2);
 				logger.info("订阅消息:"+topic);
 			}
 		} catch (MqttException e) {
-			//this.disconnetc();
 			e.printStackTrace();
 		}
 	}

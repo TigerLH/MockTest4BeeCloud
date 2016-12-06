@@ -183,16 +183,6 @@ public class MockController extends BaseController {
          mqttService.sendAuthReqMessage(authMessage,type);
     }
 
-//    /**
-//     * 功能测试连接
-//     * @param authMessage
-//     */
-//    @RequestMapping(value="/mqtt/function/connect", method= {RequestMethod.POST})
-//    @ResponseBody
-//    public void startMqttServer4Function(String authMessage) {
-//        mqttService.run(Type.FUNCTION);
-//        mqttService.sendAuthReqMessage(authMessage,Type.FUNCTION);
-//    }
 
 
     @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.POST})
@@ -201,11 +191,7 @@ public class MockController extends BaseController {
         mqttService.subscribeTopic(topic,type);
     }
 
-//    @RequestMapping(value="/mqtt/function/subscribe", method= {RequestMethod.POST})
-//    @ResponseBody
-//    public void subcribeTopic4Function(String topic){
-//        mqttService.subscribeTopic(topic,Type.FUNCTION);
-//    }
+
 
     /**
      * 发送消息
@@ -218,14 +204,14 @@ public class MockController extends BaseController {
     }
 
 
-//    /**
-//     * 功能测试中发送消息
-//     */
-//    @RequestMapping(value="/mqtt/function/send", method= {RequestMethod.POST})
-//    @ResponseBody
-//    public void sendFunctionMessage(String message,String vin) {
-//        mqttService.sendFunctionMessage(message,vin);
-//    }
+    /**
+     * 功能测试中发送消息
+     */
+    @RequestMapping(value="/mqtt/function/send", method= {RequestMethod.POST})
+    @ResponseBody
+    public void sendFunctionMessage(String message,String vin) {
+        mqttService.sendFunctionMessage(message,vin);
+    }
 
     /**
      * 断开连接
@@ -236,14 +222,7 @@ public class MockController extends BaseController {
         mqttService.stop(type);
     }
 
-//    /**
-//     * 功能测试断开连接
-//     */
-//    @RequestMapping(value="/mqtt/function/disconnect", method= {RequestMethod.GET})
-//    @ResponseBody
-//    public void disconnect4Function() {
-//        mqttService.stop(Type.FUNCTION);
-//    }
+
 
     /**
      * 获取message
@@ -257,19 +236,6 @@ public class MockController extends BaseController {
         String message = mqttService.getMessageByKey(key,timeOut, type);
         return mqttResponse(message);
     }
-
-//    /**
-//     * 功能测试获取message
-//     * @param key
-//     * @param timeOut
-//     * @return
-//     */
-//    @RequestMapping(value="/mqtt/function/receive", method= {RequestMethod.POST})
-//    @ResponseBody
-//    public String getMessage4Function(String key,int timeOut) {
-//        String message = mqttService.getMessageByKey(key,timeOut, Type.FUNCTION);
-//        return mqttResponse(message);
-//    }
 
 
     @RequestMapping(value="/tbox/insert", method= {RequestMethod.POST})

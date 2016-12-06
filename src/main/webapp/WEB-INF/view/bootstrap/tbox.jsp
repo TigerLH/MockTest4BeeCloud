@@ -330,8 +330,8 @@
 			var vin= select_start_server.options[index].value;
 			$.ajax({
 				type: "post",
-				url: "mqtt/send",
-				data: "message=" + message +"&type=FUNCTION",
+				url: "mqtt/function/send",
+				data: "message=" + message +"&vin=" + vin,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {

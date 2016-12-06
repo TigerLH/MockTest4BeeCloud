@@ -150,33 +150,41 @@ public class MqttServiceImpl implements MqttService{
         return sendMessageObject;
     }
 
+    /**
+     * 自动化测试发送消息
+     * @param message
+     * @param type
+     */
     @Override
     public void sendMessaage(String message,String type) {
-        SendMessageObject sendMessageObject = null;
+        SendMessageObject sendMessageObject = new SendMessageObject();
+        sendMessageObject.setTopic(Tbox_Send_Topic);
+        sendMessageObject.setMessage(message);
         if(Type.FUNCTION.getCode().equals(type)){
-            sendMessageObject = this.transJsonToAbstractMessage(message);
             MSMR_FUNCTION.addMessage(sendMessageObject);
         }else{
-            sendMessageObject = new SendMessageObject();
-            sendMessageObject.setTopic(Tbox_Send_Topic);
-            sendMessageObject.setMessage(message);
             MSMR_AUTOTEST.addMessage(sendMessageObject);
         }
     }
-//
-//    @Override
-//    public void sendFunctionMessage(String message,String vin) {     //功能测试发送
-//        if(vin!=null&&!"".equals(vin)){  //如果VIN码不为空,则替换掉Message中的identityCode
-//            AuthObject authObject = new AuthObject();
-//            authObject.setVin(vin);
-//            authObject.setPid("BEECLOUD");
-//            long identityCode = authObject.getIdentityCode();
-//            int tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
-//            message = message.replace(String.valueOf(tobeReplace),String.valueOf(identityCode));
-//        }
-//        SendMessageObject sendMessageObject = this.transJsonToAbstractMessage(message);
-//        MSMR_FUNCTION.addMessage(sendMessageObject);
-//    }
+
+    /**
+     * 功能测试发送消息
+     * @param message
+     * @param vin
+     */
+    @Override
+    public void sendFunctionMessage(String message,String vin) {     //功能测试发送
+        if(vin!=null&&!"".equals(vin)){  //如果VIN码不为空,则替换掉Message中的identityCode
+            AuthObject authObject = new AuthObject();
+            authObject.setVin(vin);
+            authObject.setPid("BEECLOUD");
+            long identityCode = authObject.getIdentityCode();
+            int tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
+            message = message.replace(String.valueOf(tobeReplace),String.valueOf(identityCode));
+        }
+        SendMessageObject sendMessageObject = this.transJsonToAbstractMessage(message);
+        MSMR_FUNCTION.addMessage(sendMessageObject);
+    }
 
     public static void main(String...args){
         String json = "{\n" +

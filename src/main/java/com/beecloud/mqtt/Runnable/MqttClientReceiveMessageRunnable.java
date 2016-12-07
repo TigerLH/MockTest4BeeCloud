@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -25,7 +26,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private MqttClient client = null;
 	private Logger logger = LoggerFactory.getLogger(this.getClientId());
 	private Queue<String> topics = new LinkedBlockingQueue<String>();
-	private static Map<String,String> cache = new HashMap<String,String>();
+	private static Map<String,String> cache = new ConcurrentHashMap<String,String>();
 	private String host;
 	private String Tbox_Channel_Topic = "mqtt/vehicle/%s";
 	public MqttClientReceiveMessageRunnable(String host){

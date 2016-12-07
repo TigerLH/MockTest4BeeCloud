@@ -56,6 +56,15 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 		try {
 			if(null!=client){
 				client.unsubscribe(String.format(Tbox_Channel_Topic,vin));
+				Set<String> sets = cache.keySet();
+				Iterator<String> iterator = sets.iterator();
+				while (iterator.hasNext()){
+					String key = iterator.next();
+					if(key.contains(String.format(Tbox_Channel_Topic,vin))){
+						cache.remove(key);
+						logger.info("移除缓存数据:"+key);
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

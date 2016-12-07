@@ -27,7 +27,7 @@
   <repository>  
     <id>beecloudmaven</id>  
     <name>beecloud maven</name>  
-    <url>http://10.42.254.200:8081/nexus/content/groups/public/</url> 
+    <url>http://10.28.4.4:8081/nexus/content/groups/public/</url>
   </repository>  
 </repositories> 
 	

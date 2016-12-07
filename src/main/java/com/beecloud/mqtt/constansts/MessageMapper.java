@@ -79,6 +79,10 @@ public class MessageMapper {
         map.put(ApplicationID.ABNORMAL_MOVEMENT_ALARM.name()+5,NotifyAutoAlarm.class);
         map.put(ApplicationID.ABNORMAL_MOVEMENT_ALARM.name()+8,AckMessage.class);
 
+        /**车辆异常晃动报警**/
+        map.put(ApplicationID.ABNORMAL_SHAKING_ALARM.name()+2,NotifyAutoRemind.class);
+        map.put(ApplicationID.ABNORMAL_SHAKING_ALARM.name()+3,AckMessage.class);
+
         /**远程控制**/
         map.put(ApplicationID.REMOTE_CONTROL.name()+2,RemoteControlMessage.class);
         map.put(ApplicationID.REMOTE_CONTROL.name()+3,AckMessage.class);

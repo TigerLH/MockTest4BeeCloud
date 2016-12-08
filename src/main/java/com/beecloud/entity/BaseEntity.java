@@ -37,7 +37,7 @@ public abstract class BaseEntity implements Serializable{
 			try {
 				PropertyInfo propInfo = props[i];				
 				
-				Object value = propInfo.getMethod.invoke(this, new Object[0]);
+				Object value = propInfo.getMethod.invoke(this);
 				if (isFirst)
 					isFirst = false;
 				else

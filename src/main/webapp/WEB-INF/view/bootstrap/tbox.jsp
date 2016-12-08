@@ -156,7 +156,7 @@
 					 <%--</div>--%>
 
 					 <label class="control-label"  for="message">消息体</label>
-					 <textarea id="message" style="height:200px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
+					 <textarea id="message" class="info" style="height:200px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
 				 </div>
 			 </div>
 			 <div class="modal-footer">
@@ -203,6 +203,7 @@
 		<textarea id="showmessage" style="word-break:break-all; word-wrap:break-all;"></textarea>
 	</form>
 	<script type='text/javascript'>
+		var isRunning = true;
 		//页面加载完成时初始化车辆下拉框
 		$(document).ready(function(){
 			var data = '<%=vehicle_list%>';
@@ -222,7 +223,7 @@
 		function subscribe(){
 			var index=select_start_server.selectedIndex ;
 			var vin= select_start_server.options[index].value;
-			var client = new Paho.MQTT.Client("10.28.4.34",1883, "FUNCTION_TEST");//建立客户端实例
+			var client = new Paho.MQTT.Client("10.28.4.34",Number(1883), "FUNCTION_TEST");//建立客户端实例
 			client.connect({onSuccess:onConnect});//连接服务器并注册连接成功处理事件
 			function onConnect() {
 				console.log("onConnected");
@@ -241,13 +242,31 @@
 			}
 		}
 
+		function receiveMessage() {
+			var index=select_start_server.selectedIndex ;
+			var vin= select_start_server.options[index].value;
+			$.ajax({
+				type: "post",
+				url: "mqtt/receive/all",
+				data: "topic=mqtt/vehicle/" + vin,
+				dataType: 'html',
+				ontentType: "application/x-www-form-urlencoded; charset=utf-8",
+				success: function (result) {
+					var obj = JSON.parse(result);
+					$('#showmessage').val(JSON.stringify(obj, null, 4));
+					if (isRunning) {
+						setTimeout("receiveMessage()", 5000);
+					}
+				}
+			});
+		}
 
 		//启动服务
 		function startMockServer(){
+			isRunning = true;
 			var index=select_start_server.selectedIndex ;
 			var vin= select_start_server.options[index].value;
 			var auth = '{ "vin": "'+vin+'", "pid": "BEECLOUD" }';
-			subscribe();
 			$.ajax({
 				type: "post",
 				url: "mqtt/connect",
@@ -258,6 +277,7 @@
 					document.getElementById("select_start_server").disabled=true;
 					document.getElementById("button_start_server").disabled=true;
 					document.getElementById("button_start_server").setAttribute("class","btn btn-default");
+					receiveMessage();
 				}
 			});
 		}
@@ -269,13 +289,14 @@
 			$.ajax({
 				type: "get",
 				url: "mqtt/disconnect",
-				data: "type=FUNCTION" +"&vin=" + vin,
+				data: "type=FUNCTION" +"&topic=mqtt/vehicle/" + vin,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
 					document.getElementById("select_start_server").disabled=false;
 					document.getElementById("button_start_server").disabled=false;
 					document.getElementById("button_start_server").setAttribute("class","btn btn-success");
+					isRunning = false;
 				}
 			});
 		}
@@ -292,10 +313,12 @@
 			var id = document.getElementById("tableResult").rows[row].cells[0].innerText;
 			var title = document.getElementById("tableResult").rows[row].cells[1].innerText;
 			var message = document.getElementById("tableResult").rows[row].cells[2].innerText;
+			var obj = JSON.parse(message);
+			var json = JSON.stringify(obj,null,4);
 			//向模态框中传值
 			$('#index').val(id);
 			$('#title').val(title);
-			$('#message').val(message);
+			$('#message').val(json);
 			$('#editModal').modal('show');
 		}
 			
@@ -376,7 +399,6 @@
 		}
 
 
-
 	    var PAGESIZE = 10;
         var options = {  
             currentPage: 1,  //当前页数
@@ -401,7 +423,7 @@
             	var title = $("#textInput").val(); //取内容
             	buildTable(name,page,PAGESIZE);//默认每页最多10条
             }  
-        }  
+        };
 
         //获取当前项目的路径
         var urlRootContext = (function () {
@@ -448,7 +470,7 @@
             	var name = $("#textInput").val(); //取内容
             	buildTable(name,page,PAGESIZE);//默认每页最多10条
             }  
-         }             	           
+         };
          $('#bottomTab').bootstrapPaginator("setOptions",newoptions); //重新设置总页面数目
          var dataList = data.dataList;
          $("#tableBody").empty();//清空表格内容

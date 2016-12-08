@@ -218,8 +218,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/disconnect", method= {RequestMethod.GET})
     @ResponseBody
-    public void disconnect(String vin,String type) {
-        mqttService.stop(vin,type);
+    public void disconnect(String topic,String type) {
+        mqttService.stop(topic,type);
     }
 
 
@@ -235,6 +235,19 @@ public class MockController extends BaseController {
     public String getMessage(String key,int timeOut,String type) {
         String message = mqttService.getMessageByKey(key,timeOut, type);
         return mqttResponse(message);
+    }
+
+
+
+    /**
+     * 获取和Vin码相关的所有message
+     * @return
+     */
+    @RequestMapping(value="/mqtt/receive/all", method= {RequestMethod.POST})
+    @ResponseBody
+    public String getMessage(String topic) {
+        String messages = mqttService.getAllMessage4Function(topic);
+        return mqttResponse(messages);
     }
 
 

@@ -9,6 +9,7 @@ import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.BaseMessage;
 import com.beecloud.util.UuidUtil;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.jayway.jsonpath.JsonPath;
 import org.eclipse.paho.client.mqttv3.*;
 import org.slf4j.Logger;
@@ -28,7 +29,6 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	private Queue<String> topics = new LinkedBlockingQueue<String>();
 	private static Map<String,String> cache = new ConcurrentHashMap<String,String>();
 	private String host;
-	private String Tbox_Channel_Topic = "mqtt/vehicle/%s";
 	public MqttClientReceiveMessageRunnable(String host){
 		this.host = host;
 	}
@@ -45,23 +45,37 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 		return cache.get(key);
 	}
 
+	public String getAllMessagebyVin(String  topic){
+		JsonArray jsonArray = new JsonArray();
+		Set<String> sets = cache.keySet();
+		Iterator<String> iterator = sets.iterator();
+		while (iterator.hasNext()){
+			String key = iterator.next();
+			if(key.contains(topic)){
+				jsonArray.add(cache.get(key));
+			}
+		}
+		return jsonArray.toString();
+	}
+
+
 	public String getClientId(){
 		return UuidUtil.getUuid();
 	}
 
 	/**
 	 * 退订topic
-	 * @param vin
+	 * @param topic
      */
-	public void unsubscribe(String vin){
+	public void unsubscribe(String topic){
 		try {
 			if(null!=client){
-				client.unsubscribe(String.format(Tbox_Channel_Topic,vin));
+				client.unsubscribe(topic);
 				Set<String> sets = cache.keySet();
 				Iterator<String> iterator = sets.iterator();
 				while (iterator.hasNext()){
 					String key = iterator.next();
-					if(key.contains(String.format(Tbox_Channel_Topic,vin))){
+					if(key.contains(topic)){
 						cache.remove(key);
 						logger.info("移除缓存数据:"+key);
 					}

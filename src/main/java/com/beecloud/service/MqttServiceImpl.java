@@ -95,11 +95,11 @@ public class MqttServiceImpl implements MqttService{
     }
 
     @Override
-    public void stop(String vin,String type) {
+    public void stop(String topic,String type) {
         if(Type.FUNCTION.getCode().equals(type)){
-            MRMR_FUNCTION.unsubscribe(vin);
+            MRMR_FUNCTION.unsubscribe(topic);
         }else{
-            MRMR_AUTOTEST.unsubscribe(vin);
+            MRMR_AUTOTEST.unsubscribe(topic);
         }
     }
 
@@ -184,6 +184,7 @@ public class MqttServiceImpl implements MqttService{
         MSMR_FUNCTION.addMessage(sendMessageObject);
     }
 
+
     public static void main(String...args){
         String json = "{\n" +
                 "    \"identity\": {\n" +
@@ -214,6 +215,7 @@ public class MqttServiceImpl implements MqttService{
         authObject.setVin("VIN99999901");
         authObject.setPid("BEECLOUD");
 //      AuthReqMessage authReqMessage = new MqttServiceImpl().getAuthReqMessage(authObject);
+
         Gson gson = new Gson();
         System.out.println(gson.toJson(authObject));
     }
@@ -237,4 +239,15 @@ public class MqttServiceImpl implements MqttService{
         }
         return "nothing to be found";
     }
+
+    @Override
+    public String getAllMessage4Function(String vin) {
+        String receive_message = MRMR_FUNCTION.getAllMessagebyVin(vin);
+        if(!"".equals(receive_message)){
+            return receive_message;
+        }else{
+            return "";
+        }
+    }
+
 }

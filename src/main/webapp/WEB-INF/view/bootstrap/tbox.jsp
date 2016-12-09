@@ -149,14 +149,37 @@
 						 <div class="controls" ><input id="title" placeholder="title" type="text" style="width:300px;"/></div>
 					 </div>
 
-					 <%--<div class="form-group">--%>
-						 <%--<label for="name">绑定车辆</label>--%>
-						 <%--<select id="myselect" class="form-control">--%>
-						 <%--</select>--%>
-					 <%--</div>--%>
+					 <div class="form-group">
+						 <label for="name">错误码</label>
+						 <select id="errorCode_select" class="form-control" style="width:300px;">
+							 <option>OK ("无错误")</option>
+							 <option>AUTH_ERR ("AuthToken验证失败")</option>
+							 <option>VEHICLE_AUTH_ERR ("车辆认证失败")</option>
+							 <option>PROTOCOL_DECODE_ERR ("协议解析错误")</option>
+							 <option>CAN_COMMUNICATION_ERR ("CAN通信错误")</option>
+							 <option>TBOX_SYS_ERR ("TBox系统忙")</option>
+							 <option>INVALID_COMMAND ("无效指令")</option>
+							 <option>CRC_CHECK_ERR ("CRC验证失败")</option>
+							 <option>TASK_EXECUTE_FAIL ("任务执行失败")</option>
+							 <option>TASK_EXECUTE_TIMEOUT ("任务执行超时")</option>
+							 <option>RESPONSE_TOOLONG ("应答数据过长")</option>
+							 <option>VEHICLE_CONFIGURATION_ERR ("车辆配置错误")</option>
+							 <option>TASK_EXCUTE_INVALID ("任务执行条件不满足")</option>
+							 <option>VEHICLE_UNCHARGED ("车辆未上电")</option>
+							 <option>VOLTAGE_ERR ("电压异常")</option>
+						 </select>
+					 </div>
+
+					 <div class="form-group">
+						 <label for="name">命令状态</label>
+						 <select id="commandStatus_select" class="form-control" style="width:300px;">
+							 <option>COMPLETE</option>
+							 <option>PROCESSING</option>
+						 </select>
+					 </div>
 
 					 <label class="control-label"  for="message">消息体</label>
-					 <textarea id="message" class="info" style="height:200px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
+					 <textarea id="message" class="info" style="height:300px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
 				 </div>
 			 </div>
 			 <div class="modal-footer">
@@ -220,37 +243,39 @@
 			});
 		});
 
-		function subscribe(){
-			var index=select_start_server.selectedIndex ;
-			var vin= select_start_server.options[index].value;
-			var client = new Paho.MQTT.Client("10.28.4.34",Number(1883), "FUNCTION_TEST");//建立客户端实例
-			client.connect({onSuccess:onConnect});//连接服务器并注册连接成功处理事件
-			function onConnect() {
-				console.log("onConnected");
-				client.subscribe("mqtt/vehicle/"+vin);//订阅主题
+		//自动更新ErrorCode
+		$("#errorCode_select").change(function(){
+			var errorCode = $("#errorCode_select").val().split(" ")[0];
+			var message = $("#message").val();
+			var obj = JSON.parse(message);
+			if(null!=obj['error']){
+				$("#message").val(message.replace(obj['error'].errorCode,errorCode));
 			}
-			client.onConnectionLost = onConnectionLost;//注册连接断开处理事件
-			client.onMessageArrived = onMessageArrived;//注册消息接收处理事件
-			function onConnectionLost(responseObject) {
-				if (responseObject.errorCode !== 0) {
-					console.log("onConnectionLost:"+responseObject.errorMessage);
-					console.log("连接已断开");
-				}
+			if(null!=obj['errorInfo']){
+				$("#message").val(message.replace(obj['errorInfo'].errorCode,errorCode));
 			}
-			function onMessageArrived(message) {
-				console.log("收到消息:"+message.payloadString);
+		});
+
+		//自动更新命令状态
+		$("#commandStatus_select").change(function(){
+			var command_Status = $("#commandStatus_select").val().split(" ")[0];
+			var message = $("#message").val();
+			var obj = JSON.parse(message);
+			if(null!=obj['status']){
+				$("#message").val(message.replace(obj['status'].status,command_Status));
 			}
-		}
+		});
+
+
 
 		function receiveMessage() {
-			var index=select_start_server.selectedIndex ;
-			var vin= select_start_server.options[index].value;
+			var vin= $("#select_start_server").val();
 			$.ajax({
 				type: "post",
 				url: "mqtt/receive/all",
 				data: "topic=mqtt/vehicle/" + vin,
 				dataType: 'html',
-				ontentType: "application/x-www-form-urlencoded; charset=utf-8",
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function (result) {
 					var obj = JSON.parse(result);
 					$('#showmessage').val(JSON.stringify(obj, null, 4));
@@ -264,8 +289,7 @@
 		//启动服务
 		function startMockServer(){
 			isRunning = true;
-			var index=select_start_server.selectedIndex ;
-			var vin= select_start_server.options[index].value;
+			var vin= $("#select_start_server").val();
 			var auth = '{ "vin": "'+vin+'", "pid": "BEECLOUD" }';
 			$.ajax({
 				type: "post",
@@ -284,8 +308,7 @@
 
 		//关闭服务
 		function  stopMockServer() {
-			var index=select_start_server.selectedIndex ;
-			var vin= select_start_server.options[index].value;
+			var vin= $("#select_start_server").val();
 			$.ajax({
 				type: "get",
 				url: "mqtt/disconnect",
@@ -384,8 +407,7 @@
 				row=10;  //如果能被整除,则取最后一条
 			}
 			var message = document.getElementById("tableResult").rows[row].cells[2].innerText;
-			var index=select_start_server.selectedIndex ;
-			var vin= select_start_server.options[index].value;
+			var vin= $("#select_start_server").val();
 			$.ajax({
 				type: "post",
 				url: "mqtt/function/send",

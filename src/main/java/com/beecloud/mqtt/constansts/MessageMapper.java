@@ -33,7 +33,7 @@ public class MessageMapper {
         map.put(ApplicationID.LOCK.name()+8,AckMessage.class);
 
         /**启动汽车**/
-        map.put(ApplicationID.START_CAR.name()+2,AckMessage.class);
+        map.put(ApplicationID.START_CAR.name()+2,RequestMessage.class);
         map.put(ApplicationID.START_CAR.name()+3,AckMessage.class);
         map.put(ApplicationID.START_CAR.name()+5,ResponseMessage.class);
         map.put(ApplicationID.START_CAR.name()+8,AckMessage.class);

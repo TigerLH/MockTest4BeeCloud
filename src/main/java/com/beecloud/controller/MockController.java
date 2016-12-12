@@ -253,8 +253,14 @@ public class MockController extends BaseController {
 
     @RequestMapping(value="/tbox/insert", method= {RequestMethod.POST})
     @ResponseBody
-    public void tboxInsert(String name,String data) {
-        tboxService.insert(name,data);
+    public String tboxInsert(String name,String data) {
+        List<String> list = tboxService.selectNameList();
+        if(list.contains(name)){
+             return responseFail("名称已存在,请修改后重试");
+         }else{
+            tboxService.insert(name,data);
+            return responseSuccess("插入成功");
+         }
     }
 
     @RequestMapping(value="/tbox/update", method= {RequestMethod.POST})

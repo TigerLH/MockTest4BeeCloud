@@ -51,6 +51,11 @@ public class TboxServiceImpl implements TboxService{
     }
 
     @Override
+    public List<String> selectNameList(){
+        return tboxDao.selectNameList();
+    }
+
+    @Override
     public PagedResult<Tbox> queryByPage(String name, Integer pageNo, Integer pageSize) {
         pageNo = pageNo == null?1:pageNo;
         pageSize = pageSize == null?10:pageSize;

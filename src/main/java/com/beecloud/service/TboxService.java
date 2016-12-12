@@ -14,7 +14,9 @@ public interface TboxService {
 	List<Tbox> selectEnableTbox();
 	
 	List<Tbox> selectTboxByName(String name);
-	
+
+	List<String> selectNameList();
+
 	void delectTboxById(Integer id);
 
 	void updateTboxById(Integer id, String name,String data);

@@ -35,15 +35,18 @@ public interface TboxDao {
 	  * @return
 	  */
 	 List<Tbox> selectTboxByName(@Param("name") String name);
-	  
-	 
-	 
+
 	 /**
 	  * 
 	  * @return
 	  */
 	 List<Tbox> selectEnableTbox();
-	 
+
+	/**
+	 * @return
+     */
+	 List<String> selectNameList();
+
 	 /**
 	  * 
 	  * @param id

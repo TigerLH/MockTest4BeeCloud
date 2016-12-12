@@ -23,7 +23,11 @@
 	<select id="selectEnableTbox" resultType="com.beecloud.domain.Tbox">
 		SELECT * FROM tbox WHERE status=1
 	</select>
-	
+
+	<select id="selectNameList" resultType="String">
+		SELECT name FROM tbox WHERE status=1
+	</select>
+
 	<insert id="insert">
 		INSERT into tbox (name,data,status) value(#{name},#{data},1)
 	</insert>

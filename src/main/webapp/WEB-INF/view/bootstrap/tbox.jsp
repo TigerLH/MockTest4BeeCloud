@@ -353,10 +353,17 @@
 				type: "post",
 				url: "tbox/insert",
 				data: "name=" + name + "&data=" + data,
-				dataType: 'html',
+				dataType: 'json',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
-					location.reload();
+					if(result.isError == true) {
+						alert(result.errorMsg);
+					}else{
+						location.reload();
+					}
+				},
+				error: function(e){
+					alert("插入失败:" + e);
 				}
 			});
 		}

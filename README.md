@@ -1,4 +1,4 @@
-# MockTest4Clients
+# MockTest4BeeCloud
 为客户端测试提供Mock服务
 
 ## Description
@@ -14,6 +14,9 @@
 ### HttpMock原理图
 
 ![image](https://github.com/TigerLH/MockTest4BeeCloud/tree/master/images/HttpMock.png)
+
+### TboxMock原理图
+![image](https://github.com/TigerLH/MockTest4BeeCloud/tree/master/images/TboxMock.png)
 
 ## 设计目的
 

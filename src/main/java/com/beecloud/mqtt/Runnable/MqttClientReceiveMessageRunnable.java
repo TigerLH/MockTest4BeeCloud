@@ -7,7 +7,6 @@ import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.BaseMessage;
-import com.beecloud.platform.protocol.util.binary.ByteDecoder;
 import com.beecloud.util.UuidUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -16,6 +15,7 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -158,14 +158,13 @@ class PushCallback implements MqttCallback,MqttSubject {
 			logger.info("消息类型:");
 			logger.info(MessageMapper.getMessage(key).getName());
 //			Constructor<?> cons[] = MessageMapper.getMessage(key).getConstructors();
-//			Constructor con = MessageMapper.getMessage(key).getConstructor(byte[].class);
-			AbstractMessage abstractMessages = (AbstractMessage)MessageMapper.getMessage(key).newInstance();
-			abstractMessages.decode(new ByteDecoder(data));
-			logger.info(abstractMessages.toString());
+			Constructor con = MessageMapper.getMessage(key).getConstructor(byte[].class);
+			Object object = con.newInstance(data);
+			logger.info(object.toString());
 			String keyword = String.valueOf(topic) + String.valueOf(applicationID) + String.valueOf(stepId) + String.valueOf(sequenceId);
-			if (null != abstractMessages) {
+			if (null != object) {
 				Gson gson = new Gson();
-				this.notifyMqttObservers(keyword, gson.toJson(abstractMessages));
+				this.notifyMqttObservers(keyword, gson.toJson(object));
 			}
 		}catch(Exception e){
 			e.printStackTrace();

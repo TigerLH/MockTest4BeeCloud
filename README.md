@@ -3,7 +3,7 @@
 
 ## Description
 
-基于开源框架anyproxy搭建一套利于使用的Mock测试平台,Mock服务器的各种返回
+为功能测试/自动化测试提供Mock服务,包含HttpMock & TboxMock功能
 
 代理框架：anyproxy
 

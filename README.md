@@ -2,6 +2,7 @@
 为客户端测试提供Mock服务
 
 ## Description
+
 基于开源框架anyproxy搭建一套利于使用的Mock测试平台,Mock服务器的各种返回
 
 代理框架：anyproxy
@@ -9,6 +10,10 @@
 后端框架：Spring+mybatis+SpringMvc+pageHelper
 
 前端框架：BootStrap+JQuery+Ajax
+
+### HttpMock原理图
+
+![image](https://github.com/TigerLH/MockTest4BeeCloud/tree/master/images/HttpMock.png)
 
 ## 设计目的
 

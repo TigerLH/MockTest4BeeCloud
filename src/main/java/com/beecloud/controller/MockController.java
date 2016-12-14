@@ -262,7 +262,7 @@ public class MockController extends BaseController {
 
     @RequestMapping(value="/tbox/update", method= {RequestMethod.POST})
     @ResponseBody
-    public void tboxUpdate(Integer id,String name,String data,int delay) {
+    public void tboxUpdate(Integer id,String name,String data,Integer delay) {
         tboxService.updateTboxById(id,name,data,delay);
     }
 

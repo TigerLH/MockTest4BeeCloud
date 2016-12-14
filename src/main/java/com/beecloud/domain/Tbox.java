@@ -9,6 +9,7 @@ public class Tbox {
     private int id;
     private String name;
     private String data;
+    private String delay;
     private int status;
 
     public int getId() {
@@ -35,6 +36,14 @@ public class Tbox {
         this.data = data;
     }
 
+    public String getDelay() {
+        return delay;
+    }
+
+    public void setDelay(String delay) {
+        this.delay = delay;
+    }
+
     public int getStatus() {
         return status;
     }
@@ -49,6 +58,7 @@ public class Tbox {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", data='" + data + '\'' +
+                ", delay='" + delay + '\'' +
                 ", status=" + status +
                 '}';
     }

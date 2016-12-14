@@ -53,5 +53,5 @@ public interface TboxDao {
 	  */
 	 void delectTboxById(@Param("id") Integer id);
 
-	 void updateTboxById(@Param("id")Integer id,@Param("name")String name,@Param("data")String data);
+	 void updateTboxById(@Param("id")Integer id,@Param("name")String name,@Param("data")String data,@Param("delay")Integer delay);
 }

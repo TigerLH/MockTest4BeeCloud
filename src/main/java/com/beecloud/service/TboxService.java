@@ -19,7 +19,7 @@ public interface TboxService {
 
 	void delectTboxById(Integer id);
 
-	void updateTboxById(Integer id, String name,String data);
+	void updateTboxById(Integer id, String name,String data,Integer delay);
 	
 	PagedResult<Tbox> queryByPage(String name, Integer pageNo, Integer pageSize);
 

@@ -1,5 +1,6 @@
 package com.beecloud.mqtt.Runnable;
 
+import com.beecloud.mqtt.Entity.SendMessageObject;
 import com.beecloud.mqtt.constansts.MessageMapper;
 import com.beecloud.mqtt.listenser.MqttObserver;
 import com.beecloud.mqtt.listenser.MqttSubject;
@@ -7,6 +8,7 @@ import com.beecloud.platform.protocol.core.datagram.BaseDataGram;
 import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.BaseMessage;
+import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.beecloud.util.UuidUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -17,24 +19,24 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by dell on 2016/11/9.
  */
-public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
+public class MqttClientHandleMessageThread extends Thread implements MqttObserver {
 	private MqttClient client = null;
 	private Logger logger = LoggerFactory.getLogger(this.getClientId());
-	private Queue<String> topics = new LinkedBlockingQueue<String>();
-	private static Map<String,String> cache = new ConcurrentHashMap<String,String>();
+	private Queue<SendMessageObject> messages = new LinkedBlockingQueue<SendMessageObject>();
+	private Map<String,String> cache = new HashMap<String, String>();
 	private String host;
-	public MqttClientReceiveMessageRunnable(String host){
+	private String vin;
+	private String Tbox_Receive_Topic = "mqtt/vehicle/%s";
+	private boolean status = true;
+	public MqttClientHandleMessageThread(String host,String vin){
 		this.host = host;
-	}
-
-	public void addTopic(String topic){
-		topics.add(topic);
+		this.vin = vin;
+		this.setName(vin);	//给线程设置名称,根据名称释放线程
 	}
 
 	public void setMessage(String key,String message){
@@ -45,15 +47,28 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 		return cache.get(key);
 	}
 
-	public String getAllMessagebyVin(String  topic){
+	public void subscirbe(String topic){
+		if(null!=client){
+			try {
+				logger.info("订阅消息:"+topic);
+				client.subscribe(topic, 2);
+			} catch (MqttException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void  sendMessage(SendMessageObject sendMessageObject){
+		messages.add(sendMessageObject);
+	}
+
+	public String getAllMessage(){
 		JsonArray jsonArray = new JsonArray();
 		Set<String> sets = cache.keySet();
 		Iterator<String> iterator = sets.iterator();
 		while (iterator.hasNext()){
 			String key = iterator.next();
-			if(key.contains(topic)){
 				jsonArray.add(cache.get(key));
-			}
 		}
 		return jsonArray.toString();
 	}
@@ -64,24 +79,15 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 	}
 
 	/**
-	 * 退订topic
-	 * @param topic
+	 * 强制断开连接
      */
-	public void unsubscribe(String topic){
+	public void forceDisconnect(){
 		try {
-			if(null!=client){
-				client.unsubscribe(topic);
-				Set<String> sets = cache.keySet();
-				Iterator<String> iterator = sets.iterator();
-				while (iterator.hasNext()){
-					String key = iterator.next();
-					if(key.contains(topic)){
-						cache.remove(key);
-						logger.info("移除缓存数据:"+key);
-					}
-				}
-			}
-		} catch (Exception e) {
+			status = false;
+			client.disconnectForcibly();
+			client = null;
+			cache = null;
+		} catch (MqttException e) {
 			e.printStackTrace();
 		}
 	}
@@ -91,18 +97,29 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setCleanSession(true);
 		try {
+			String topic = String.format(Tbox_Receive_Topic,vin);
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
-			while(true){
-				if(topics.isEmpty()){
+			PushCallback pushCallback = new PushCallback();
+			pushCallback.registerMqttObserver(this);
+			client.setCallback(pushCallback);
+			this.subscirbe(topic);
+			while(status){
+				if(messages.isEmpty()){
 					continue;
 				}
-				String topic = topics.poll();
-				PushCallback pushCallback = new PushCallback();
-				pushCallback.registerMqttObserver(this);
-				client.setCallback(pushCallback);
-				client.subscribe(topic, 2);
-				logger.info("订阅消息:"+topic);
+				SendMessageObject messageObject = messages.poll();
+				String send_topic = messageObject.getTopic();
+				String message = messageObject.getMessage();
+				byte[] data = ProtocolUtil.formatBitStringToBytes(message);
+				BaseDataGram baseDataGram = new BaseDataGram();
+				BaseMessage baseMessage = new BaseMessage(data);
+				baseDataGram.addMessage(baseMessage);
+				MqttMessage msg = new MqttMessage();
+				msg.setPayload(baseDataGram.encode());
+				logger.info("消息体:");
+				logger.info(baseMessage.toString());
+				client.publish(send_topic, msg);
 			}
 		} catch (MqttException e) {
 			e.printStackTrace();
@@ -111,7 +128,7 @@ public class MqttClientReceiveMessageRunnable implements Runnable,MqttObserver {
 
 	@Override
 	public void onMessageReceive(String keyword,String message) {
-		    System.out.println(keyword+":"+message);
+		    logger.info(keyword+":"+message);
 			setMessage(keyword,message);
 	}
 }
@@ -128,11 +145,11 @@ class PushCallback implements MqttCallback,MqttSubject {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public void connectionLost(Throwable cause) {
-		logger.error("Receive Client连接断开");
+		logger.error("Mqtt Client连接断开");
 	}
 
 	public void deliveryComplete(IMqttDeliveryToken token) {
-		logger.info("deliveryComplete---------" + token.isComplete());
+		logger.info("deliveryComplete:" + token.isComplete());
 	}
 
 
@@ -159,12 +176,12 @@ class PushCallback implements MqttCallback,MqttSubject {
 			logger.info(MessageMapper.getMessage(key).getName());
 //			Constructor<?> cons[] = MessageMapper.getMessage(key).getConstructors();
 			Constructor con = MessageMapper.getMessage(key).getConstructor(byte[].class);
-			Object object = con.newInstance(data);
-			logger.info(object.toString());
+			AbstractMessage abstractMessage = (AbstractMessage)con.newInstance(data);
+			logger.info(abstractMessage.toString());
 			String keyword = String.valueOf(topic) + String.valueOf(applicationID) + String.valueOf(stepId) + String.valueOf(sequenceId);
-			if (null != object) {
+			if (null != abstractMessage) {
 				Gson gson = new Gson();
-				this.notifyMqttObservers(keyword, gson.toJson(object));
+				this.notifyMqttObservers(keyword, gson.toJson(abstractMessage));
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -195,19 +212,6 @@ class PushCallback implements MqttCallback,MqttSubject {
 		    this.notifyMqttObservers(key,msg);
 	}
 
-	public static void main(String ...args){
-		String msg = " {\"serviceHeader\":{\"applicationId\":\"1\",\"stepId\":\"7\",\"msgId\":\"1480488965807|VIN99999901\"},\"data\":{\"state\":false,\"tboxEventTime\":1480488966000,\"notiyfyMsg\":\"浠诲姟鎵ц\uE511鏉′欢涓嶆弧瓒砡杞﹁締姝ｅ湪琛岄┒\",\"plate\":\"宸滱99901\"}}";
-		String key = "";
-//		try{
-//			key = ((ArrayList<String>)JsonPath.parse(msg).read("$..msgId")).get(0);
-//		}catch(Exception e){
-//			String applicationId = ((ArrayList<String>)JsonPath.parse(msg).read("$..applicationId")).get(0);
-//			String stepId = ((ArrayList<String>)JsonPath.parse(msg).read("$..stepId")).get(0);
-//			long tboxEventTime =  ((ArrayList<Long>)JsonPath.parse(msg).read("$..tboxEventTime")).get(0);
-//			key = String.valueOf(applicationId)+String.valueOf(stepId)+String.valueOf(tboxEventTime);
-//		}
-		System.out.println(key);
-	}
 
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {

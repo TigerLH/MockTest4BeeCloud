@@ -179,18 +179,15 @@ public class MockController extends BaseController {
     @RequestMapping(value="/mqtt/connect", method= {RequestMethod.POST})
     @ResponseBody
     public void startMqttServer4AutoTest(String authMessage,String type) {
-         mqttService.run(type);
-         mqttService.sendAuthReqMessage(authMessage,type);
+         mqttService.startAndAutoAuth(authMessage,type);
     }
-
 
 
     @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.POST})
     @ResponseBody
-    public void subcribeTopic4AutoTest(String topic,String type){
-        mqttService.subscribeTopic(topic,type);
+    public void subcribeTopic4AutoTest(String vin,String topic,String type){
+        mqttService.subscribeTopic(vin,topic,type);
     }
-
 
 
     /**
@@ -199,8 +196,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/send", method= {RequestMethod.POST})
     @ResponseBody
-    public void sendMessage(String message,String type) {
-        mqttService.sendMessaage(message,type);
+    public void sendMessage(String vin,String message,String type) {
+        mqttService.sendMessaage(vin,message,type);
     }
 
 
@@ -218,8 +215,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/disconnect", method= {RequestMethod.GET})
     @ResponseBody
-    public void disconnect(String topic,String type) {
-        mqttService.stop(topic,type);
+    public void disconnect(String vin,String type) {
+        mqttService.disconnect(vin,type);
     }
 
 
@@ -232,8 +229,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/receive", method= {RequestMethod.POST})
     @ResponseBody
-    public String getMessage(String key,int timeOut,String type) {
-        String message = mqttService.getMessageByKey(key,timeOut, type);
+    public String getMessage(String vin,String key,int timeOut,String type) {
+        String message = mqttService.getMessage(vin,key,timeOut,type);
         return mqttResponse(message);
     }
 
@@ -245,8 +242,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/receive/all", method= {RequestMethod.POST})
     @ResponseBody
-    public String getMessage(String topic) {
-        String messages = mqttService.getAllMessage4Function(topic);
+    public String getMessage(String vin) {
+        String messages = mqttService.getAllMessage4Function(vin);
         return mqttResponse(messages);
     }
 
@@ -265,8 +262,8 @@ public class MockController extends BaseController {
 
     @RequestMapping(value="/tbox/update", method= {RequestMethod.POST})
     @ResponseBody
-    public void tboxUpdate(Integer id,String name,String data) {
-        tboxService.updateTboxById(id,name,data);
+    public void tboxUpdate(Integer id,String name,String data,int delay) {
+        tboxService.updateTboxById(id,name,data,delay);
     }
 
     @RequestMapping(value="/tbox/delete", method= {RequestMethod.POST})

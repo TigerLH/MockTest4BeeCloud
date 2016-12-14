@@ -150,7 +150,7 @@
 					 </div>
 
 					 <div class="form-group">
-						 <label for="name">错误码</label>
+						 <label for="errorCode_select">错误码</label>
 						 <select id="errorCode_select" class="form-control" style="width:300px;">
 							 <option>OK ("无错误")</option>
 							 <option>AUTH_ERR ("AuthToken验证失败")</option>
@@ -171,12 +171,15 @@
 					 </div>
 
 					 <div class="form-group">
-						 <label for="name">命令状态</label>
+						 <label for="commandStatus_select">命令状态</label>
 						 <select id="commandStatus_select" class="form-control" style="width:300px;">
 							 <option>COMPLETE</option>
 							 <option>PROCESSING</option>
 						 </select>
 					 </div>
+
+					 <label for="delay">延时发送</label>
+					 <input id="delay" type="number" class="form-control" style="width:300px;">
 
 					 <label class="control-label"  for="message">消息体</label>
 					 <textarea id="message" class="info" style="height:300px;width:300px;word-break:break-all; word-wrap:break-all;"></textarea>
@@ -215,6 +218,7 @@
 					<th width=10%>id</th>
 					<th width=20%>name</th>
 					<th width=40%>data</th>
+					<th width=10%>delay</th>
 					<th width=20%>operation</th>
 				</tr>
 			</thead>
@@ -273,7 +277,7 @@
 			$.ajax({
 				type: "post",
 				url: "mqtt/receive/all",
-				data: "topic=mqtt/vehicle/" + vin,
+				data: "vin=" + vin,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function (result) {
@@ -312,7 +316,7 @@
 			$.ajax({
 				type: "get",
 				url: "mqtt/disconnect",
-				data: "type=FUNCTION" +"&topic=mqtt/vehicle/" + vin,
+				data: "type=FUNCTION" +"&vin=" + vin,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
@@ -372,10 +376,11 @@
 			var id =  $('#index').val();
 			var name = $('#title').val();
 			var data = $('#message').val();
+			var delay = $('#delay').val();
 			$.ajax({
 				type: "post",
 				url: "tbox/update",
-				data: "id=" + id +"&name=" + name + "&data=" + data,
+				data: "id=" + id +"&name=" + name + "&data=" + data + "&delay="+delay,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
@@ -510,6 +515,7 @@
                     content += '<td>' + element.id + '</td>';
                     content += '<td>' + element.name + '</td>';
                     content += '<td>' + element.data + '</td>';
+				    content += '<td>' + element.delay + '</td>';
                     content += '<td>';
 				    content += '<button class="btn btn-info" type="button"'+'id="'+index+'"onclick=send(this)>发送</button>';
 				    content += '<button class="btn btn-warning" type="button"'+'id="'+index+'"onclick=edit(this)>编辑</button>';
@@ -519,7 +525,7 @@
                     $("#tableBody").append(content);
              	    });
              	    } else {             	            	
-             	          $("#tableBody").append('<tr><th colspan ="5"><center>查询无数据</center></th></tr>');
+             	          $("#tableBody").append('<tr><th colspan ="6"><center>查询无数据</center></th></tr>');
              	    }
              	    }else{
              	          alert(data.errorMsg);

@@ -190,6 +190,7 @@ public class MqttServiceImpl implements MqttService{
             }
             if(!("").equals(value)){
                 message = value;
+                break;
             }else{
                 message = "nothing to be found";
             }

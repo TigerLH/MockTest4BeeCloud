@@ -410,19 +410,23 @@
 			});
 		}
 
-		function sendMessage(message,vin) {
-			return function () {
-				$.ajax({
-					type: "post",
-					url: "mqtt/function/send",
-					data: "message=" + message +"&vin=" + vin,
-					dataType: 'html',
-					contentType: "application/x-www-form-urlencoded; charset=utf-8",
-					success: function(result) {
-						//location.reload();
-					}
-				});
-			}
+
+
+		//倒计时
+		function timer(obj,time){
+			obj.disabled = true;
+			obj.innerText = time+"s";
+			setTimeout(function () {
+				time --;
+				if(time==0){
+					obj.innerText = "发送";
+					obj.disabled = false;
+					return;
+				}else{
+					obj.innerText = time+"s";
+					timer(obj,time);
+				}
+			},1000);
 		}
 
 		//发送消息
@@ -437,7 +441,21 @@
 			var delay = document.getElementById("tableResult").rows[row].cells[3].innerText;
 			var vin= $("#select_start_server").val();
 			if(""!=delay){
-				setTimeout(sendMessage(message,vin),delay*1000);
+				timer(obj,delay);
+				setTimeout(function () {
+					$.ajax({
+						type: "post",
+						url: "mqtt/function/send",
+						data: "message=" + message +"&vin=" + vin,
+						dataType: 'html',
+						contentType: "application/x-www-form-urlencoded; charset=utf-8",
+						success: function(result) {
+							alert("发送成功");
+						},error: function(e) {
+							alert("发送失败:" + e);
+						}
+					});
+				},delay*1000);
 			}else{
 				$.ajax({
 					type: "post",
@@ -446,7 +464,9 @@
 					dataType: 'html',
 					contentType: "application/x-www-form-urlencoded; charset=utf-8",
 					success: function(result) {
-						//location.reload();
+						alert("发送成功");
+					},error: function(e) {
+						alert("发送失败:" + e);
 					}
 				});
 			}
@@ -537,7 +557,10 @@
                     content += '<td>' + element.data + '</td>';
 				    content += '<td>' + element.delay + '</td>';
                     content += '<td>';
-				    content += '<button class="btn btn-info" type="button"'+'id="'+index+'"onclick=send(this)>发送</button>';
+				    content += '<button class="btn btn-info" type="button"'+'id="'+index+'" ' +
+					         'data-container="body" data-toggle="popover" data-placement="top"'+
+							 'data-content="发送成功"'+
+							 'onclick=send(this)>发送</button>';
 				    content += '<button class="btn btn-warning" type="button"'+'id="'+index+'"onclick=edit(this)>编辑</button>';
                     content += '<button class="btn btn-danger" type="button"'+'id="'+index+'"onclick=del(this)>删除</button>';
                     content += '</td>';

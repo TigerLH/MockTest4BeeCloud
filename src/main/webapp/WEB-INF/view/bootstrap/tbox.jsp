@@ -410,6 +410,21 @@
 			});
 		}
 
+		function sendMessage(message,vin) {
+			return function () {
+				$.ajax({
+					type: "post",
+					url: "mqtt/function/send",
+					data: "message=" + message +"&vin=" + vin,
+					dataType: 'html',
+					contentType: "application/x-www-form-urlencoded; charset=utf-8",
+					success: function(result) {
+						//location.reload();
+					}
+				});
+			}
+		}
+
 		//发送消息
 		function send(obj) {
 			var index = $(obj).attr("id");
@@ -419,17 +434,22 @@
 				row=10;  //如果能被整除,则取最后一条
 			}
 			var message = document.getElementById("tableResult").rows[row].cells[2].innerText;
+			var delay = document.getElementById("tableResult").rows[row].cells[3].innerText;
 			var vin= $("#select_start_server").val();
-			$.ajax({
-				type: "post",
-				url: "mqtt/function/send",
-				data: "message=" + message +"&vin=" + vin,
-				dataType: 'html',
-				contentType: "application/x-www-form-urlencoded; charset=utf-8",
-				success: function(result) {
-					//location.reload();
-				}
-			});
+			if(""!=delay){
+				setTimeout(sendMessage(message,vin),delay*1000);
+			}else{
+				$.ajax({
+					type: "post",
+					url: "mqtt/function/send",
+					data: "message=" + message +"&vin=" + vin,
+					dataType: 'html',
+					contentType: "application/x-www-form-urlencoded; charset=utf-8",
+					success: function(result) {
+						//location.reload();
+					}
+				});
+			}
 		}
 
 

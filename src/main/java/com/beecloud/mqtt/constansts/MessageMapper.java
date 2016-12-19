@@ -89,6 +89,12 @@ public class MessageMapper {
         map.put(ApplicationID.REMOTE_CONTROL.name()+5,RemoteNotifyMessage.class);
         map.put(ApplicationID.REMOTE_CONTROL.name()+8,AckMessage.class);
 
+        /**远程诊断**/
+        map.put(ApplicationID.REMOTE_DIAGNOSIS.name()+2,RemoteDiagnoseCommand.class);
+        map.put(ApplicationID.REMOTE_DIAGNOSIS.name()+3,AckMessage.class);
+        map.put(ApplicationID.REMOTE_DIAGNOSIS.name()+5,RemoteDiagnoseNotify.class);
+        map.put(ApplicationID.REMOTE_DIAGNOSIS.name()+8,AckMessage.class);
+
          /**碰撞记录上传**/
         map.put(ApplicationID.COLLISION_RECORD_UPLOAD.name()+2,NotifyCollisionMessage.class);
         map.put(ApplicationID.COLLISION_RECORD_UPLOAD.name()+3,AckMessage.class);

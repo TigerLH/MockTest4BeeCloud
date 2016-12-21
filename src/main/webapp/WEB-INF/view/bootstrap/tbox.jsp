@@ -268,6 +268,9 @@
 			if(null!=obj['status']){
 				$("#message").val(message.replace(obj['status'].status,command_Status));
 			}
+			if(null!=obj['functionCommandStatus']){
+				$("#message").val(message.replace(obj['functionCommandStatus'].status,command_Status));
+			}
 		});
 
 
@@ -384,7 +387,9 @@
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
-					location.reload();
+					//location.reload();
+					$('#editModal').modal('hide');
+					$('#queryButton').click();
 				}
 			});
 		}

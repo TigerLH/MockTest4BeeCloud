@@ -77,6 +77,7 @@
 	                Mock Server
 	             </a>
 	         </li>
+
 			 <li class="sidebar-brand">
 				 <a href="list">
 					 HttpMock
@@ -87,10 +88,12 @@
 				 <a href="#">
 					 TboxMock
 				 </a>
-			 <li>
-				 <a href="tbox">Tbox管理</a>
 			 </li>
-			 </li>
+				 <ul>
+					 <li>
+						 <a href="tbox">Tbox管理</a>
+					 </li>
+				 </ul>
 	     </ul>
 	 </div>
 	 

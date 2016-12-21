@@ -39,16 +39,21 @@
 				 <a href="#">
 					 HttpMock
 				 </a>
-			 <li>
-				 <a href="list">
-					 Mock管理
-				 </a>
 			 </li>
-			 <li>
-				 <a href="rule">
-					 规则管理
-				 </a>
-			 </li>
+				 <ul>
+					 <li>
+						 <a href="list">
+							 Mock管理
+						 </a>
+					 </li>
+				  </ul>
+			      <ul>
+					 <li>
+						 <a href="rule">
+							 规则管理
+						 </a>
+					 </li>
+				 </ul>
 			 </li>
 
 			 <li class="sidebar-brand">
@@ -257,7 +262,7 @@
             	var title = $("#textInput").val(); //取内容
             	buildTable(name,page,PAGESIZE);//默认每页最多10条
             }  
-        }  
+        };
 
         //获取当前项目的路径
         var urlRootContext = (function () {
@@ -304,7 +309,7 @@
             	var name = $("#textInput").val(); //取内容
             	buildTable(name,page,PAGESIZE);//默认每页最多10条
             }  
-         }             	           
+         };
          $('#bottomTab').bootstrapPaginator("setOptions",newoptions); //重新设置总页面数目
          var dataList = data.dataList;
          $("#tableBody").empty();//清空表格内容

@@ -42,18 +42,19 @@
 	             <a href="#">
 					 HttpMock
 				 </a>
-				 <li>
-					 <a href="list">
-						 Mock管理
-					 </a>
-				 </li>
-				 <li>
-					 <a href="rule">
-						 规则管理
-					 </a>
-				 </li>
-	         </li>
-
+			 </li>
+			 	<ul>
+					 <li>
+						 <a href="list">
+							 Mock管理
+						 </a>
+					 </li>
+					<li>
+						<a href="rule">
+							规则管理
+						</a>
+					</li>
+				</ul>
 			 <li class="sidebar-brand">
 				 <a href="tbox">
 					 TboxMock
@@ -254,8 +255,8 @@
 			if(title==""||url==""||statuscode==""||response==""){
 				alert("必填项不能为空");
 				return;
-			};
-			if(isNaN(statuscode)){
+            }
+            if(isNaN(statuscode)){
 				alert("状态码只能为数字");
 				return;
 			}
@@ -295,7 +296,8 @@
 				 }else{
 				 	location.reload();
 				 }
-				},error: function(e){
+				},
+				error: function(e){
              	     alert("删除失败:" + e);
              	 }
 			});
@@ -325,7 +327,7 @@
             	var title = $("#textInput").val(); //取内容
             	buildTable(title,page,PAGESIZE);//默认每页最多10条
             }  
-        }  
+        };
 
         //获取当前项目的路径
         var urlRootContext = (function () {
@@ -372,7 +374,7 @@
             	var title = $("#textInput").val(); //取内容
             	buildTable(title,page,PAGESIZE);//默认每页最多10条
             }  
-         }             	           
+         };
          $('#bottomTab').bootstrapPaginator("setOptions",newoptions); //重新设置总页面数目
          var dataList = data.dataList;
          $("#tableBody").empty();//清空表格内容

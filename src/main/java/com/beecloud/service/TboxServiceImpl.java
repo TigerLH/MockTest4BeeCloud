@@ -62,4 +62,12 @@ public class TboxServiceImpl implements TboxService{
         PageHelper.startPage(pageNo,pageSize);
         return BeanUtil.toPagedResult(tboxDao.selectTboxByName(name));
     }
+
+    @Override
+    public PagedResult<Tbox> queryByPage(List<String> names, Integer pageNo, Integer pageSize) {
+        pageNo = pageNo == null?1:pageNo;
+        pageSize = pageSize == null?10:pageSize;
+        PageHelper.startPage(pageNo,pageSize);
+        return BeanUtil.toPagedResult(tboxDao.selectTboxItems(names));
+    }
 }

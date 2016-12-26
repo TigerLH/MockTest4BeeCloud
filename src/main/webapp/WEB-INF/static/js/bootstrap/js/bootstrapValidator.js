@@ -1802,7 +1802,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.base64 = $.extend($.fn.bootstrapValidator.i18n.base64 || {}, {
         'default': 'Please enter a valid base 64 encoded'
     });
@@ -1827,7 +1827,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.between = $.extend($.fn.bootstrapValidator.i18n.between || {}, {
         'default': 'Please enter a value between %s and %s',
         notInclusive: 'Please enter a value between %s and %s strictly'
@@ -1893,7 +1893,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.callback = $.extend($.fn.bootstrapValidator.i18n.callback || {}, {
         'default': 'Please enter a valid value'
     });
@@ -1933,7 +1933,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.choice = $.extend($.fn.bootstrapValidator.i18n.choice || {}, {
         'default': 'Please enter a valid value',
         less: 'Please choose %s options at minimum',
@@ -2001,7 +2001,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.creditCard = $.extend($.fn.bootstrapValidator.i18n.creditCard || {}, {
         'default': 'Please enter a valid credit card number'
     });
@@ -2104,7 +2104,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.cusip = $.extend($.fn.bootstrapValidator.i18n.cusip || {}, {
         'default': 'Please enter a valid CUSIP number'
     });
@@ -2159,7 +2159,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.cvv = $.extend($.fn.bootstrapValidator.i18n.cvv || {}, {
         'default': 'Please enter a valid CVV number'
     });
@@ -2275,7 +2275,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.date = $.extend($.fn.bootstrapValidator.i18n.date || {}, {
         'default': 'Please enter a valid date'
     });
@@ -2393,7 +2393,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.different = $.extend($.fn.bootstrapValidator.i18n.different || {}, {
         'default': 'Please enter a different value'
     });
@@ -2434,7 +2434,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.digits = $.extend($.fn.bootstrapValidator.i18n.digits || {}, {
         'default': 'Please enter only digits'
     });
@@ -2458,7 +2458,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.ean = $.extend($.fn.bootstrapValidator.i18n.ean || {}, {
         'default': 'Please enter a valid EAN number'
     });
@@ -2498,7 +2498,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.emailAddress = $.extend($.fn.bootstrapValidator.i18n.emailAddress || {}, {
         'default': 'Please enter a valid email address'
     });
@@ -2529,7 +2529,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.file = $.extend($.fn.bootstrapValidator.i18n.file || {}, {
         'default': 'Please choose a valid file'
     });
@@ -2598,7 +2598,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.greaterThan = $.extend($.fn.bootstrapValidator.i18n.greaterThan || {}, {
         'default': 'Please enter a value greater than or equal to %s',
         notInclusive: 'Please enter a value greater than %s'
@@ -2659,7 +2659,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.grid = $.extend($.fn.bootstrapValidator.i18n.grid || {}, {
         'default': 'Please enter a valid GRId number'
     });
@@ -2696,7 +2696,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.hex = $.extend($.fn.bootstrapValidator.i18n.hex || {}, {
         'default': 'Please enter a valid hexadecimal number'
     });
@@ -2721,7 +2721,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.hexColor = $.extend($.fn.bootstrapValidator.i18n.hexColor || {}, {
         'default': 'Please enter a valid hex color'
     });
@@ -2749,7 +2749,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.iban = $.extend($.fn.bootstrapValidator.i18n.iban || {}, {
         'default': 'Please enter a valid IBAN number',
         countryNotSupported: 'The country code %s is not supported',
@@ -2995,7 +2995,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.id = $.extend($.fn.bootstrapValidator.i18n.id || {}, {
         'default': 'Please enter a valid identification number',
         countryNotSupported: 'The country code %s is not supported',
@@ -3810,7 +3810,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.identical = $.extend($.fn.bootstrapValidator.i18n.identical || {}, {
         'default': 'Please enter the same value'
     });
@@ -3850,7 +3850,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.imei = $.extend($.fn.bootstrapValidator.i18n.imei || {}, {
         'default': 'Please enter a valid IMEI number'
     });
@@ -3894,7 +3894,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.imo = $.extend($.fn.bootstrapValidator.i18n.imo || {}, {
         'default': 'Please enter a valid IMO number'
     });
@@ -3939,7 +3939,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.integer = $.extend($.fn.bootstrapValidator.i18n.integer || {}, {
         'default': 'Please enter a valid number'
     });
@@ -3967,7 +3967,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.ip = $.extend($.fn.bootstrapValidator.i18n.ip || {}, {
         'default': 'Please enter a valid IP address',
         ipv4: 'Please enter a valid IPv4 address',
@@ -4029,7 +4029,8 @@
             };
         }
     };
-}(window.jQuery));;(function($) {
+}(window.jQuery));
+(function ($) {
     $.fn.bootstrapValidator.i18n.isbn = $.extend($.fn.bootstrapValidator.i18n.isbn || {}, {
         'default': 'Please enter a valid ISBN number'
     });
@@ -4115,7 +4116,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.isin = $.extend($.fn.bootstrapValidator.i18n.isin || {}, {
         'default': 'Please enter a valid ISIN number'
     });
@@ -4174,7 +4175,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.ismn = $.extend($.fn.bootstrapValidator.i18n.ismn || {}, {
         'default': 'Please enter a valid ISMN number'
     });
@@ -4233,7 +4234,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.issn = $.extend($.fn.bootstrapValidator.i18n.issn || {}, {
         'default': 'Please enter a valid ISSN number'
     });
@@ -4279,7 +4280,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.lessThan = $.extend($.fn.bootstrapValidator.i18n.lessThan || {}, {
         'default': 'Please enter a value less than or equal to %s',
         notInclusive: 'Please enter a value less than %s'
@@ -4340,7 +4341,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.mac = $.extend($.fn.bootstrapValidator.i18n.mac || {}, {
         'default': 'Please enter a valid MAC address'
     });
@@ -4365,7 +4366,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.meid = $.extend($.fn.bootstrapValidator.i18n.meid || {}, {
         'default': 'Please enter a valid MEID number'
     });
@@ -4448,7 +4449,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.notEmpty = $.extend($.fn.bootstrapValidator.i18n.notEmpty || {}, {
         'default': 'Please enter a value'
     });
@@ -4480,7 +4481,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.numeric = $.extend($.fn.bootstrapValidator.i18n.numeric || {}, {
         'default': 'Please enter a valid float number'
     });
@@ -4519,7 +4520,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.phone = $.extend($.fn.bootstrapValidator.i18n.phone || {}, {
         'default': 'Please enter a valid phone number',
         countryNotSupported: 'The country code %s is not supported',
@@ -4616,7 +4617,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.regexp = $.extend($.fn.bootstrapValidator.i18n.regexp || {}, {
         'default': 'Please enter a value matching the pattern'
     });
@@ -4658,7 +4659,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.remote = $.extend($.fn.bootstrapValidator.i18n.remote || {}, {
         'default': 'Please enter a valid value'
     });
@@ -4728,7 +4729,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.rtn = $.extend($.fn.bootstrapValidator.i18n.rtn || {}, {
         'default': 'Please enter a valid RTN number'
     });
@@ -4766,7 +4767,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.sedol = $.extend($.fn.bootstrapValidator.i18n.sedol || {}, {
         'default': 'Please enter a valid SEDOL number'
     });
@@ -4806,7 +4807,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.siren = $.extend($.fn.bootstrapValidator.i18n.siren || {}, {
         'default': 'Please enter a valid SIREN number'
     });
@@ -4834,7 +4835,7 @@
 		}
 	};
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.siret = $.extend($.fn.bootstrapValidator.i18n.siret || {}, {
         'default': 'Please enter a valid SIRET number'
     });
@@ -4872,7 +4873,7 @@
 		}
 	};
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.step = $.extend($.fn.bootstrapValidator.i18n.step || {}, {
         'default': 'Please enter a valid step of %s'
     });
@@ -4936,7 +4937,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.stringCase = $.extend($.fn.bootstrapValidator.i18n.stringCase || {}, {
         'default': 'Please enter only lowercase characters',
         upper: 'Please enter only uppercase characters'
@@ -4972,7 +4973,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.stringLength = $.extend($.fn.bootstrapValidator.i18n.stringLength || {}, {
         'default': 'Please enter a value with valid length',
         less: 'Please enter less than %s characters',
@@ -5053,7 +5054,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.uri = $.extend($.fn.bootstrapValidator.i18n.uri || {}, {
         'default': 'Please enter a valid URI'
     });
@@ -5157,7 +5158,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.uuid = $.extend($.fn.bootstrapValidator.i18n.uuid || {}, {
         'default': 'Please enter a valid UUID number',
         version: 'Please enter a valid UUID version %s number'
@@ -5203,7 +5204,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.vat = $.extend($.fn.bootstrapValidator.i18n.vat || {}, {
         'default': 'Please enter a valid VAT number',
         countryNotSupported: 'The country code %s is not supported',
@@ -6423,7 +6424,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.vin = $.extend($.fn.bootstrapValidator.i18n.vin || {}, {
         'default': 'Please enter a valid VIN number'
     });
@@ -6472,7 +6473,7 @@
         }
     };
 }(window.jQuery));
-;(function($) {
+(function ($) {
     $.fn.bootstrapValidator.i18n.zipCode = $.extend($.fn.bootstrapValidator.i18n.zipCode || {}, {
         'default': 'Please enter a valid zip code',
         countryNotSupported: 'The country code %s is not supported',

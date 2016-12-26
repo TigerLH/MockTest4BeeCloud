@@ -58,19 +58,20 @@
 }
 
 .sidebar-nav li {
-    text-indent: 20px;
+    text-indent: 40px;
     line-height: 40px;
 }
 
-.sidebar-nav li a {
-    display: block;
-    text-decoration: none;
-    color: #87B7FF;
-}
+
+ .sidebar-nav  li a {
+     display: block;
+     text-decoration: none;
+     color: #c0c0c0;
+ }
 
 .sidebar-nav li a:hover {
     text-decoration: none;
-    color: #87B7FF;
+    color: #c0c0c0;
     background: rgba(255,255,255,0.2);
 }
 

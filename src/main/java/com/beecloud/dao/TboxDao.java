@@ -42,6 +42,7 @@ public interface TboxDao {
 	  */
 	 List<Tbox> selectEnableTbox();
 
+
 	/**
 	 * @return
      */
@@ -52,6 +53,9 @@ public interface TboxDao {
 	  * @param id
 	  */
 	 void delectTboxById(@Param("id") Integer id);
+
+
+	List<Tbox> selectTboxItems(@Param("names")List<String> names);
 
 	 void updateTboxById(@Param("id")Integer id,@Param("name")String name,@Param("data")String data,@Param("delay")Integer delay);
 }

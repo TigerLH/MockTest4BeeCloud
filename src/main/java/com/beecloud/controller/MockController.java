@@ -1,15 +1,10 @@
 package com.beecloud.controller;
 
 
-import com.beecloud.domain.Mock;
-import com.beecloud.domain.MockVo;
-import com.beecloud.domain.Rule;
-import com.beecloud.domain.Tbox;
-import com.beecloud.service.MockService;
-import com.beecloud.service.MqttService;
-import com.beecloud.service.RuleService;
-import com.beecloud.service.TboxService;
+import com.beecloud.domain.*;
+import com.beecloud.service.*;
 import com.beecloud.util.PagedResult;
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -19,7 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -44,6 +41,9 @@ public class MockController extends BaseController {
 
     @Resource
     private TboxService tboxService;
+
+    @Resource
+    private TboxGroupService tboxGroupService;
 	@RequestMapping("/")  
     public ModelAndView getIndex(){    
 		ModelAndView mav = new ModelAndView("index"); 
@@ -65,10 +65,15 @@ public class MockController extends BaseController {
 	}
 
     @RequestMapping("/tbox")
-    public String mqttlist(){
+    public String tboxlist(){
         return "bootstrap/tbox";
     }
-	
+
+    @RequestMapping("/group")
+    public String tboxGrouplist(){
+        return "bootstrap/group";
+    }
+
     @RequestMapping(value="/mock/list.do", method= {RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
     public String mockList(Integer pageNumber,Integer pageSize ,String title) {
@@ -266,6 +271,13 @@ public class MockController extends BaseController {
         tboxService.updateTboxById(id,name,data,delay);
     }
 
+    @RequestMapping(value="/tbox/list/name", method= {RequestMethod.POST,RequestMethod.GET})
+    @ResponseBody
+    public String tboxGetNameList() {
+        return tboxService.selectNameList().toString();
+    }
+
+
     @RequestMapping(value="/tbox/delete", method= {RequestMethod.POST})
     @ResponseBody
     public void tboxDelete(Integer id) {
@@ -283,4 +295,82 @@ public class MockController extends BaseController {
         }
     }
 
+
+
+
+    @RequestMapping(value="/group/insert", method= {RequestMethod.POST})
+    @ResponseBody
+    public String tboxGroupInsert(String name,String description) {
+        List<String> list = tboxGroupService.selectNameList();
+        if(list.contains(name)){
+            return responseFail("名称已存在,请修改后重试");
+        }else{
+            tboxGroupService.insert(name,description);
+            return responseSuccess("插入成功");
+        }
+    }
+
+    @RequestMapping(value="/group/update", method= {RequestMethod.POST})
+    @ResponseBody
+    public void tboxGroupUpdate(Integer id,String name,String description,String tboxs) {
+        tboxGroupService.updateTboxGroupById(id,name,description,tboxs);
+    }
+
+
+    @RequestMapping(value="/group/get", method= {RequestMethod.POST,RequestMethod.GET})
+    @ResponseBody
+    public String tboxGroupGet(Integer id) {
+        Gson gson = new Gson();
+        TboxGroup tboxGroup = tboxGroupService.selectTboxGroupById(id);
+        return gson.toJson(tboxGroup);
+    }
+
+
+    @RequestMapping(value="/group/delete", method= {RequestMethod.POST})
+    @ResponseBody
+    public void tboxGroupDelete(Integer id) {
+        tboxGroupService.delectTboxGroupById(id);
+    }
+
+    @RequestMapping(value="/group/list.do", method= {RequestMethod.POST,RequestMethod.GET})
+    @ResponseBody
+    public String tboxGroupList(Integer pageNumber,Integer pageSize ,String name) {
+        try {
+            PagedResult<TboxGroup> pageResult = tboxGroupService.queryByPage(name, pageNumber,pageSize);
+            return responseSuccess(pageResult);
+        } catch (Exception e) {
+            return responseFail(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取测试套名称和Tboxs键值关系
+     * @return
+     */
+    @RequestMapping(value="/group/list", method= {RequestMethod.POST,RequestMethod.GET})
+    @ResponseBody
+    public Map<String,String> tboxGroupList() {
+        return tboxGroupService.selectNameAndTboxsMap();
+    }
+
+
+    /**
+     * 根据测试套名称获取Tbox列表
+     * @param pageNumber
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @RequestMapping(value="/group/items", method= {RequestMethod.POST,RequestMethod.GET})
+    @ResponseBody
+    public String tboxGroupItemList(Integer pageNumber,Integer pageSize ,String name) {
+        try {
+            String[] array = name.split("\\|");
+            List<String> names = Arrays.asList(array);
+            PagedResult<Tbox> pageResult = tboxService.queryByPage(names, pageNumber,pageSize);
+            return responseSuccess(pageResult);
+        } catch (Exception e) {
+            return responseFail(e.getMessage());
+        }
+    }
 }

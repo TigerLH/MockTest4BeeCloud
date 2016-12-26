@@ -10,7 +10,6 @@
 	<script src="<%=request.getContextPath()%>/static/js/jQuery/jquery-2.1.4.min.js"></script>
 	<script src="<%=request.getContextPath()%>/static/js/bootstrap/js/bootstrap.min.js"></script>
 	<script src="<%=request.getContextPath()%>/static/js/bootstrap/js/bootstrap-paginator.min.js"></script>
-	<script src="<%=request.getContextPath()%>/static/js/bootstrap/js/mqttws31.min.js"></script>
 <style type="text/css">
 #queryDiv {
  margin-right: auto;
@@ -18,6 +17,12 @@
  width:800px;
 }
 #startServer {
+	margin-right: auto;
+	margin-left: auto;
+	width:800px;
+}
+
+#testSuite {
 	margin-right: auto;
 	margin-left: auto;
 	width:800px;
@@ -92,6 +97,9 @@
 				 <ul>
 					 <li>
 						 <a href="tbox">Tbox管理</a>
+					 </li>
+					 <li>
+						 <a href="group">Tbox测试套</a>
 					 </li>
 				 </ul>
 	     </ul>
@@ -210,6 +218,11 @@
 		<button id = "button_start_server" class="btn btn-success" type="button" onclick="startMockServer()">认证</button>
 		<button id = "button_stop_server" class="btn btn-warning" type="button" onclick="stopMockServer()">退订</button>
 	</div>
+	<div id = "testSuite">
+		<select id="select_group_list" class="form-control"></select>
+		<button id = "button_group_query" class="btn btn-success" type="button">查询</button>
+		<button id = "button_group_run" class="btn btn-warning" type="button">批量执行</button>
+	</div>
 
 
 
@@ -234,6 +247,7 @@
 	</form>
 	<script type='text/javascript'>
 		var isRunning = true;
+		var group_tboxs_map = {};  //存储测试套名称和tboxs对应关系
 		//页面加载完成时初始化车辆下拉框
 		$(document).ready(function(){
 			var data = '<%=vehicle_list%>';
@@ -249,6 +263,29 @@
 				}
 			});
 		});
+
+		//初始化测试套下拉列表
+		$(document).ready(function(){
+			$.ajax({
+				type: "post",
+				url: "group/list",
+				dataType: 'html',
+				contentType: "application/x-www-form-urlencoded; charset=utf-8",
+				success: function (result) {
+					var count= document.getElementById('select_group_list').options.length;
+					if(count>0){
+						return;
+					}
+					var data = JSON.parse(result);
+					group_tboxs_map = data;
+					$.each(data,function(index){
+						var content = '<option>' +index+ '</option>';
+						$("#select_group_list").append(content);
+					});
+				}
+			});
+		});
+
 
 		//自动更新ErrorCode
 		$("#errorCode_select").change(function(){
@@ -458,9 +495,7 @@
 						dataType: 'html',
 						contentType: "application/x-www-form-urlencoded; charset=utf-8",
 						success: function(result) {
-							alert("发送成功");
-						},error: function(e) {
-							alert("发送失败:" + e);
+
 						}
 					});
 				},delay*1000);
@@ -482,29 +517,29 @@
 
 
 	    var PAGESIZE = 10;
-        var options = {  
+        var options = {
             currentPage: 1,  //当前页数
             totalPages: 10,  //总页数，这里只是暂时的，后头会根据查出来的条件进行更改
-            size:"normal",  
-            alignment:"center",  
-            itemTexts: function (type, page, current) {  
-                switch (type) {  
-                    case "first":  
-                        return "第一页";  
-                    case "prev":  
-                        return "前一页";  
-                    case "next":  
-                        return "后一页";  
-                    case "last":  
-                        return "最后页";  
-                    case "page":  
-                        return  page;  
-                }                 
-            },  
-            onPageClicked: function (e, originalEvent, type, page) {  
+            size:"normal",
+            alignment:"center",
+            itemTexts: function (type, page, current) {
+                switch (type) {
+                    case "first":
+                        return "第一页";
+                    case "prev":
+                        return "前一页";
+                    case "next":
+                        return "后一页";
+                    case "last":
+                        return "最后页";
+                    case "page":
+                        return  page;
+                }
+            },
+            onPageClicked: function (e, originalEvent, type, page) {
             	var title = $("#textInput").val(); //取内容
             	buildTable(name,page,PAGESIZE);//默认每页最多10条
-            }  
+            }
         };
 
         //获取当前项目的路径
@@ -513,13 +548,13 @@
             var postPath = strPath.substring(0, strPath.substr(1).indexOf('/') + 1);
             return postPath;
         })();
-        
-       
+
+
         //生成表格
-        function buildTable(name,pageNumber,pageSize) {
-        	 var url =  urlRootContext + "/tbox/list.do"; //请求的地址
+        function buildTable(url,name,pageNumber,pageSize) {
+        	console.log(name);
              var reqParams = {'name':name, 'pageNumber':pageNumber,'pageSize':pageSize};//请求数据
-             $(function () {   
+             $(function () {
              	  $.ajax({
              	        type:"POST",
              	        url:url,
@@ -529,29 +564,28 @@
              	        success: function(data){
              	            if(data.isError == false) {
              	           // options.totalPages = data.pages;
-             	        var newoptions = {  
+             	        var newoptions = {
                         currentPage: 1,  //当前页数
                         totalPages: data.pages==0?1:data.pages,  //总页数
-                        size:"normal",  
-                        alignment:"center",  
-                        itemTexts: function (type, page, current) {  
-                        switch (type) {  
-                            case "first":  
-                            return "第一页";  
-                            case "prev":  
-                            return "前一页";  
-                            case "next":  
-                            return "后一页";  
-                            case "last":  
-                            return "最后页";  
-                        case "page":  
-                        return  page;  
-                }                 
-            },  
-            onPageClicked: function (e, originalEvent, type, page) {  
-            	var name = $("#textInput").val(); //取内容
-            	buildTable(name,page,PAGESIZE);//默认每页最多10条
-            }  
+                        size:"normal",
+                        alignment:"center",
+                        itemTexts: function (type, page, current) {
+                        switch (type) {
+                            case "first":
+                            return "第一页";
+                            case "prev":
+                            return "前一页";
+                            case "next":
+                            return "后一页";
+                            case "last":
+                            return "最后页";
+                        case "page":
+                        return  page;
+                }
+            },
+            onPageClicked: function (e, originalEvent, type, page) {
+            	buildTable(url,name,page,PAGESIZE);//默认每页最多10条
+            }
          };
          $('#bottomTab').bootstrapPaginator("setOptions",newoptions); //重新设置总页面数目
          var dataList = data.dataList;
@@ -569,13 +603,13 @@
 					         'data-container="body" data-toggle="popover" data-placement="top"'+
 							 'data-content="发送成功"'+
 							 'onclick=send(this)>发送</button>';
-				    content += '<button class="btn btn-warning" type="button"'+'id="'+index+'"onclick=edit(this)>编辑</button>';
-                    content += '<button class="btn btn-danger" type="button"'+'id="'+index+'"onclick=del(this)>删除</button>';
+				    content += '<button class="btn btn-warning" type="button"'+'id="1'+index+'"onclick=edit(this)>编辑</button>';
+                    content += '<button class="btn btn-danger" type="button"'+'id="10'+index+'"onclick=del(this)>删除</button>';
                     content += '</td>';
                     content += '</tr>';
                     $("#tableBody").append(content);
              	    });
-             	    } else {             	            	
+             	    } else {
              	          $("#tableBody").append('<tr><th colspan ="6"><center>查询无数据</center></th></tr>');
              	    }
              	    }else{
@@ -588,20 +622,37 @@
              	    });
                });
         }
-        
+
         //渲染完就执行
         $(function() {
-        	
+			var url_all =  urlRootContext + "/tbox/list.do"; //请求的地址
+			var url_group =  urlRootContext + "/group/items";
         	//生成底部分页栏
-            $('#bottomTab').bootstrapPaginator(options);     
-        	
-        	buildTable("",1,10);//默认空白查全部
-        	
+            $('#bottomTab').bootstrapPaginator(options);
+
+        	buildTable(url_all,"",1,10);//默认空白查全部
+
             //创建结算规则
             $("#queryButton").bind("click",function(){
-            	var name = $("#textInput").val();	
-            	buildTable(name,1,PAGESIZE);
+            	var name = $("#textInput").val();
+            	buildTable(url_all,name,1,PAGESIZE);
             });
+
+			//查询分组信息
+			$("#button_group_query").bind("click",function(){
+				var key = $("#select_group_list").val();
+				var name = group_tboxs_map[key];
+				buildTable(url_group,name,1,PAGESIZE);
+			});
+
+			//批量执行
+			$("#button_group_run").bind("click",function(){
+				$("button").each(function() {
+					if ($(this).text() == "发送") {
+						$(this).click();
+					}
+				});
+			});
         });
     </script>
 </body>

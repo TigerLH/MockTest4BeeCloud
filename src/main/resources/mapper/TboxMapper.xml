@@ -39,4 +39,12 @@
 	<update id="updateTboxById">
 		UPDATE tbox SET name = #{name},data = #{data},delay = #{delay} WHERE id=#{id}
 	</update>
+
+	<select id="selectTboxItems"  resultType="com.beecloud.domain.Tbox">
+		select * from tbox
+		<where>
+			name in <foreach collection="names" item="item" index="index"
+						   open="(" separator="," close=")">#{item}</foreach>
+		</where>
+	</select>
 </mapper>

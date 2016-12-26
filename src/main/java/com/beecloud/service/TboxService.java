@@ -23,4 +23,5 @@ public interface TboxService {
 	
 	PagedResult<Tbox> queryByPage(String name, Integer pageNo, Integer pageSize);
 
+	PagedResult<Tbox> queryByPage(List<String> names, Integer pageNo, Integer pageSize);
 }

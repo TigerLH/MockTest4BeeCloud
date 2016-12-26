@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beecloud.dao.TboxGroupDao">
+	<!-- 查询单条记录 -->
+	<select id="selectTboxGroupById" parameterType="int" resultType="com.beecloud.domain.TboxGroup">
+		SELECT * FROM tbox_group WHERE id = #{id}
+	</select>
+	
+	<!-- 	模糊查询 -->
+	<select id="selectTboxGroupByName" parameterType="java.lang.String" resultType="com.beecloud.domain.TboxGroup">
+		<bind name="pattern" value="'%' + name + '%'" />	
+		SELECT *
+		FROM tbox_group
+		WHERE 1 = 1
+		<if test="name != null and name !=''">
+		    AND name LIKE #{pattern}
+		</if>
+		AND status=1
+		ORDER BY id
+	</select>
+	
+	<select id="selectEnableTboxGroup" resultType="com.beecloud.domain.TboxGroup">
+		SELECT * FROM tbox_group WHERE status=1
+	</select>
+
+	<select id="selectNameList" resultType="String">
+		SELECT name FROM tbox_group WHERE status=1
+	</select>
+
+	<insert id="insert">
+		INSERT into tbox_group (name,description,status) value(#{name},#{description},1)
+	</insert>
+	
+	<update id="delectTboxGroupById">
+		UPDATE tbox_group SET status=0 WHERE id=#{id}
+	</update>
+
+	<update id="updateTboxGroupById">
+		UPDATE tbox_group SET name = #{name},description = #{description},tboxs = #{tboxs} WHERE id=#{id}
+	</update>
+</mapper>

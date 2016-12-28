@@ -98,6 +98,13 @@ public class MessageMapper {
          /**碰撞记录上传**/
         map.put(ApplicationID.COLLISION_RECORD_UPLOAD.name()+2,NotifyCollisionMessage.class);
         map.put(ApplicationID.COLLISION_RECORD_UPLOAD.name()+3,AckMessage.class);
+
+        /**车辆部件状态获取**/
+        map.put(ApplicationID.VEHICLE_COMPONENT_ACQUISITION.name()+2,RequestStateMessage.class);
+        map.put(ApplicationID.VEHICLE_COMPONENT_ACQUISITION.name()+3,AckMessage.class);
+        map.put(ApplicationID.VEHICLE_COMPONENT_ACQUISITION.name()+5,ResponseStateMessage.class);
+        map.put(ApplicationID.VEHICLE_COMPONENT_ACQUISITION.name()+8,AckMessage.class);
+
     }
     public static Class getMessage(String key){
         return map.get(key);

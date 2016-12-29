@@ -1,5 +1,6 @@
 package com.beecloud.mqtt.Utils;
 
+import com.alibaba.fastjson.JSON;
 import com.beecloud.mqtt.Entity.AuthObject;
 import com.beecloud.mqtt.Entity.SendMessageObject;
 import com.beecloud.mqtt.Runnable.MqttClientHandleMessageThread;
@@ -12,7 +13,6 @@ import com.beecloud.platform.protocol.core.header.ApplicationHeader;
 import com.beecloud.platform.protocol.core.message.AbstractMessage;
 import com.beecloud.platform.protocol.core.message.AuthReqMessage;
 import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
-import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,18 +64,18 @@ public class Util {
 
 
     /**
+     * 功能测试
      * 转换接口参数中的json转换为AbstractMessage实体
      * @param message
      * @return
      */
     public static SendMessageObject transJsonToAbstractMessage(String message){
-        Gson gson = new Gson();
         String applicationId = JsonPath.parse(message).read("$.applicationHeader.applicationID");
         int stepId = JsonPath.parse(message).read("$.applicationHeader.stepId");
         String key = applicationId+stepId;
         logger.info("发送消息:");
         logger.info("消息类型:"+ MessageMapper.getMessage(key).getName());
-        AbstractMessage abstractMessage = (AbstractMessage)gson.fromJson(message, MessageMapper.getMessage(key));
+        AbstractMessage abstractMessage = (AbstractMessage)JSON.parseObject(message, MessageMapper.getMessage(key));
         SendMessageObject sendMessageObject = new SendMessageObject();
         sendMessageObject.setTopic(Tbox_Send_Topic);
         sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(abstractMessage.encode()));

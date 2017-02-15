@@ -54,7 +54,7 @@
 		//加载数据库驱动类
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
 		//数据库连接URL
-		String url = "jdbc:mysql://10.28.4.35:3306/vehicle?useUnicode=true&characterEncoding=UTF-8";
+		String url = "jdbc:mysql://10.28.4.35:3306/unified_users?useUnicode=true&characterEncoding=UTF-8";
 		//数据库用户名
 		String user = "root";
 		//数据库密码
@@ -62,7 +62,7 @@
 		//根据数据库参数取得一个数据库连接
 		conn = DriverManager.getConnection(url, user, password);
 		stat = conn.createStatement();
-		String sql = "select * from vehicle";
+		String sql = "select * from um_vehicles";
 		ResultSet rs = stat.executeQuery(sql);
 		while(rs.next()){
 			vehicle_list.add(rs.getString("vin"));
@@ -466,7 +466,7 @@
 				if(time==0){
 					obj.innerText = "发送";
 					obj.disabled = false;
-					return;
+
 				}else{
 					obj.innerText = time+"s";
 					timer(obj,time);

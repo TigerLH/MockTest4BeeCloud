@@ -62,10 +62,19 @@
 		//根据数据库参数取得一个数据库连接
 		conn = DriverManager.getConnection(url, user, password);
 		stat = conn.createStatement();
-		String sql = "select * from um_vehicles";
+		String sql = "SELECT um_vehicles.vin,um_tbox.device_no,um_simcard.imsi,um_simcard.iccid FROM um_tbox,um_vehicles,um_vehicle_tbox,um_simcard,um_tbox_simcard WHERE um_tbox.id=um_vehicle_tbox.tbox_id AND um_vehicles.id =um_vehicle_tbox.vehicle_id\n" +
+				"AND um_tbox.id=um_tbox_simcard.tbox_id AND um_simcard.id=um_tbox_simcard.simcard_id";
 		ResultSet rs = stat.executeQuery(sql);
 		while(rs.next()){
-			vehicle_list.add(rs.getString("vin"));
+			StringBuilder sb = new StringBuilder();
+			sb.append(rs.getString("vin").trim())
+					.append("|")
+					.append(rs.getString("device_no").trim())
+					.append("|")
+					.append(rs.getString("imsi").trim())
+					.append("|")
+					.append(rs.getString("iccid").trim());
+			vehicle_list.add(sb.toString().trim());
 		}
 		if (rs!=null){
 			rs.close();
@@ -246,6 +255,7 @@
 		<textarea id="showmessage" style="word-break:break-all; word-wrap:break-all;"></textarea>
 	</form>
 	<script type='text/javascript'>
+		var map = {};
 		var isRunning = true;
 		var group_tboxs_map = {};  //存储测试套名称和tboxs对应关系
 		//页面加载完成时初始化车辆下拉框
@@ -258,7 +268,9 @@
 			}
 			$.each(array,function(index,value){
 				if(""!=value){
-					var content = '<option>' +value+ '</option>';
+					var vin = value.trim().split("|")[0];
+					map[vin] = value.trim();
+					var content = '<option>' +vin+ '</option>';
 					$("#select_start_server").append(content);
 				}
 			});
@@ -337,7 +349,12 @@
 		function startMockServer(){
 			isRunning = true;
 			var vin= $("#select_start_server").val();
-			var auth = '{ "vin": "'+vin+'", "pid": "BEECLOUD" }';
+			var data = map[vin].split("|");
+			console.log(data);
+			var device_no = data[1];
+			var imsi = data[2];
+			var iccid = data[3];
+			var auth = '{ "vin": "'+vin+'","tboxSerial": "'+device_no+'","imei": "'+imsi+'", "iccid": "'+iccid+'","pid": "BEECLOUD" }';
 			$.ajax({
 				type: "post",
 				url: "mqtt/connect",

@@ -113,20 +113,17 @@ public class MqttServiceImpl implements MqttService{
     /**
      * 功能测试发送消息
      * @param message
-     * @param vin
+     * @param identity
      */
     @Override
-    public void sendFunctionMessage(String message,String vin) {     //功能测试发送
-        if(vin!=null&&!"".equals(vin)){  //如果VIN码不为空,则替换掉Message中的identityCode
-            AuthObject authObject = new AuthObject();
-            authObject.setVin(vin);
-            authObject.setPid("BEECLOUD");
-            long identityCode = authObject.getIdentityCode();
-            int tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
-            message = message.replace(String.valueOf(tobeReplace),String.valueOf(identityCode));
-        }
+    public void sendFunctionMessage(String message,String identity) {     //功能测试发送//替换掉Message中的identityCode
+        Gson gson = new Gson();
+        AuthObject authObject = gson.fromJson(identity,AuthObject.class);
+        long identityCode = authObject.getIdentityCode();
+        int tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
+        message = message.replace(String.valueOf(tobeReplace),String.valueOf(identityCode));
         SendMessageObject sendMessageObject = Util.transJsonToAbstractMessage(message);
-        Util.sendMessageByVin(vin,thread_Group_function,sendMessageObject);
+        Util.sendMessageByVin(authObject.getVin().trim(),thread_Group_function,sendMessageObject);
     }
 
     @Override

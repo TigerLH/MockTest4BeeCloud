@@ -494,6 +494,13 @@
 		//发送消息
 		function send(obj) {
 			var index = $(obj).attr("id");
+			var vin= $("#select_start_server").val();
+			var data = map[vin].split("|");
+			console.log(data);
+			var device_no = data[1];
+			var imsi = data[2];
+			var iccid = data[3];
+			var identity = '{ "vin": "'+vin+'","tboxSerial": "'+device_no+'","imei": "'+imsi+'", "iccid": "'+iccid+'","pid": "BEECLOUD" }';
 			//获取表格中的一行数据
 			var row = index%10;
 			if(row==0){
@@ -508,7 +515,7 @@
 					$.ajax({
 						type: "post",
 						url: "mqtt/function/send",
-						data: "message=" + message +"&vin=" + vin,
+						data: "message=" + message +"&identity=" + identity,
 						dataType: 'html',
 						contentType: "application/x-www-form-urlencoded; charset=utf-8",
 						success: function(result) {
@@ -520,7 +527,7 @@
 				$.ajax({
 					type: "post",
 					url: "mqtt/function/send",
-					data: "message=" + message +"&vin=" + vin,
+					data: "message=" + message +"&identity=" + identity,
 					dataType: 'html',
 					contentType: "application/x-www-form-urlencoded; charset=utf-8",
 					success: function(result) {

@@ -211,8 +211,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/function/send", method= {RequestMethod.POST})
     @ResponseBody
-    public void sendFunctionMessage(String message,String vin) {
-        mqttService.sendFunctionMessage(message,vin);
+    public void sendFunctionMessage(String message,String identity) {
+        mqttService.sendFunctionMessage(message,identity);
     }
 
     /**

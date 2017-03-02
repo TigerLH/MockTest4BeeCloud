@@ -17,6 +17,7 @@ import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -87,17 +88,18 @@ public class Util {
      * @param vin
      * @param list
      */
-    public static void stopThreadByVin(String vin,List<MqttClientHandleMessageThread> list){
-//        List<MqttClientHandleMessageThread> updateThreadList = new ArrayList<MqttClientHandleMessageThread>();
+    public static List<MqttClientHandleMessageThread> stopThreadByVin(String vin,List<MqttClientHandleMessageThread> list){
+        List<MqttClientHandleMessageThread> updateThreadList = new ArrayList<MqttClientHandleMessageThread>();
         Iterator<MqttClientHandleMessageThread> iterator = list.iterator();
         while(iterator.hasNext()){
             MqttClientHandleMessageThread thread = iterator.next();
             if(thread.getName().equals(vin)){
                 thread.forceDisconnect();
-                list.remove(iterator);
+            }else {
+                updateThreadList.add(thread);
             }
         }
-//        return updateThreadList;
+        return updateThreadList;
     }
 
     /**

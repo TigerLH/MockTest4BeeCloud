@@ -32,9 +32,9 @@ public class MqttServiceImpl implements MqttService{
     @Override
     public void disconnect(String vin,String type) {
         if(Type.FUNCTION.getCode().equals(type)){
-            Util.stopThreadByVin(vin,thread_Group_function);
+            thread_Group_function = Util.stopThreadByVin(vin,thread_Group_function);
         }else if(Type.AUTOTEST.getCode().equals(type)){
-            Util.stopThreadByVin(vin,thread_Group_auto);
+            thread_Group_auto = Util.stopThreadByVin(vin,thread_Group_auto);
         }
     }
 

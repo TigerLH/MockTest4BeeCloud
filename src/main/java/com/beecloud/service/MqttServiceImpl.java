@@ -32,9 +32,9 @@ public class MqttServiceImpl implements MqttService{
     @Override
     public void disconnect(String vin,String type) {
         if(Type.FUNCTION.getCode().equals(type)){
-            thread_Group_function = Util.stopThreadByVin(vin,thread_Group_function);
-        }else{
-            thread_Group_auto = Util.stopThreadByVin(vin,thread_Group_auto);
+            Util.stopThreadByVin(vin,thread_Group_function);
+        }else if(Type.AUTOTEST.getCode().equals(type)){
+            Util.stopThreadByVin(vin,thread_Group_auto);
         }
     }
 
@@ -61,7 +61,6 @@ public class MqttServiceImpl implements MqttService{
         }else{
             if(!isClientExist(vin,thread_Group_auto)){
                 MqttClientHandleMessageThread MCHMR_AUTOTEST = new MqttClientHandleMessageThread(auto_test_host,vin);
-                MCHMR_AUTOTEST.cleanCache();
                 MCHMR_AUTOTEST.start();
                 thread_Group_auto.add(MCHMR_AUTOTEST);
                 MCHMR_AUTOTEST.sendMessage(sendMessageObject);
@@ -87,6 +86,7 @@ public class MqttServiceImpl implements MqttService{
     protected void sendMessage4ExistThread(String vin,List<MqttClientHandleMessageThread> list,SendMessageObject sendMessageObject){
         for(MqttClientHandleMessageThread thread : list) {
             if(thread.getName().equals(vin)){
+                thread.cleanCache();
                 thread.sendMessage(sendMessageObject);
                 break;
             }

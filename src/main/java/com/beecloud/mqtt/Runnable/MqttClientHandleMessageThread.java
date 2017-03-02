@@ -52,11 +52,12 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 			Set<String> sets = cache.keySet();
 			for(String set : sets){
 				if(set.startsWith(matcher)){
-					return cache.get(set);
+					message = cache.get(set);
+					cache.remove(set);
 				}
 			}
 		}else{
-			return "nothing to be found";
+			message =  "nothing to be found";
 		}
 		return message;
 	}
@@ -103,8 +104,8 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 		try {
 			status = false;
 			client.disconnectForcibly();
-			client = null;
-			cache = null;
+			cache.clear();
+			this.destroy();
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}

@@ -44,6 +44,20 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 	}
 
 	public String getMessageBykey(String key){
+		String message = "";
+		if(cache.containsKey(key)){
+			message = cache.get(key);
+		}else if(key.endsWith("*")){
+			String matcher = key.substring(0,key.length()-2);
+			Set<String> sets = cache.keySet();
+			for(String set : sets){
+				if(set.startsWith(matcher)){
+					return cache.get(set);
+				}
+			}
+		}else{
+			return "nothing to be found";
+		}
 		return cache.get(key);
 	}
 
@@ -158,7 +172,7 @@ class PushCallback implements MqttCallback,MqttSubject {
 	 * @param topic
 	 * @param message
      */
-	protected   void receiveTboxMessaage(String topic,MqttMessage message){
+	protected void receiveTboxMessaage(String topic,MqttMessage message){
 		try {
 			BaseDataGram baseDataGram = new BaseDataGram(message.getPayload());
 			List<BaseMessage> baseMessages = baseDataGram.getMessages();

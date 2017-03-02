@@ -121,7 +121,7 @@ public class MqttServiceImpl implements MqttService{
         Gson gson = new Gson();
         AuthObject authObject = gson.fromJson(identity,AuthObject.class);
         long identityCode = authObject.getIdentityCode();
-        long tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
+        Object tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
         message = message.replace(String.valueOf(tobeReplace),String.valueOf(identityCode));
         SendMessageObject sendMessageObject = Util.transJsonToAbstractMessage(message);
         Util.sendMessageByVin(authObject.getVin().trim(),thread_Group_function,sendMessageObject);

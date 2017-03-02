@@ -51,8 +51,7 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 			Set<String> sets = cache.keySet();
 			for(String set : sets){
 				if(set.startsWith(matcher)){
-					message = cache.get(set);
-					cache.remove(set);
+					return cache.get(set);
 				}
 			}
 		}else{

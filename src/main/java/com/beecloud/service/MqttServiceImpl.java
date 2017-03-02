@@ -55,7 +55,7 @@ public class MqttServiceImpl implements MqttService{
                 MCHMR_FUNCTION.start();
                 thread_Group_function.add(MCHMR_FUNCTION);
                 MCHMR_FUNCTION.sendMessage(sendMessageObject);
-            }else{
+            }else{         //forget to disconnect
                 sendMessage4ExistThread(vin,thread_Group_function,sendMessageObject);
             }
         }else{
@@ -64,7 +64,7 @@ public class MqttServiceImpl implements MqttService{
                 MCHMR_AUTOTEST.start();
                 thread_Group_auto.add(MCHMR_AUTOTEST);
                 MCHMR_AUTOTEST.sendMessage(sendMessageObject);
-            }else{
+            }else{         //forget to disconnect
                 sendMessage4ExistThread(vin,thread_Group_auto,sendMessageObject);
             }
         }

@@ -61,6 +61,7 @@ public class MqttServiceImpl implements MqttService{
         }else{
             if(!isClientExist(vin,thread_Group_auto)){
                 MqttClientHandleMessageThread MCHMR_AUTOTEST = new MqttClientHandleMessageThread(auto_test_host,vin);
+                MCHMR_AUTOTEST.cleanCache();
                 MCHMR_AUTOTEST.start();
                 thread_Group_auto.add(MCHMR_AUTOTEST);
                 MCHMR_AUTOTEST.sendMessage(sendMessageObject);

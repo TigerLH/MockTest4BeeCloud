@@ -58,7 +58,7 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 		}else{
 			return "nothing to be found";
 		}
-		return cache.get(key);
+		return message;
 	}
 
 	public void subscirbe(String topic){
@@ -90,6 +90,10 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 
 	public String getClientId(){
 		return UuidUtil.getUuid();
+	}
+
+	public void cleanCache(){
+		this.cache.clear();
 	}
 
 	/**

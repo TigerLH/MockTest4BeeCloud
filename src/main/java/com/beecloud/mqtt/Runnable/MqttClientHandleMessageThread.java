@@ -32,6 +32,7 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 	private String host;
 	private String vin;
 	private String Tbox_Receive_Topic = "mqtt/vehicle/%s";
+	private boolean status = true;
 	public MqttClientHandleMessageThread(String host,String vin){
 		this.host = host;
 		this.vin = vin;
@@ -102,7 +103,7 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 		try {
 			client.disconnectForcibly();
 			cache.clear();
-			this.destroy();
+			status = false;
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
@@ -120,7 +121,7 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 			pushCallback.registerMqttObserver(this);
 			client.setCallback(pushCallback);
 			this.subscirbe(topic);
-			while(true){
+			while(status){
 				if(messages.isEmpty()){
 					continue;
 				}

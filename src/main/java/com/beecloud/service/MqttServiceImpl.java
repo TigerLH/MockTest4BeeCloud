@@ -178,7 +178,7 @@ public class MqttServiceImpl implements MqttService{
         logger.info("GetMessage for key:"+key);
         logger.info("ReturnMessage:");
         long start = System.currentTimeMillis();
-        String message = "nothing to be found";
+        String message = "";
         while((System.currentTimeMillis()-start)<timeOut*1000){  //设置超时时间
             if(Type.FUNCTION.getCode().equals(type)){
                 message = Util.getMessageByVin(vin,thread_Group_function,key);
@@ -189,7 +189,7 @@ public class MqttServiceImpl implements MqttService{
               return message;
             }
         }
-        return message;
+        return "nothing to be found";
     }
 
     @Override

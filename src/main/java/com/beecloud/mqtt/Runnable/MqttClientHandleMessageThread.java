@@ -44,10 +44,10 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 	}
 
 	public String getMessageBykey(String key){
-		String message = "";
 		if(cache.containsKey(key)){
-			message = cache.get(key);
-		}else if(key.endsWith("*")){
+			return cache.get(key);
+		}
+		if(key.endsWith("*")){
 			String matcher = key.substring(0,key.length()-2);
 			Set<String> sets = cache.keySet();
 			for(String set : sets){
@@ -55,10 +55,8 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 					return cache.get(set);
 				}
 			}
-		}else{
-			message =  "nothing to be found";
 		}
-		return message;
+		return "";
 	}
 
 	public void subscirbe(String topic){

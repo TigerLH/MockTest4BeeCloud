@@ -178,12 +178,15 @@ public class MqttServiceImpl implements MqttService{
         logger.info("GetMessage for key:"+key);
         logger.info("ReturnMessage:");
         long start = System.currentTimeMillis();
-        String message = "";
+        String message = "nothing to be found";
         while((System.currentTimeMillis()-start)<timeOut*1000){  //设置超时时间
             if(Type.FUNCTION.getCode().equals(type)){
                 message = Util.getMessageByVin(vin,thread_Group_function,key);
             }else{
                 message = Util.getMessageByVin(vin,thread_Group_auto,key);
+            }
+            if(!"".equals(message)){
+              return message;
             }
         }
         return message;

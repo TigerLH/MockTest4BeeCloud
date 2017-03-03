@@ -45,6 +45,7 @@
 		<where>
 			name in <foreach collection="names" item="item" index="index"
 						   open="(" separator="," close=")">#{item}</foreach>
+			and status = 1
 		</where>
 	</select>
 </mapper>

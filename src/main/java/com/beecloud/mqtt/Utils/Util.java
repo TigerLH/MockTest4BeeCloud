@@ -75,7 +75,7 @@ public class Util {
         String key = applicationId+stepId;
         logger.info("发送消息:");
         logger.info("消息类型:"+ MessageMapper.getMessage(key).getName());
-        AbstractMessage abstractMessage = (AbstractMessage)JSON.parseObject(message, MessageMapper.getMessage(key));
+        AbstractMessage abstractMessage = (AbstractMessage)JSON.parse(message);
         SendMessageObject sendMessageObject = new SendMessageObject();
         sendMessageObject.setTopic(Tbox_Send_Topic);
         sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(abstractMessage.encode()));
@@ -124,14 +124,12 @@ public class Util {
      * @return
      */
     public static String getMessageByVin(String vin,List<MqttClientHandleMessageThread> list,String key){
-        String message = "";
         for(MqttClientHandleMessageThread thread : list){
             if(thread.getName().equals(vin)&&thread.isAlive()){
-                message = thread.getMessageBykey(key);
-                break;
+                return thread.getMessageBykey(key);
             }
         }
-        return message;
+        return "";
     }
 
     /**

@@ -75,7 +75,7 @@ public class Util {
         String key = applicationId+stepId;
         logger.info("发送消息:");
         logger.info("消息类型:"+ MessageMapper.getMessage(key).getName());
-        AbstractMessage abstractMessage = (AbstractMessage)JSON.parse(message);
+        AbstractMessage abstractMessage = (AbstractMessage)JSON.parseObject(message, MessageMapper.getMessage(key));
         SendMessageObject sendMessageObject = new SendMessageObject();
         sendMessageObject.setTopic(Tbox_Send_Topic);
         sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(abstractMessage.encode()));

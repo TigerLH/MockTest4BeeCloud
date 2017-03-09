@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author hong.lin
@@ -133,7 +135,7 @@ public class Util {
     }
 
     /**
-     * 查询对应的线程订阅消息
+     * 订阅消息
      * @param vin
      * @param list
      * @param topic
@@ -145,5 +147,48 @@ public class Util {
                 break;
             }
         }
+    }
+
+    /**
+     * 退订消息
+     * @param vin
+     * @param list
+     * @param topic
+     */
+    public static void unSubscribeByVin(String vin,List<MqttClientHandleMessageThread> list,String topic){
+        for(MqttClientHandleMessageThread thread : list){
+            if(thread.getName().equals(vin)){
+                thread.unSubscribe(topic);
+                break;
+            }
+        }
+    }
+
+
+    /**
+     * 清除数据缓存
+     * @param mqttClientHandleMessageThreads
+     * @param vin
+     */
+    public static void cleanCache(List<MqttClientHandleMessageThread> mqttClientHandleMessageThreads,String vin){
+        for (MqttClientHandleMessageThread thread : mqttClientHandleMessageThreads) {
+            if (vin.equals(thread.getName())&&thread.isAlive()) {
+                thread.cleanCache();
+            }
+        }
+    }
+
+    /**
+     * 判断字符串是否为数值
+     * @param str
+     * @return
+     */
+    public static boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        if( !isNum.matches() ){
+            return false;
+        }
+        return true;
     }
 }

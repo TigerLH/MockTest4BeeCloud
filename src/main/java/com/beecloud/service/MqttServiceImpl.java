@@ -136,6 +136,15 @@ public class MqttServiceImpl implements MqttService{
         }
     }
 
+    @Override
+    public void unSubscribeTopic(String vin, String topic, String type) {
+        if(Type.FUNCTION.getCode().equals(type)){
+            Util.unSubscribeByVin(vin,thread_Group_function,topic);
+        }else{
+            Util.unSubscribeByVin(vin,thread_Group_auto,topic);
+        }
+    }
+
 
     public static void main(String...args){
         String json = "{\n" +
@@ -203,5 +212,15 @@ public class MqttServiceImpl implements MqttService{
         }
         return receiveMessage;
     }
+
+    @Override
+    public void clean(String vin,String type) {
+        if(Type.FUNCTION.getCode().equals(type)){
+            Util.cleanCache(thread_Group_function,vin);
+        }else{
+            Util.cleanCache(thread_Group_auto,vin);
+        }
+    }
+
 
 }

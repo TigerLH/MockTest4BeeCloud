@@ -9,6 +9,8 @@ public interface MqttService {
     void sendMessaage(String vin,String message,String type);
     void sendFunctionMessage(String json,String vin);
     void subscribeTopic(String vin,String topic,String type);
+    void unSubscribeTopic(String vin,String topic,String type);
     String getAllMessage4Function(String vin);
+    void clean(String vin,String type);
     String getMessage(String vin,String key,int timeOut,String type);
 }

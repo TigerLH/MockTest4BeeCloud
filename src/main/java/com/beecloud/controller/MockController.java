@@ -187,11 +187,28 @@ public class MockController extends BaseController {
          mqttService.startAndAutoAuth(authMessage,type);
     }
 
-
+    /**
+     * 订阅消息
+     * @param vin
+     * @param topic
+     * @param type
+     */
     @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.POST})
     @ResponseBody
-    public void subcribeTopic4AutoTest(String vin,String topic,String type){
+    public void subcribeTopic(String vin,String topic,String type){
         mqttService.subscribeTopic(vin,topic,type);
+    }
+
+    /**
+     * 退订消息
+     * @param vin
+     * @param topic
+     * @param type
+     */
+    @RequestMapping(value="/mqtt/unSubscribe", method= {RequestMethod.POST})
+    @ResponseBody
+    public void unSubcribeTopic(String vin,String topic,String type){
+        mqttService.unSubscribeTopic(vin,topic,type);
     }
 
 
@@ -224,6 +241,14 @@ public class MockController extends BaseController {
         mqttService.disconnect(vin,type);
     }
 
+    /**
+     *清除缓存Map
+     */
+    @RequestMapping(value="/mqtt/clean", method= {RequestMethod.GET})
+    @ResponseBody
+    public void clean(String vin,String type) {
+        mqttService.clean(vin,type);
+    }
 
 
     /**

@@ -1,6 +1,7 @@
 package com.beecloud.mqtt.Runnable;
 
 import com.beecloud.mqtt.Entity.SendMessageObject;
+import com.beecloud.mqtt.Utils.Util;
 import com.beecloud.mqtt.constansts.MessageMapper;
 import com.beecloud.mqtt.listenser.MqttObserver;
 import com.beecloud.mqtt.listenser.MqttSubject;
@@ -69,6 +70,18 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 			}
 		}
 	}
+
+	public void unSubscribe(String topic){
+		if(null!=client){
+			try {
+				logger.info("退订消息:"+topic);
+				client.unsubscribe(topic);
+			} catch (MqttException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 	public void  sendMessage(SendMessageObject sendMessageObject){
 		messages.add(sendMessageObject);
@@ -214,13 +227,18 @@ class PushCallback implements MqttCallback,MqttSubject {
 			String msg = new String(data);
 			logger.info("收到App推送消息:");
 			logger.info(msg);
-			try{
-				key = ((ArrayList<String>)JsonPath.parse(msg).read("$..msgId")).get(0);
-			}catch(Exception e){
-				String applicationId = ((ArrayList<String>)JsonPath.parse(msg).read("$..applicationId")).get(0);
-				String stepId = ((ArrayList<String>)JsonPath.parse(msg).read("$..stepId")).get(0);
-				long tboxEventTime =  ((ArrayList<Long>)JsonPath.parse(msg).read("$..tboxEventTime")).get(0);
-				key = String.valueOf(applicationId)+String.valueOf(stepId)+String.valueOf(tboxEventTime);
+		    boolean isNum = Util.isNumeric(topic);
+		    if(isNum){				//CarRental
+		    	key = topic;
+			}else{
+				try{
+					key = ((ArrayList<String>)JsonPath.parse(msg).read("$..msgId")).get(0);
+				}catch(Exception e){
+					String applicationId = ((ArrayList<String>)JsonPath.parse(msg).read("$..applicationId")).get(0);
+					String stepId = ((ArrayList<String>)JsonPath.parse(msg).read("$..stepId")).get(0);
+					long tboxEventTime =  ((ArrayList<Long>)JsonPath.parse(msg).read("$..tboxEventTime")).get(0);
+					key = String.valueOf(applicationId)+String.valueOf(stepId)+String.valueOf(tboxEventTime);
+				}
 			}
 			logger.info("映射的Key为:");
 			logger.info(key);

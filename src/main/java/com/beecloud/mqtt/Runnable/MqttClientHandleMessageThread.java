@@ -31,13 +31,10 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 	private Queue<SendMessageObject> messages = new LinkedBlockingQueue<SendMessageObject>();
 	private Map<String,String> cache = new HashMap<String, String>();
 	private String host;
-	private String vin;
-	private String Tbox_Receive_Topic = "mqtt/vehicle/%s";
 	private boolean status = true;
-	public MqttClientHandleMessageThread(String host,String vin){
+	public MqttClientHandleMessageThread(String host,String threadName){
 		this.host = host;
-		this.vin = vin;
-		this.setName(vin);	//给线程设置名称,根据名称释放线程
+		this.setName(threadName);	//给线程设置名称,根据名称释放线程
 	}
 
 	public void setMessage(String key,String message){
@@ -126,13 +123,13 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setCleanSession(true);
 		try {
-			String topic = String.format(Tbox_Receive_Topic,vin);
+//			String topic = String.format(Tbox_Receive_Topic,vin);
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
 			PushCallback pushCallback = new PushCallback();
 			pushCallback.registerMqttObserver(this);
 			client.setCallback(pushCallback);
-			this.subscirbe(topic);
+//			this.subscirbe(topic);
 			while(status){
 				if(messages.isEmpty()){
 					continue;

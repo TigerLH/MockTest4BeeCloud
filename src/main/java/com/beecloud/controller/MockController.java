@@ -178,37 +178,39 @@ public class MockController extends BaseController {
 
 
     /**
-     * 连接
-     * @param authMessage
+     *
+     * @param threadName
+     * @param type
      */
     @RequestMapping(value="/mqtt/connect", method= {RequestMethod.POST})
     @ResponseBody
-    public void startMqttServer4AutoTest(String authMessage,String type) {
-         mqttService.startAndAutoAuth(authMessage,type);
+    public void connect(String threadName,String type) {
+         mqttService.connect(threadName, type);
     }
+
 
     /**
      * 订阅消息
-     * @param vin
+     * @param threadName
      * @param topic
      * @param type
      */
     @RequestMapping(value="/mqtt/subscribe", method= {RequestMethod.POST})
     @ResponseBody
-    public void subcribeTopic(String vin,String topic,String type){
-        mqttService.subscribeTopic(vin,topic,type);
+    public void subcribeTopic(String threadName,String topic,String type){
+        mqttService.subscribeTopic(threadName,topic,type);
     }
 
     /**
      * 退订消息
-     * @param vin
+     * @param threadName
      * @param topic
      * @param type
      */
     @RequestMapping(value="/mqtt/unSubscribe", method= {RequestMethod.POST})
     @ResponseBody
-    public void unSubcribeTopic(String vin,String topic,String type){
-        mqttService.unSubscribeTopic(vin,topic,type);
+    public void unSubcribeTopic(String threadName,String topic,String type){
+        mqttService.unSubscribeTopic(threadName,topic,type);
     }
 
 
@@ -218,8 +220,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/send", method= {RequestMethod.POST})
     @ResponseBody
-    public void sendMessage(String vin,String message,String type) {
-        mqttService.sendMessaage(vin,message,type);
+    public void sendMessage(String threadName,String message,String type) {
+        mqttService.sendMessaage(threadName,message,type);
     }
 
 
@@ -237,17 +239,18 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/disconnect", method= {RequestMethod.GET})
     @ResponseBody
-    public void disconnect(String vin,String type) {
-        mqttService.disconnect(vin,type);
+    public void disconnect(String threadName,String type) {
+        mqttService.disconnect(threadName,type);
     }
+
 
     /**
      *清除缓存Map
      */
     @RequestMapping(value="/mqtt/clean", method= {RequestMethod.GET})
     @ResponseBody
-    public void clean(String vin,String type) {
-        mqttService.clean(vin,type);
+    public void clean(String threadName,String type) {
+        mqttService.clean(threadName,type);
     }
 
 
@@ -259,8 +262,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/receive", method= {RequestMethod.POST})
     @ResponseBody
-    public String getMessage(String vin,String key,int timeOut,String type) {
-        String message = mqttService.getMessage(vin,key,timeOut,type);
+    public String getMessage(String threadName,String key,int timeOut,String type) {
+        String message = mqttService.getMessage(threadName,key,timeOut,type);
         return mqttResponse(message);
     }
 
@@ -272,8 +275,8 @@ public class MockController extends BaseController {
      */
     @RequestMapping(value="/mqtt/receive/all", method= {RequestMethod.POST})
     @ResponseBody
-    public String getMessage(String vin) {
-        String messages = mqttService.getAllMessage4Function(vin);
+    public String getMessage(String threadName) {
+        String messages = mqttService.getAllMessage4Function(threadName);
         return mqttResponse(messages);
     }
 

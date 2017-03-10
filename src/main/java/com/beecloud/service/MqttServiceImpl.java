@@ -5,8 +5,6 @@ import com.beecloud.mqtt.Entity.SendMessageObject;
 import com.beecloud.mqtt.Runnable.MqttClientHandleMessageThread;
 import com.beecloud.mqtt.Utils.Util;
 import com.beecloud.mqtt.constansts.Type;
-import com.beecloud.platform.protocol.core.message.AuthReqMessage;
-import com.beecloud.platform.protocol.util.binary.ProtocolUtil;
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
@@ -39,37 +37,22 @@ public class MqttServiceImpl implements MqttService{
     }
 
 
-
     @Override
-    public synchronized void startAndAutoAuth(String authMessage,String type) {
-        Gson gson = new Gson();
-        AuthObject authObject = gson.fromJson(authMessage,AuthObject.class);
-        SendMessageObject sendMessageObject = new SendMessageObject();
-        AuthReqMessage authReqMessage = Util.getAuthReqMessage(authObject);
-        sendMessageObject.setMessage(ProtocolUtil.bytesToFormatBitString(authReqMessage.encode()));
-        sendMessageObject.setTopic(Tbox_Send_Topic);
-        String vin = authObject.getVin();
-        if(Type.FUNCTION.toString().equals(type)){
-            if(!isClientExist(vin,thread_Group_function)){
-                MqttClientHandleMessageThread MCHMR_FUNCTION = new MqttClientHandleMessageThread(host,vin);
+    public void connect(String threadName, String type) {
+        if (Type.FUNCTION.toString().equals(type)) {
+            if (!isClientExist(threadName, thread_Group_function)) {
+                MqttClientHandleMessageThread MCHMR_FUNCTION = new MqttClientHandleMessageThread(host, threadName);
                 MCHMR_FUNCTION.start();
                 thread_Group_function.add(MCHMR_FUNCTION);
-                MCHMR_FUNCTION.sendMessage(sendMessageObject);
-            }else{         //forget to disconnect
-                sendMessage4ExistThread(vin,thread_Group_function,sendMessageObject);
             }
-        }else{
-            if(!isClientExist(vin,thread_Group_auto)){
-                MqttClientHandleMessageThread MCHMR_AUTOTEST = new MqttClientHandleMessageThread(auto_test_host,vin);
+        } else {
+            if (!isClientExist(threadName, thread_Group_auto)) {
+                MqttClientHandleMessageThread MCHMR_AUTOTEST = new MqttClientHandleMessageThread(auto_test_host, threadName);
                 MCHMR_AUTOTEST.start();
                 thread_Group_auto.add(MCHMR_AUTOTEST);
-                MCHMR_AUTOTEST.sendMessage(sendMessageObject);
-            }else{         //forget to disconnect
-                sendMessage4ExistThread(vin,thread_Group_auto,sendMessageObject);
             }
         }
     }
-
 
 
     protected boolean isClientExist(String vin,List<MqttClientHandleMessageThread> list){

@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 public class Util {
     private static final String Tbox_Send_Topic = "mqtt/server";
     private static Logger logger = LoggerFactory.getLogger("com.beecloud.mqtt.Utils.Util");
+
     /**
      * 生成认证消息
      * @return
@@ -103,6 +104,7 @@ public class Util {
         }
         return updateThreadList;
     }
+
 
     /**
      * 发送消息到对应的线程中

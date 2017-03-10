@@ -228,7 +228,7 @@ class PushCallback implements MqttCallback,MqttSubject {
 			logger.info("收到App推送消息:");
 			logger.info(msg);
 		    boolean isNum = Util.isNumeric(topic);
-		    if(isNum){				//CarRental
+		    if(!isNum){				//CarRental
 		    	key = topic;
 			}else{
 				try{

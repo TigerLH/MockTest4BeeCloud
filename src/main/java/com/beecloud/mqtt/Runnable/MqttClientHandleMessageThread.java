@@ -113,6 +113,7 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 			client.disconnectForcibly();
 			cache.clear();
 			status = false;
+			this.interrupt();
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}

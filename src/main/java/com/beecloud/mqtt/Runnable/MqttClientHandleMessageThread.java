@@ -49,7 +49,7 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 			return cache.get(key);
 		}
 		if(key.endsWith("*")){
-			String matcher = key.substring(0,key.length()-2);
+			String matcher = key.substring(0,key.length()-1);
 			Set<String> sets = cache.keySet();
 			for(String set : sets){
 				if(set.startsWith(matcher)){
@@ -59,6 +59,7 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 		}
 		return "";
 	}
+
 
 	public void subscirbe(String topic){
 		if(null!=client){

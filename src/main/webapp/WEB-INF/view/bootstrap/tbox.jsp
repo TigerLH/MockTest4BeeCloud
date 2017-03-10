@@ -332,7 +332,7 @@
 			$.ajax({
 				type: "post",
 				url: "mqtt/receive/all",
-				data: "vin=" + vin,
+				data: "threadName=" + vin,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function (result) {
@@ -351,14 +351,14 @@
 			var vin= $("#select_start_server").val();
 			var data = map[vin].split("|");
 			console.log(data);
-			var device_no = data[1];
-			var imsi = data[2];
-			var iccid = data[3];
-			var auth = '{ "vin": "'+vin+'","tboxSerial": "'+device_no+'","imei": "'+imsi+'", "iccid": "'+iccid+'","pid": "BEECLOUD" }';
+//			var device_no = data[1];
+//			var imsi = data[2];
+//			var iccid = data[3];
+//			var auth = '{ "vin": "'+vin+'","tboxSerial": "'+device_no+'","imei": "'+imsi+'", "iccid": "'+iccid+'","pid": "BEECLOUD" }';
 			$.ajax({
 				type: "post",
 				url: "mqtt/connect",
-				data: "authMessage=" + auth +"&type=FUNCTION",
+				data: "threadName=" + vin +"&type=FUNCTION",
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {
@@ -376,7 +376,7 @@
 			$.ajax({
 				type: "get",
 				url: "mqtt/disconnect",
-				data: "type=FUNCTION" +"&vin=" + vin,
+				data: "type=FUNCTION" +"&threadName=" + vin,
 				dataType: 'html',
 				contentType: "application/x-www-form-urlencoded; charset=utf-8",
 				success: function(result) {

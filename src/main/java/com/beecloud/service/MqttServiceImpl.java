@@ -28,11 +28,11 @@ public class MqttServiceImpl implements MqttService{
 
 
     @Override
-    public void disconnect(String vin,String type) {
+    public void disconnect(String threadName,String type) {
         if(Type.FUNCTION.getCode().equals(type)){
-            thread_Group_function = Util.stopThreadByVin(vin,thread_Group_function);
+            thread_Group_function = Util.stopThreadByThreadName(threadName,thread_Group_function);
         }else if(Type.AUTOTEST.getCode().equals(type)){
-            thread_Group_auto = Util.stopThreadByVin(vin,thread_Group_auto);
+            thread_Group_auto = Util.stopThreadByThreadName(threadName,thread_Group_auto);
         }
     }
 
@@ -66,9 +66,9 @@ public class MqttServiceImpl implements MqttService{
         return isExist;
     }
 
-    protected void sendMessage4ExistThread(String vin,List<MqttClientHandleMessageThread> list,SendMessageObject sendMessageObject){
+    protected void sendMessage4ExistThread(String threadName,List<MqttClientHandleMessageThread> list,SendMessageObject sendMessageObject){
         for(MqttClientHandleMessageThread thread : list) {
-            if(thread.getName().equals(vin)){
+            if(thread.getName().equals(threadName)){
                 thread.cleanCache();
                 thread.sendMessage(sendMessageObject);
                 break;
@@ -83,14 +83,14 @@ public class MqttServiceImpl implements MqttService{
      * @param type
      */
     @Override
-    public void sendMessaage(String vin,String message,String type) {
+    public void sendMessaage(String threadName,String message,String type) {
         SendMessageObject sendMessageObject = new SendMessageObject();
         sendMessageObject.setTopic(Tbox_Send_Topic);
         sendMessageObject.setMessage(message);
         if(Type.FUNCTION.getCode().equals(type)){
-            Util.sendMessageByVin(vin,thread_Group_function,sendMessageObject);
+            Util.sendMessageByThreadName(threadName,thread_Group_function,sendMessageObject);
         }else{
-            Util.sendMessageByVin(vin,thread_Group_auto,sendMessageObject);
+            Util.sendMessageByThreadName(threadName,thread_Group_auto,sendMessageObject);
         }
     }
 
@@ -107,24 +107,24 @@ public class MqttServiceImpl implements MqttService{
         Object tobeReplace = JsonPath.parse(message).read("$.identity.identityCode");
         message = message.replace(String.valueOf(tobeReplace),String.valueOf(identityCode));
         SendMessageObject sendMessageObject = Util.transJsonToAbstractMessage(message);
-        Util.sendMessageByVin(authObject.getVin().trim(),thread_Group_function,sendMessageObject);
+        Util.sendMessageByThreadName(authObject.getVin().trim(),thread_Group_function,sendMessageObject);
     }
 
     @Override
-    public void subscribeTopic(String vin, String topic, String type) {
+    public void subscribeTopic(String threadName, String topic, String type) {
         if(Type.FUNCTION.getCode().equals(type)){
-            Util.subscribeByVin(vin,thread_Group_function,topic);
+            Util.subscribeByThreadName(threadName,thread_Group_function,topic);
         }else{
-            Util.subscribeByVin(vin,thread_Group_auto,topic);
+            Util.subscribeByThreadName(threadName,thread_Group_auto,topic);
         }
     }
 
     @Override
-    public void unSubscribeTopic(String vin, String topic, String type) {
+    public void unSubscribeTopic(String threadName, String topic, String type) {
         if(Type.FUNCTION.getCode().equals(type)){
-            Util.unSubscribeByVin(vin,thread_Group_function,topic);
+            Util.unSubscribeByThreadName(threadName,thread_Group_function,topic);
         }else{
-            Util.unSubscribeByVin(vin,thread_Group_auto,topic);
+            Util.unSubscribeByThreadName(threadName,thread_Group_auto,topic);
         }
     }
 
@@ -166,16 +166,16 @@ public class MqttServiceImpl implements MqttService{
 
 
     @Override
-    public String getMessage(String vin,String key,int timeOut,String type) {
+    public String getMessage(String threadName,String key,int timeOut,String type) {
         logger.info("GetMessage for key:"+key);
         logger.info("ReturnMessage:");
         long start = System.currentTimeMillis();
         String message = "";
         while((System.currentTimeMillis()-start)<timeOut*1000){  //设置超时时间
             if(Type.FUNCTION.getCode().equals(type)){
-                message = Util.getMessageByVin(vin,thread_Group_function,key);
+                message = Util.getMessageByThreadName(threadName,thread_Group_function,key);
             }else{
-                message = Util.getMessageByVin(vin,thread_Group_auto,key);
+                message = Util.getMessageByThreadName(threadName,thread_Group_auto,key);
             }
             if(!"".equals(message)){
               return message;
@@ -185,10 +185,10 @@ public class MqttServiceImpl implements MqttService{
     }
 
     @Override
-    public String getAllMessage4Function(String vin) {
+    public String getAllMessage4Function(String threadName) {
         String receiveMessage = "nothing to be found";
         for (MqttClientHandleMessageThread thread : thread_Group_function) {
-            if (vin.equals(thread.getName())&&thread.isAlive()) {
+            if (threadName.equals(thread.getName())&&thread.isAlive()) {
                 receiveMessage = thread.getAllMessage();
                 break;
             }

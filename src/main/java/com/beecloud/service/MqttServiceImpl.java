@@ -55,10 +55,10 @@ public class MqttServiceImpl implements MqttService{
     }
 
 
-    protected boolean isClientExist(String vin,List<MqttClientHandleMessageThread> list){
+    protected boolean isClientExist(String threadName,List<MqttClientHandleMessageThread> list){
         boolean isExist = false;
         for(MqttClientHandleMessageThread thread : list) {
-            if(thread.getName().equals(vin)&&thread.isAlive()){
+            if(thread.getName().equals(threadName)&&thread.isUseFul()){
                 isExist = true;
                 break;
             }
@@ -66,15 +66,6 @@ public class MqttServiceImpl implements MqttService{
         return isExist;
     }
 
-    protected void sendMessage4ExistThread(String threadName,List<MqttClientHandleMessageThread> list,SendMessageObject sendMessageObject){
-        for(MqttClientHandleMessageThread thread : list) {
-            if(thread.getName().equals(threadName)){
-                thread.cleanCache();
-                thread.sendMessage(sendMessageObject);
-                break;
-            }
-        }
-    }
 
 
     /**

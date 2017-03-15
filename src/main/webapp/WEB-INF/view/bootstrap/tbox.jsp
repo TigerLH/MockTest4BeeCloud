@@ -437,18 +437,28 @@
 			var name = $('#title').val();
 			var data = $('#message').val();
 			var delay = $('#delay').val();
-			$.ajax({
-				type: "post",
-				url: "tbox/update",
-				data: "id=" + id +"&name=" + name + "&data=" + data + "&delay="+delay,
-				dataType: 'html',
-				contentType: "application/x-www-form-urlencoded; charset=utf-8",
-				success: function(result) {
-					//location.reload();
-					$('#editModal').modal('hide');
-					$('#queryButton').click();
-				}
-			});
+			var isJson = false;
+			try{
+				var obj = JSON.parse(data);
+				JSON.stringify(obj,null,4);
+				isJson = true;
+			}catch(err){
+				alert("消息体不是合法的Json字符串")
+			}
+			if(isJson){
+				$.ajax({
+					type: "post",
+					url: "tbox/update",
+					data: "id=" + id +"&name=" + name + "&data=" + data + "&delay="+delay,
+					dataType: 'html',
+					contentType: "application/x-www-form-urlencoded; charset=utf-8",
+					success: function(result) {
+						//location.reload();
+						$('#editModal').modal('hide');
+						$('#queryButton').click();
+					}
+				});
+			}
 		}
 
 		//删除记录

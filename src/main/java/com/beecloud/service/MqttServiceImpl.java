@@ -56,14 +56,12 @@ public class MqttServiceImpl implements MqttService{
 
 
     protected boolean isClientExist(String threadName,List<MqttClientHandleMessageThread> list){
-        boolean isExist = false;
         for(MqttClientHandleMessageThread thread : list) {
             if(thread.getName().equals(threadName)&&thread.isUseFul()){
-                isExist = true;
-                break;
+                return true;
             }
         }
-        return isExist;
+        return false;
     }
 
 

@@ -29,6 +29,7 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 	private MqttClient client = null;
 	private Logger logger = LoggerFactory.getLogger(this.getClientId());
 	private Queue<SendMessageObject> messages = new LinkedBlockingQueue<SendMessageObject>();
+	private Queue<String> topics = new LinkedBlockingQueue<String>();
 	private Map<String,String> cache = new HashMap<String, String>();
 	private String host;
 	private boolean status = true;
@@ -59,20 +60,14 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 
    public boolean isUseFul(){
    	  if(this.isAlive()&&client.isConnected()){
-   	  	return true;
+   	  	  return true;
 	  }
 	  return false;
    }
 
-	public void subscirbe(String topic){
-		if(null!=client){
-			try {
-				logger.info("订阅消息:"+topic);
-				client.subscribe(topic, 2);
-			} catch (MqttException e) {
-				e.printStackTrace();
-			}
-		}
+   public void subscirbe(String topic){
+		logger.info("订阅消息:"+topic);
+		topics.add(topic);
 	}
 
 	public void unSubscribe(String topic){
@@ -130,29 +125,30 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setCleanSession(true);
 		try {
-//			String topic = String.format(Tbox_Receive_Topic,vin);
 			client = new MqttClient(host, getClientId());
 			client.connect(options);
 			PushCallback pushCallback = new PushCallback();
 			pushCallback.registerMqttObserver(this);
 			client.setCallback(pushCallback);
-//			this.subscirbe(topic);
 			while(status){
-				if(messages.isEmpty()){
-					continue;
+				if(!topics.isEmpty()){
+					String topic = topics.poll();
+					client.subscribe(topic,2);
 				}
-				SendMessageObject messageObject = messages.poll();
-				String send_topic = messageObject.getTopic();
-				String message = messageObject.getMessage();
-				byte[] data = ProtocolUtil.formatBitStringToBytes(message);
-				BaseDataGram baseDataGram = new BaseDataGram();
-				BaseMessage baseMessage = new BaseMessage(data);
-				baseDataGram.addMessage(baseMessage);
-				MqttMessage msg = new MqttMessage();
-				msg.setPayload(baseDataGram.encode());
-				logger.info("消息体:");
-				logger.info(baseMessage.toString());
-				client.publish(send_topic, msg);
+				if(!messages.isEmpty()){
+					SendMessageObject messageObject = messages.poll();
+					String send_topic = messageObject.getTopic();
+					String message = messageObject.getMessage();
+					byte[] data = ProtocolUtil.formatBitStringToBytes(message);
+					BaseDataGram baseDataGram = new BaseDataGram();
+					BaseMessage baseMessage = new BaseMessage(data);
+					baseDataGram.addMessage(baseMessage);
+					MqttMessage msg = new MqttMessage();
+					msg.setPayload(baseDataGram.encode());
+					logger.info("消息体:");
+					logger.info(baseMessage.toString());
+					client.publish(send_topic, msg);
+				}
 			}
 		} catch (MqttException e) {
 			e.printStackTrace();
@@ -251,7 +247,7 @@ class PushCallback implements MqttCallback,MqttSubject {
 	}
 
 
-
+    @Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 			if(topic.startsWith(prefix)){		//Tbox消息
 				receiveTboxMessaage(topic,message);
@@ -280,4 +276,15 @@ class PushCallback implements MqttCallback,MqttSubject {
 		}
 	}
 
+   public static void  main(String ...args){
+	   try {
+		   MqttClient mqttClient = new MqttClient("tcp://10.28.4.76:1883","1231223312321");
+		   mqttClient.connect();
+		   PushCallback pushCallback = new PushCallback();
+		   mqttClient.setCallback(pushCallback);
+		   mqttClient.subscribe("mqtt/vehicle/VIN99999999999901",2);
+	   } catch (MqttException e) {
+		   e.printStackTrace();
+	   }
+   }
 }

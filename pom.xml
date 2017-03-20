@@ -17,19 +17,25 @@
 		<mybatis.version>3.2.1</mybatis.version>
 	</properties>
 	
-<repositories>  
-  <repository>  
+<repositories>
+  <repository>
      <id>alimaven</id>
      <name>aliyun maven</name>
      <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-  </repository>  
-  
-  <repository>  
-    <id>beecloudmaven</id>  
-    <name>beecloud maven</name>  
-    <url>http://10.28.4.4:8081/nexus/content/groups/public/</url>
-  </repository>  
-</repositories> 
+  </repository>
+
+	<repository>
+		<id>beecloudmaven</id>
+		<name>beecloud maven</name>
+		<url>http://10.28.4.4:8081/nexus/content/groups/public/</url>
+	</repository>
+
+	<repository>
+		<id>testmaven</id>
+		<name>test maven</name>
+		<url>http://10.28.4.35:8081/nexus/content/repositories/snapshots/</url>
+	</repository>
+</repositories>
 	
 	<dependencies>
 		<!-- 添加Spring依赖 -->

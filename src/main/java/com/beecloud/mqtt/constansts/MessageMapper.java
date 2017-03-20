@@ -59,6 +59,9 @@ public class MessageMapper {
         /**启动状态上传**/
         map.put(ApplicationID.START_CAR_NOTIFY.name()+2,NotifyAutoRemind.class);
         map.put(ApplicationID.START_CAR_NOTIFY.name()+3,AckMessage.class);
+        map.put(ApplicationID.START_CAR_NOTIFY.name()+5,NotifyAutoRemind.class);
+        map.put(ApplicationID.START_CAR_NOTIFY.name()+8,AckMessage.class);
+
 
         /**运行时地理位置上传**/
         map.put(ApplicationID.POSITION_UPLOAD_RUNNING.name()+5,AutoLocationMessage.class);

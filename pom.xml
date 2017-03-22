@@ -24,11 +24,11 @@
      <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
   </repository>
 
-	<repository>
-		<id>beecloudmaven</id>
-		<name>beecloud maven</name>
-		<url>http://10.28.4.4:8081/nexus/content/groups/public/</url>
-	</repository>
+	<!--<repository>-->
+		<!--<id>beecloudmaven</id>-->
+		<!--<name>beecloud maven</name>-->
+		<!--<url>http://10.28.4.4:8081/nexus/content/groups/public/</url>-->
+	<!--</repository>-->
 
 	<repository>
 		<id>testmaven</id>
@@ -196,7 +196,7 @@
 		<dependency>
 		  <groupId>com.beecloud</groupId>
 		  <artifactId>beecloud-vehicle-spa-protocol</artifactId>
-		  <version>1.0.0-SNAPSHOT</version>
+		  <version>1.0.0-master-SNAPSHOT</version>
 		</dependency>
 		
 <!-- 		MQTT Client -->

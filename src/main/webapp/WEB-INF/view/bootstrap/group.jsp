@@ -183,7 +183,7 @@
 		//编辑框关闭时,清空下拉选项框
 		$('#editModal').on('hide.bs.modal', function () {
 			$("#select_tbox_list").empty();//删除所有的options
-		})
+		});
 
 		//触发模态框的同时调用此方法
 		function edit(obj) {

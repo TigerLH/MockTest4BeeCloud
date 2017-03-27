@@ -59,10 +59,7 @@ public class MqttClientHandleMessageThread extends Thread implements MqttObserve
 	}
 
    public boolean isUseFul(){
-   	  if(this.isAlive()&&client.isConnected()){
-   	  	  return true;
-	  }
-	  return false;
+       return this.isAlive() && client.isConnected();
    }
 
    public void subscirbe(String topic){

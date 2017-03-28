@@ -223,14 +223,14 @@ class PushCallback implements MqttCallback,MqttSubject {
      */
 	protected void receiveAppMessage(String topic, MqttMessage message){
 			byte[] data = message.getPayload();
-		    String key;
+		    String key = "";
 			String msg = new String(data);
 			logger.info("收到App推送消息:");
 			logger.info(msg);
-		    boolean isNum = Util.isNumeric(topic);
-		    if(!isNum){				//CarRental
-		    	key = topic;
-			}else{
+			logger.info("映射的Key为:");
+			logger.info(topic);
+		    this.notifyMqttObservers(topic,msg);
+		    if(Util.isNumeric(topic)){
 				try{
 					key = ((ArrayList<String>)JsonPath.parse(msg).read("$..msgId")).get(0);
 				}catch(Exception e){

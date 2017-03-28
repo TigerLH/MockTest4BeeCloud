@@ -239,10 +239,10 @@ class PushCallback implements MqttCallback,MqttSubject {
 					long tboxEventTime =  ((ArrayList<Long>)JsonPath.parse(msg).read("$..tboxEventTime")).get(0);
 					key = String.valueOf(applicationId)+String.valueOf(stepId)+String.valueOf(tboxEventTime);
 				}
+				logger.info("精确映射:");
+				logger.info(key);
+				this.notifyMqttObservers(key,msg);
 			}
-			logger.info("映射的Key为:");
-			logger.info(key);
-		    this.notifyMqttObservers(key,msg);
 	}
 
 

@@ -229,7 +229,7 @@ class PushCallback implements MqttCallback,MqttSubject {
 			logger.info(msg);
 			logger.info("映射的Key为:");
 			logger.info(topic);
-		    this.notifyMqttObservers(topic,msg);
+		    this.notifyMqttObservers(topic.trim(),msg);
 		    if(Util.isNumeric(topic)){
 				try{
 					key = ((ArrayList<String>)JsonPath.parse(msg).read("$..msgId")).get(0);

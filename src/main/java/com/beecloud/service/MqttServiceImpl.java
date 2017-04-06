@@ -8,6 +8,7 @@ import com.beecloud.mqtt.constansts.Type;
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,8 +21,10 @@ import java.util.List;
 @Service
 public class MqttServiceImpl implements MqttService{
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
-    private String host = "tcp://10.28.4.34:1883";  //功能测试环境
-    private String auto_test_host = "tcp://10.28.4.76:1883";//自动化测试环境
+    @Value("${function_test_host}") //功能测试环境
+    private String host;
+    @Value("${auto_test_host}")  //自动化测试环境
+    private String auto_test_host;
     private List<MqttClientHandleMessageThread> thread_Group_function = new ArrayList<MqttClientHandleMessageThread>();
     private List<MqttClientHandleMessageThread> thread_Group_auto = new ArrayList<MqttClientHandleMessageThread>();
     private final String Tbox_Send_Topic = "mqtt/server";

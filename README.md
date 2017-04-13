@@ -97,8 +97,13 @@ mvn tomcat7:undeploy
 mvn tomcat7:redeploy
 
 ### Docker部署
-构建Image:./build.sh beecloud.war tag
-运行:docker run -it -d -p xxxx:8080 tag
+构建Image:
+
+./build.sh beecloud.war tag
+
+运行:
+
+docker run -it -d -p xxxx:8080 tag
 
 ## HOW TO USE
 ### 运行anyproxy服务
